@@ -1,0 +1,67 @@
+# Máquina de estados del sub-pedido
+
+Fuente: docs/funcional.md §8 y docs/tecnico.md §22.2. El estado autoritativo vive en
+`sub_pedido`. Este archivo es la fuente de verdad de las transiciones; el código debe coincidir.
+
+## Estados
+Normales: PENDIENTE_PAGO, PAGADO, CONFIRMADO, EN_PREPARACION, DESPACHADO, EN_TRANSITO,
+EN_REPARTO, ENTREGADO, FINALIZADO.
+Excepcionales: CANCELADO, RECLAMADO, DEVUELTO, REEMBOLSADO.
+Finales: FINALIZADO, REEMBOLSADO.
+
+## Actores
+SISTEMA, COMPRADOR, VENDEDOR, TRANSPORTISTA (simulado), SOPORTE_ADMIN.
+
+## Transiciones permitidas
+| Desde | Hacia | Actor | Condición |
+|---|---|---|---|
+| PENDIENTE_PAGO | PAGADO | SISTEMA | Evento PagoAprobado |
+| PENDIENTE_PAGO | CANCELADO | SISTEMA | Pago no confirmado en 30 min. Libera stock |
+| PAGADO | CONFIRMADO | VENDEDOR | Confirma que tiene el producto |
+| PAGADO | CANCELADO | COMPRADOR / SISTEMA | Antes del despacho; el sistema cancela si el vendedor no confirma en 48 h. Reembolso total |
+| CONFIRMADO | EN_PREPARACION | VENDEDOR | Inicia la preparación |
+| CONFIRMADO | CANCELADO | COMPRADOR / VENDEDOR | Antes del despacho; el vendedor solo por falta de stock. Reembolso total |
+| EN_PREPARACION | DESPACHADO | VENDEDOR | Registra transportista, código de seguimiento y fecha estimada |
+| DESPACHADO | EN_TRANSITO | TRANSPORTISTA | Hito de envío |
+| EN_TRANSITO | EN_REPARTO | TRANSPORTISTA | Hito de envío |
+| EN_REPARTO | ENTREGADO | TRANSPORTISTA | Registro de entrega. Abre el plazo de reclamo (7 días) |
+| ENTREGADO | FINALIZADO | COMPRADOR / SISTEMA | Confirmación del comprador o vencimiento del plazo de reclamo. Libera custodia |
+| ENTREGADO | RECLAMADO | COMPRADOR | Reclamo dentro del plazo. Custodia pasa a CONGELADO |
+| RECLAMADO | FINALIZADO | SOPORTE_ADMIN | Resolución SIN_FUNDAMENTO |
+| RECLAMADO | DEVUELTO | SOPORTE_ADMIN | Resolución DEVOLUCION |
+| RECLAMADO | REEMBOLSADO | SOPORTE_ADMIN | Resolución REEMBOLSO (total o parcial) |
+| DEVUELTO | REEMBOLSADO | SOPORTE_ADMIN / SISTEMA | Producto devuelto y revisado |
+| CANCELADO | REEMBOLSADO | SISTEMA | Solo si hubo pago |
+
+Cualquier transición que no figure aquí se rechaza con `ORDER_INVALID_TRANSITION` (HTTP 409).
+
+## Puntos abiertos (el agente debe PREGUNTAR, no decidir)
+1. El funcional permite reclamar un pedido "vencido sin entrega", pero el diagrama no tiene
+   esa transición. Definir desde qué estados (EN_TRANSITO / EN_REPARTO) y con qué plazo.
+2. EN_PREPARACION → CANCELADO no figura en el diagrama, aunque el funcional permite cancelar
+   "antes del despacho". Confirmar si se agrega.
+3. REEMPLAZO como resolución de reclamo: definir a qué estado vuelve el sub-pedido.
+
+## Estado derivado de la compra (pedido)
+Se calcula a partir de los sub-pedidos; nunca se edita.
+| Sub-pedidos | Estado de la compra |
+|---|---|
+| Todos PENDIENTE_PAGO | PENDIENTE_PAGO |
+| Todos pagados y ninguno finalizado | PAGADO |
+| Mezcla de estados avanzados | EN_CURSO |
+| Alguno RECLAMADO | CON_RECLAMO |
+| Todos FINALIZADO | FINALIZADO |
+| Todos CANCELADO | CANCELADO |
+
+`pedido.estado_pago`: SIN_PAGO, EN_PROCESO, PAGADO, REEMBOLSADO_PARCIAL, REEMBOLSADO_TOTAL.
+
+## Plazos por defecto (config_sistema)
+| Plazo | Valor |
+|---|---|
+| Pago del pedido pendiente (reserva de stock) | 30 min |
+| Confirmación del vendedor tras el pago | 48 h |
+| Despacho tras confirmar | 72 h |
+| Reclamo tras la entrega | 7 días |
+| Respuesta del vendedor a un reclamo | 72 h |
+| Apelación | 3 días desde la resolución |
+| Envío del producto devuelto | 7 días |
