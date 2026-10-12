@@ -11,7 +11,7 @@ Entorno: Windows con PowerShell 5.x (sin `&&`).
 | MODELO DE PRUEBA/Tienda-Virtual-Segura.html | (sin cambios, prototipo visual de solo lectura) |
 
 ## Fases
-- [ ] Fases 0-1: Fundaciones y máquina de estados (Prompt 1)
+- [x] Fases 0-1: Fundaciones y máquina de estados (Prompt 1)
 - [ ] Fase 2: BD, infraestructura, auth y auditoría (Prompt 2)
 - [ ] Fase 3 y parte de 4: vendedores, catálogo, archivos, búsqueda, carrito (Prompt 3)
 - [ ] Fases 4-6: pedidos, pagos, envíos, tareas programadas (Prompt 4)

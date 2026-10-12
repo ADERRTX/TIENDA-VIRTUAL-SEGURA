@@ -1,0 +1,22 @@
+{
+  "name": "shared",
+  "version": "1.0.0",
+  "description": "Shared packages for Tienda Virtual Segura",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "./enums": "./dist/enums/index.js",
+    "./errors": "./dist/errors/index.js",
+    "./constants": "./dist/constants/index.js",
+    "./schemas": "./dist/schemas/index.js"
+  },
+  "scripts": {
+    "build": "pnpm tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  }
+}

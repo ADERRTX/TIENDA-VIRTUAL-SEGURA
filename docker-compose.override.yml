@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ../infrastructure/docker
+      dockerfile: Dockerfile.backend
+    volumes:
+      - ./backend/src:/app/backend/src:ro
+      - ./shared/src:/app/shared/src:ro
+    environment:
+      NODE_ENV: development
+      TZ: UTC
+    restart: "no"
+
+  frontend:
+    build:
+      context: ../infrastructure/docker
+      dockerfile: Dockerfile.frontend
+    volumes:
+      - ./frontend/src:/app/frontend/src:ro
+    environment:
+      NODE_ENV: development
+      TZ: UTC
+    restart: "no"
