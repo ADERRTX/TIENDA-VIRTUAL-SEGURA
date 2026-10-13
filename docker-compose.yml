@@ -1,0 +1,111 @@
+version: '3.8'
+
+services:
+  proxy:
+    build:
+      context: ../infrastructure/nginx
+      dockerfile: Dockerfile
+    image: tienda-virtual-segura-nginx:latest
+    container_name: tvs-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - edge
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ../infrastructure/docker
+      dockerfile: Dockerfile.backend
+    image: tienda-virtual-segura-backend:latest
+    container_name: tvs-backend
+    env_file:
+      - ../.env
+    environment:
+      - NODE_ENV=production
+      - TZ=UTC
+    networks:
+      - app
+      - data
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ../infrastructure/docker
+      dockerfile: Dockerfile.frontend
+    image: tienda-virtual-segura-frontend:latest
+    container_name: tvs-frontend
+    networks:
+      - edge
+    restart: unless-stopped
+
+  db:
+    image: postgres:17-alpine
+    container_name: tvs-db
+    environment:
+      POSTGRES_DB: tienda_virtual_segura
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-app_password}
+      TZ: UTC
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ../database/sql:/docker-entrypoint-initdb.d:ro
+    networks:
+      - data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_user -d tienda_virtual_segura"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  storage:
+    image: minio/minio:latest
+    container_name: tvs-storage
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    volumes:
+      - storage_data:/data
+    networks:
+      - data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: tvs-mailpit
+    environment:
+      MP_SMTP_PORT: 1025
+      MP_HTTP_PORT: 8025
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - data
+    restart: unless-stopped
+
+volumes:
+  db_data:
+  storage_data:
+
+networks:
+  edge:
+    driver: bridge
+  app:
+    driver: bridge
+  data:
+    driver: bridge
+    internal: true
