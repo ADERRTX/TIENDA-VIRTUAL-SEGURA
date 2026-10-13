@@ -34,7 +34,8 @@
     "cors": "^2.8.5",
     "express-rate-limit": "^7.1.5",
     "dotenv": "^16.4.5",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "@tvs/shared": "workspace:*"
   },
   "devDependencies": {
     "@nestjs/testing": "^10.3.0",

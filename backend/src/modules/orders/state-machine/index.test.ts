@@ -1,6 +1,6 @@
 import { EstadoPedido } from './index';
-import { SubPedidoEstado } from '@shared/enums';
-import { OrderInvalidTransitionError } from '@shared/errors';
+import { SubPedidoEstado } from '@tvs/shared/enums';
+import { OrderInvalidTransitionError } from '@tvs/shared/errors';
 
 describe('EstadoPedido', () => {
   let estado: EstadoPedido;

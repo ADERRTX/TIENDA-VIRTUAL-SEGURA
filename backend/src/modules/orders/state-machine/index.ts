@@ -1,5 +1,5 @@
-import { SubPedidoEstado } from '@shared/enums';
-import { OrderInvalidTransitionError } from '@shared/errors';
+import { SubPedidoEstado } from '@tvs/shared/enums';
+import { OrderInvalidTransitionError } from '@tvs/shared/errors';
 
 export type Actor = 'SISTEMA' | 'COMPRADOR' | 'VENDEDOR' | 'TRANSPORTISTA' | 'SOPORTE_ADMIN';
 
