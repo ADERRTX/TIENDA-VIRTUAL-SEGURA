@@ -1,9 +1,0 @@
-title = "Gitleaks - Tienda Virtual Segura"
-
-[extend]
-useDefault = true
-
-allowlist:
-  description = "Allowlisted patterns"
-  regexes = []
-  paths = []
