@@ -77,18 +77,56 @@ private vencidoSinEntrega(dias: number): boolean {
     if (estadosFijos.every((e) => e === SubPedidoEstado.PENDIENTE_PAGO)) {
       return 'PENDIENTE_PAGO';
     }
-    if (estadosFijos.every((e) => e === SubPedidoEstado.PAGADO)) {
+    // Estados donde el pago está confirmado
+    const estadosConPagoConfirmado = [
+      SubPedidoEstado.PAGADO,
+      SubPedidoEstado.CONFIRMADO,
+      SubPedidoEstado.EN_PREPARACION,
+      SubPedidoEstado.DESPACHADO,
+      SubPedidoEstado.EN_TRANSITO,
+      SubPedidoEstado.EN_REPARTO,
+      SubPedidoEstado.ENTREGADO,
+    ];
+    // Estados terminales
+    const estadosTerminales = [
+      SubPedidoEstado.FINALIZADO,
+      SubPedidoEstado.CANCELADO,
+      SubPedidoEstado.RECLAMADO,
+      SubPedidoEstado.DEVUELTO,
+      SubPedidoEstado.REEMBOLSADO,
+    ];
+    // Estados avanzados (preparación física en adelante)
+    const estadosAvanzados = [
+      SubPedidoEstado.EN_PREPARACION,
+      SubPedidoEstado.DESPACHADO,
+      SubPedidoEstado.EN_TRANSITO,
+      SubPedidoEstado.EN_REPARTO,
+      SubPedidoEstado.ENTREGADO,
+    ];
+    
+    // "Todos pagados y ninguno finalizado" = todos tienen pago confirmado, ninguno terminal
+    // Y todos en EL MISMO estado (no hay "mezcla")
+    const todosMismoEstado = estadosFijos.every((e) => e === estadosFijos[0]);
+    if (estadosFijos.every((e) => estadosConPagoConfirmado.includes(e)) && 
+        !estadosFijos.some((e) => estadosTerminales.includes(e)) &&
+        todosMismoEstado) {
       return 'PAGADO';
     }
-    if (estadosFijos.some((e) => ![SubPedidoEstado.PENDIENTE_PAGO, SubPedidoEstado.FINALIZADO, SubPedidoEstado.CANCELADO].includes(e))) {
-      return 'EN_CURSO';
-    }
+    // "Alguno RECLAMADO" 
     if (estadosFijos.some((e) => e === SubPedidoEstado.RECLAMADO)) {
       return 'CON_RECLAMO';
     }
+    // "Mezcla de estados avanzados" = hay al menos uno en estado avanzado
+    // O hay mezcla de estados (no todos iguales) y algunos con pago confirmado
+    if (estadosFijos.some((e) => estadosAvanzados.includes(e)) || 
+        (!todosMismoEstado && estadosFijos.some((e) => estadosConPagoConfirmado.includes(e)))) {
+      return 'EN_CURSO';
+    }
+    // "Todos FINALIZADO"
     if (estadosFijos.every((e) => e === SubPedidoEstado.FINALIZADO)) {
       return 'FINALIZADO';
     }
+    // "Todos CANCELADO"
     if (estadosFijos.every((e) => e === SubPedidoEstado.CANCELADO)) {
       return 'CANCELADO';
     }

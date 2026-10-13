@@ -11,7 +11,11 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@shared": ["../shared/src"],
+      "@tvs/shared/enums": ["../shared/dist/enums"],
+      "@tvs/shared/errors": ["../shared/dist/errors"],
+      "@tvs/shared/constants": ["../shared/dist/constants"],
+      "@tvs/shared/schemas": ["../shared/dist/schemas"],
+      "@tvs/shared": ["../shared/dist"],
       "@modules/*": ["src/modules/*"]
     },
     "outDir": "./dist",
