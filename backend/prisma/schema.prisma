@@ -1,0 +1,489 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  BUYER
+  SELLER
+  SUPPORT
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+}
+
+enum SellerStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  REMOVED
+}
+
+enum SubOrderStatus {
+  PENDIENTE_PAGO
+  PAGADO
+  CONFIRMADO
+  EN_PREPARACION
+  DESPACHADO
+  EN_TRANSITO
+  EN_REPARTO
+  ENTREGADO
+  FINALIZADO
+  CANCELADO
+  RECLAMADO
+  DEVUELTO
+  REEMBOLSADO
+}
+
+enum OrderStatus {
+  PENDIENTE_PAGO
+  PAGADO
+  EN_CURSO
+  CON_RECLAMO
+  FINALIZADO
+  CANCELADO
+}
+
+enum OrderPaymentStatus {
+  SIN_PAGO
+  EN_PROCESO
+  PAGADO
+  REEMBOLSADO_PARCIAL
+  REEMBOLSADO_TOTAL
+}
+
+enum PaymentStatus {
+  EN_PROCESO
+  APROBADO
+  RECHAZADO
+}
+
+enum CustodyStatus {
+  RETENIDO
+  CONGELADO
+  LIBERADO
+  DEVUELTO
+}
+
+enum RefundStatus {
+  EN_PROCESO
+  APROBADO
+  RECHAZADO
+}
+
+enum ShipmentStatus {
+  PENDIENTE
+  EN_TRANSITO
+  EN_REPARTO
+  ENTREGADO
+}
+
+enum ClaimStatus {
+  ABIERTO
+  EN_RESPUESTA
+  RESUELTO
+  APELADO
+  CERRADO
+}
+
+enum ClaimResolution {
+  SIN_FUNDAMENTO
+  DEVOLUCION
+  REEMBOLSO
+  REEMPLAZO
+}
+
+enum TrackingEventType {
+  DESPACHADO
+  EN_TRANSITO
+  EN_REPARTO
+  ENTREGADO
+}
+
+enum NotificationType {
+  ORDER
+  CLAIM
+  REVIEW
+  SELLER
+  SYSTEM
+}
+
+model User {
+  id           String     @id @default(uuid()) @db.Uuid
+  email        String     @unique
+  passwordHash String
+  fullName     String
+  role         UserRole   @default(BUYER)
+  status       UserStatus @default(ACTIVE)
+  failedLogins Int        @default(0)
+  lockedUntil  DateTime?  @db.Timestamptz(3)
+  createdAt    DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime   @updatedAt @db.Timestamptz(3)
+
+  addresses      Address[]
+  seller         Seller?
+  carts          Cart[]
+  orders         Order[]
+  reviews        Review[]
+  claimsMade     Claim[] @relation("Claimant")
+  claimsResolved Claim[] @relation("ClaimResolver")
+  claimMessages  ClaimMessage[]
+  notifications  Notification[]
+  auditLogs      AuditLog[]
+
+  @@map("user")
+}
+
+model Address {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  label     String
+  line1     String
+  city      String
+  province  String
+  country   String   @default("PE")
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders Order[]
+
+  @@map("address")
+}
+
+model Seller {
+  id          String       @id @default(uuid()) @db.Uuid
+  userId      String       @unique @db.Uuid
+  storeName   String       @unique
+  description String?
+  status      SellerStatus @default(PENDING)
+  reason      String?
+  createdAt   DateTime     @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime     @updatedAt @db.Timestamptz(3)
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products  Product[]
+  subOrders SubOrder[]
+
+  @@map("seller")
+}
+
+model Category {
+  id       String @id @default(uuid()) @db.Uuid
+  name     String @unique
+  parentId String? @db.Uuid
+
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryTree")
+  products Product[]
+
+  @@map("category")
+}
+
+model Product {
+  id          String        @id @default(uuid()) @db.Uuid
+  sellerId    String        @db.Uuid
+  categoryId  String        @db.Uuid
+  title       String
+  description String
+  status      ProductStatus @default(DRAFT)
+  createdAt   DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime      @updatedAt @db.Timestamptz(3)
+
+  seller        Seller        @relation(fields: [sellerId], references: [id])
+  category      Category      @relation(fields: [categoryId], references: [id])
+  variants      Variant[]
+  images        ProductImage[]
+
+  @@index([sellerId])
+  @@index([categoryId])
+  @@map("product")
+}
+
+model ProductImage {
+  id        String   @id @default(uuid()) @db.Uuid
+  productId String   @db.Uuid
+  fileName  String
+  isMain    Boolean  @default(false)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_image")
+}
+
+model PriceHistory {
+  id        String   @id @default(uuid()) @db.Uuid
+  variantId String   @db.Uuid
+  price     Int
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  variant Variant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@map("price_history")
+}
+
+model Variant {
+  id        String @id @default(uuid()) @db.Uuid
+  productId String @db.Uuid
+  name      String
+  price     Int
+  stock     Int    @default(0)
+
+  product      Product        @relation(fields: [productId], references: [id])
+  priceHistory PriceHistory[]
+  cartItems    CartItem[]
+  orderItems   OrderItem[]
+
+  @@index([productId])
+  @@map("variant")
+}
+
+model Cart {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @unique @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items CartItem[]
+
+  @@map("cart")
+}
+
+model CartItem {
+  id        String @id @default(uuid()) @db.Uuid
+  cartId    String @db.Uuid
+  variantId String @db.Uuid
+  quantity  Int
+
+  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variant Variant @relation(fields: [variantId], references: [id])
+
+  @@unique([cartId, variantId])
+  @@map("cart_item")
+}
+
+model Order {
+  id             String             @id @default(uuid()) @db.Uuid
+  buyerId        String             @db.Uuid
+  addressId      String             @db.Uuid
+  status         OrderStatus        @default(PENDIENTE_PAGO)
+  paymentStatus  OrderPaymentStatus @default(SIN_PAGO)
+  paymentExpires DateTime           @db.Timestamptz(3)
+  createdAt      DateTime           @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime           @updatedAt @db.Timestamptz(3)
+
+  buyer     User       @relation(fields: [buyerId], references: [id])
+  address   Address    @relation(fields: [addressId], references: [id])
+  subOrders SubOrder[]
+  payments  Payment[]
+
+  @@index([buyerId])
+  @@map("order")
+}
+
+model SubOrder {
+  id        String         @id @default(uuid()) @db.Uuid
+  orderId   String         @db.Uuid
+  sellerId  String         @db.Uuid
+  status    SubOrderStatus @default(PENDIENTE_PAGO)
+  createdAt DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime       @updatedAt @db.Timestamptz(3)
+
+  order      Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  seller     Seller       @relation(fields: [sellerId], references: [id])
+  items      OrderItem[]
+  payment    Payment?
+  custody    Custody?
+  refunds    Refund[]
+  shipment   Shipment?
+  claims     Claim[]
+
+  @@index([orderId])
+  @@index([sellerId])
+  @@map("sub_order")
+}
+
+model OrderItem {
+  id         String @id @default(uuid()) @db.Uuid
+  subOrderId String @db.Uuid
+  variantId  String @db.Uuid
+  name       String
+  unitPrice  Int
+  quantity   Int
+
+  subOrder SubOrder @relation(fields: [subOrderId], references: [id], onDelete: Cascade)
+  variant  Variant  @relation(fields: [variantId], references: [id])
+  review   Review?
+
+  @@map("order_item")
+}
+
+model Payment {
+  id         String        @id @default(uuid()) @db.Uuid
+  orderId    String        @db.Uuid
+  subOrderId String?       @unique @db.Uuid
+  amount     Int
+  status     PaymentStatus @default(EN_PROCESO)
+  createdAt  DateTime      @default(now()) @db.Timestamptz(3)
+
+  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  subOrder SubOrder? @relation(fields: [subOrderId], references: [id])
+
+  @@index([orderId])
+  @@map("payment")
+}
+
+model Custody {
+  id         String        @id @default(uuid()) @db.Uuid
+  subOrderId String        @unique @db.Uuid
+  amount     Int
+  status     CustodyStatus @default(RETENIDO)
+  createdAt  DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt  DateTime      @updatedAt @db.Timestamptz(3)
+
+  subOrder SubOrder @relation(fields: [subOrderId], references: [id], onDelete: Cascade)
+
+  @@map("custody")
+}
+
+model Refund {
+  id         String       @id @default(uuid()) @db.Uuid
+  subOrderId String       @db.Uuid
+  amount     Int
+  reason     String
+  status     RefundStatus @default(EN_PROCESO)
+  createdAt  DateTime     @default(now()) @db.Timestamptz(3)
+
+  subOrder SubOrder @relation(fields: [subOrderId], references: [id], onDelete: Cascade)
+
+  @@index([subOrderId])
+  @@map("refund")
+}
+
+model Shipment {
+  id             String         @id @default(uuid()) @db.Uuid
+  subOrderId     String         @unique @db.Uuid
+  carrier        String
+  trackingCode   String         @unique
+  estimatedDate  DateTime       @db.Timestamptz(3)
+  status         ShipmentStatus @default(PENDIENTE)
+  createdAt      DateTime       @default(now()) @db.Timestamptz(3)
+
+  subOrder       SubOrder        @relation(fields: [subOrderId], references: [id], onDelete: Cascade)
+  trackingEvents TrackingEvent[]
+
+  @@map("shipment")
+}
+
+model TrackingEvent {
+  id         String             @id @default(uuid()) @db.Uuid
+  shipmentId String             @db.Uuid
+  type       TrackingEventType
+  note       String?
+  occurredAt DateTime           @db.Timestamptz(3)
+
+  shipment Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+
+  @@map("tracking_event")
+}
+
+model Review {
+  id         String   @id @default(uuid()) @db.Uuid
+  orderItemId String  @unique @db.Uuid
+  buyerId    String   @db.Uuid
+  stars      Int
+  comment    String?
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  orderItem OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  buyer     User      @relation(fields: [buyerId], references: [id])
+
+  @@map("review")
+}
+
+model Claim {
+  id              String          @id @default(uuid()) @db.Uuid
+  subOrderId      String          @db.Uuid
+  claimantId      String          @db.Uuid
+  reason          String
+  evidence        String[]
+  status          ClaimStatus     @default(ABIERTO)
+  resolution      ClaimResolution?
+  resolvedById    String?         @db.Uuid
+  resolvedAt      DateTime?       @db.Timestamptz(3)
+  apelatedAt      DateTime?       @db.Timestamptz(3)
+  createdAt       DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime        @updatedAt @db.Timestamptz(3)
+
+  subOrder   SubOrder        @relation(fields: [subOrderId], references: [id], onDelete: Cascade)
+  claimant   User            @relation("Claimant", fields: [claimantId], references: [id])
+  resolvedBy User?           @relation("ClaimResolver", fields: [resolvedById], references: [id])
+  messages   ClaimMessage[]
+
+  @@index([subOrderId])
+  @@map("claim")
+}
+
+model ClaimMessage {
+  id       String   @id @default(uuid()) @db.Uuid
+  claimId  String   @db.Uuid
+  authorId String   @db.Uuid
+  body     String
+  blocked  Boolean  @default(false)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  claim  Claim @relation(fields: [claimId], references: [id], onDelete: Cascade)
+  author User  @relation(fields: [authorId], references: [id])
+
+  @@index([claimId])
+  @@map("claim_message")
+}
+
+model Notification {
+  id        String           @id @default(uuid()) @db.Uuid
+  userId    String           @db.Uuid
+  type      NotificationType
+  message   String
+  readAt    DateTime?        @db.Timestamptz(3)
+  createdAt DateTime         @default(now()) @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notification")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  actorId    String?  @db.Uuid
+  action     String
+  entity     String
+  entityId   String
+  payload    Json?
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  actor User? @relation(fields: [actorId], references: [id])
+
+  @@index([entity, entityId])
+  @@map("audit_log")
+}
+
+model SystemConfig {
+  key   String @id
+  value String
+}

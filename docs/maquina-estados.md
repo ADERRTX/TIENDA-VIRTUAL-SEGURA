@@ -39,8 +39,7 @@ SISTEMA, COMPRADOR, VENDEDOR, TRANSPORTISTA (simulado), SOPORTE_ADMIN.
 
 Cualquier transición que no figure aquí se rechaza con `ORDER_INVALID_TRANSITION` (HTTP 409).
 
-## Puntos abiertos (resueltos)
-Aclaraciones implementadas:
+## Decisiones implementadas
 
 1. **Reclamo por "vencido sin entrega"**: Permitir desde `EN_TRANSITO` y `EN_REPARTO` con plazo de 7 días (mismo que reclamo tras entrega). El comprador puede darse cuenta el pedido nunca llegará y querer reclamar antes de marcar ENTREGADO.
 
