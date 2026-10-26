@@ -19,3 +19,5 @@ secrets.json
 *.key
 *.pem
 MODELO DE PRUEBA/**
+backend/src/generated/
+backend/uploads/

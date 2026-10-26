@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from './prisma/prisma.service';
 import { AuditService } from './audit/audit.service';
-import { ClockService } from './clock/clock.service';
+import { ClockService } from './common/clock.service';
 import { HealthController } from './modules/health/health.controller';
 
 @Module({
