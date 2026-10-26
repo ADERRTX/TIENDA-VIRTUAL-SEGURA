@@ -143,6 +143,7 @@ model User {
   claimMessages  ClaimMessage[]
   notifications  Notification[]
   auditLogs      AuditLog[]
+  idempotencyKeys IdempotencyKey[]
 
   @@map("user")
 }
@@ -486,4 +487,17 @@ model AuditLog {
 model SystemConfig {
   key   String @id
   value String
+}
+
+model IdempotencyKey {
+  id        String   @id @default(uuid()) @db.Uuid
+  key       String   @unique
+  userId    String   @db.Uuid
+  response  Json
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([key, userId])
+  @@map("idempotency_key")
 }
