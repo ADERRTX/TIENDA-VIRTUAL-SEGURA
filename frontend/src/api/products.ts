@@ -51,3 +51,28 @@ export function useProduct(id: string | undefined) {
     enabled: Boolean(id),
   });
 }
+
+export interface ProductReview {
+  id: string;
+  stars: number;
+  comment?: string | null;
+  createdAt: string;
+  user?: { fullName?: string } | null;
+}
+
+export interface ProductReviews {
+  items: ProductReview[];
+  average: number | null;
+  count: number;
+}
+
+export function useProductReviews(productId: string | undefined) {
+  return useQuery({
+    queryKey: ['reviews', productId],
+    queryFn: async () => {
+      const response = await http<ProductReviews>(`/products/${productId}/reviews`);
+      return response.data;
+    },
+    enabled: Boolean(productId),
+  });
+}

@@ -1,3 +1,8 @@
+
+import AdminSellersPage from './pages/AdminSellersPage';
+import SellerApplyPage from './pages/SellerApplyPage';
+import ClaimDetailPage from './pages/ClaimDetailPage';
+import ClaimsPage from './pages/ClaimsPage';
 import SellerProductsPage from './pages/SellerProductsPage';
 import RequireRole from './components/RequireRole';
 import SellerOrdersPage from './pages/SellerOrdersPage';
@@ -18,6 +23,16 @@ export default function App() {
     <Routes>
       
       <Route element={<PublicLayout />}>
+      <Route element={<RequireRole roles={['BUYER']} />}>
+  <Route path="vender" element={<SellerApplyPage />} />
+</Route>
+<Route element={<RequireRole roles={['ADMIN']} />}>
+  <Route path="admin/vendedores" element={<AdminSellersPage />} />
+</Route>
+      <Route element={<RequireRole roles={['BUYER', 'SELLER', 'SUPPORT', 'ADMIN']} />}>
+  <Route path="reclamos" element={<ClaimsPage />} />
+  <Route path="reclamos/:id" element={<ClaimDetailPage />} />
+</Route>
         <Route index element={<HomePage />} />
   <Route element={<RequireRole roles={['SELLER']} />}>
   <Route path="vendedor/pedidos" element={<SellerOrdersPage />} />

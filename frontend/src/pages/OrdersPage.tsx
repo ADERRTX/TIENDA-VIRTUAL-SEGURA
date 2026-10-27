@@ -1,3 +1,4 @@
+
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -10,6 +11,7 @@ import {
   type OrderItem,
   type SubOrder,
 } from '../api/orders';
+import OrderTimeline from '../components/OrderTimeline';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { i18n } from '../i18n/es';
@@ -272,15 +274,15 @@ function OrderCard({ order }: { order: MyOrder }) {
             ))}
           </ul>
           {sub.status === 'PAGADO' && <CancelSubOrder subOrder={sub} />}
-          {sub.status === 'ENTREGADO' && (
-            <div className="flex flex-wrap gap-2">
-              <ConfirmDelivery subOrder={sub} />
-              <ClaimButton subOrder={sub} />
-            </div>
-          )}
+       {['ENTREGADO', 'EN_TRANSITO', 'EN_REPARTO'].includes(sub.status) && (
+  <div className="flex flex-wrap gap-2">
+    {sub.status === 'ENTREGADO' && <ConfirmDelivery subOrder={sub} />}
+    <ClaimButton subOrder={sub} />
+  </div>
+)}
         </div>
       ))}
-
+<OrderTimeline orderId={order.id} />
       <footer className="flex flex-wrap items-end justify-between gap-2 border-t border-line pt-3">
         <p className="text-xs text-ink-muted">
           Entrega: {order.address.label} · {order.address.line1}, {order.address.city},{' '}

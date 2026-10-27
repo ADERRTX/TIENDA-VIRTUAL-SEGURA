@@ -1,3 +1,4 @@
+import ReviewsSection from '../components/ReviewsSection';
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMe } from '../api/auth';
@@ -66,6 +67,7 @@ export default function ProductDetailPage() {
 
       {product && (
         <div className="grid gap-6 md:grid-cols-2">
+          <ReviewsSection productId={product.id} />
           {image ? (
             <img
               src={imageUrl(image.fileName)}
