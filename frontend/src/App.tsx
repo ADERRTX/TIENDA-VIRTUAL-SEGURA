@@ -1,3 +1,6 @@
+import SellerProductsPage from './pages/SellerProductsPage';
+import RequireRole from './components/RequireRole';
+import SellerOrdersPage from './pages/SellerOrdersPage';
 import OrdersPage from './pages/OrdersPage';
 import CheckoutPage from './pages/CheckoutPage';
 import { Route, Routes } from 'react-router-dom';
@@ -16,8 +19,12 @@ export default function App() {
       
       <Route element={<PublicLayout />}>
         <Route index element={<HomePage />} />
+  <Route element={<RequireRole roles={['SELLER']} />}>
+  <Route path="vendedor/pedidos" element={<SellerOrdersPage />} />
+   <Route path="vendedor/productos" element={<SellerProductsPage />} />
+</Route>
         <Route path="pedidos" element={<OrdersPage />} />
-         <Route path="checkout" element={<CheckoutPage />} />
+        <Route path="checkout" element={<CheckoutPage />} />
         <Route path="catalogo" element={<CatalogPage />} />
         <Route path="catalogo/:id" element={<ProductDetailPage />} />
         <Route path="carrito" element={<CartPage />} />

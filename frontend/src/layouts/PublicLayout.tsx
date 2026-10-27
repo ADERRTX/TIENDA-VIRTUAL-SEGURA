@@ -4,11 +4,11 @@ import { useCart } from '../api/cart';
 import { Button } from '../components/ui/Button';
 import { i18n } from '../i18n/es';
 
-const links = [
-  { to: '/', label: i18n.nav.home, end: true },
-  { to: '/catalogo', label: i18n.nav.catalog, end: false },
-  { to: '/carrito', label: i18n.nav.cart, end: false },
-];
+interface NavItem {
+  to: string;
+  label: string;
+  end?: boolean;
+}
 
 export default function PublicLayout() {
   const navigate = useNavigate();
@@ -16,6 +16,19 @@ export default function PublicLayout() {
   const logout = useLogout();
   const { data: cart } = useCart(Boolean(user));
   const cartCount = user ? (cart?.totalItems ?? 0) : 0;
+
+  const links: NavItem[] = [
+    { to: '/', label: i18n.nav.home, end: true },
+    { to: '/catalogo', label: i18n.nav.catalog },
+    { to: '/carrito', label: i18n.nav.cart },
+  ];
+if (user?.role === 'BUYER') {
+  links.push({ to: '/pedidos', label: i18n.nav.orders });
+}
+  if (user?.role === 'SELLER') {
+      links.push({ to: '/vendedor/productos', label: i18n.seller.myProducts });
+    links.push({ to: '/vendedor/pedidos', label: i18n.seller.pendingOrders });
+  }
 
   return (
     <div className="min-h-screen bg-bg text-ink flex flex-col">
@@ -25,12 +38,12 @@ export default function PublicLayout() {
             {i18n.app.name}
           </Link>
 
-          <nav className="order-last w-full md:order-none md:w-auto flex items-center gap-5">
+          <nav className="order-last w-full md:order-none md:w-auto flex flex-wrap items-center gap-5">
             {links.map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
-                end={link.end}
+                end={link.end ?? false}
                 className={({ isActive }) =>
                   `text-sm font-semibold transition-colors ${
                     isActive ? 'text-brand' : 'text-ink-muted hover:text-ink'

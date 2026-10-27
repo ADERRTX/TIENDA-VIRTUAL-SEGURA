@@ -47,3 +47,52 @@ export function useCancelOrder() {
     },
   });
 }
+
+export function useConfirmDelivery() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (subOrderId: string) => {
+      const response = await http<unknown>(`/orders/${subOrderId}/confirm-delivery`, {
+        method: 'POST',
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['orders'] });
+    },
+  });
+}
+
+export function useCreateReview() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { orderItemId: string; stars: number; comment?: string }) => {
+      const response = await http<unknown>('/reviews', {
+        method: 'POST',
+        body: JSON.stringify(input),
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['orders'] });
+      void queryClient.invalidateQueries({ queryKey: ['reviews'] });
+    },
+  });
+}
+
+export function useCreateClaim() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { subOrderId: string; reason: string }) => {
+      const response = await http<unknown>('/claims', {
+        method: 'POST',
+        body: JSON.stringify({ ...input, evidence: [] }),
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['orders'] });
+      void queryClient.invalidateQueries({ queryKey: ['claims'] });
+    },
+  });
+}
