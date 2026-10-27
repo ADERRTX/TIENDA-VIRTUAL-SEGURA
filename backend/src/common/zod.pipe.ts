@@ -1,10 +1,16 @@
-import { PipeTransform, BadRequestException } from '@nestjs/common';
+import { ArgumentMetadata, BadRequestException, PipeTransform } from '@nestjs/common';
 import { ZodType, ZodError } from 'zod';
 
 export class ZodPipe implements PipeTransform {
   constructor(private readonly schema: ZodType) {}
 
-  transform(value: unknown): unknown {
+  transform(value: unknown, metadata?: ArgumentMetadata): unknown {
+    // Solo se valida el cuerpo. Con @UsePipes a nivel de método, Nest también
+    // pasa por aquí @CurrentUser() y @Param(), que no deben validarse con el esquema del body.
+    if (metadata && metadata.type !== 'body') {
+      return value;
+    }
+
     try {
       return this.schema.parse(value);
     } catch (error) {

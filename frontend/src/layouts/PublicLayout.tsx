@@ -1,4 +1,6 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useLogout, useMe } from '../api/auth';
+import { useCart } from '../api/cart';
 import { Button } from '../components/ui/Button';
 import { i18n } from '../i18n/es';
 
@@ -10,6 +12,10 @@ const links = [
 
 export default function PublicLayout() {
   const navigate = useNavigate();
+  const { data: user } = useMe();
+  const logout = useLogout();
+  const { data: cart } = useCart(Boolean(user));
+  const cartCount = user ? (cart?.totalItems ?? 0) : 0;
 
   return (
     <div className="min-h-screen bg-bg text-ink flex flex-col">
@@ -32,17 +38,40 @@ export default function PublicLayout() {
                 }
               >
                 {link.label}
+                {link.to === '/carrito' && cartCount > 0 && (
+                  <span className="ml-1 rounded-full bg-brand px-2 py-0.5 text-xs text-white">
+                    {cartCount}
+                  </span>
+                )}
               </NavLink>
             ))}
           </nav>
 
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/login')}>
-              {i18n.nav.login}
-            </Button>
-            <Button size="sm" onClick={() => navigate('/registro')}>
-              {i18n.nav.register}
-            </Button>
+            {user ? (
+              <>
+                <span className="text-sm text-ink-muted">
+                  {user.fullName ?? user.email} · {i18n.roles[user.role]}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={logout.isPending}
+                  onClick={() => logout.mutate(undefined, { onSuccess: () => navigate('/') })}
+                >
+                  {i18n.nav.logout}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" onClick={() => navigate('/login')}>
+                  {i18n.nav.login}
+                </Button>
+                <Button size="sm" onClick={() => navigate('/registro')}>
+                  {i18n.nav.register}
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>

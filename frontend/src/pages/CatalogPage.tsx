@@ -1,4 +1,5 @@
-import { useProducts, type Product } from '../api/products';
+import { Link } from 'react-router-dom';
+import { imageUrl, mainImage, useProducts, type Product } from '../api/products';
 import { Button } from '../components/ui/Button';
 import { i18n } from '../i18n/es';
 import { formatMoney } from '../lib/formatters';
@@ -10,15 +11,34 @@ function minPrice(product: Product): number | null {
 
 function ProductCard({ product }: { product: Product }) {
   const price = minPrice(product);
+  const image = mainImage(product);
 
   return (
-    <article className="flex flex-col gap-2 rounded-2xl border border-line bg-surface-2 p-4">
-      <h2 className="font-bold">{product.title}</h2>
-      <p className="text-sm text-ink-muted line-clamp-2">{product.description}</p>
-      <p className="mt-auto font-bold text-brand">
-        {price === null ? 'Sin precio' : formatMoney(price)}
-      </p>
-    </article>
+    <Link
+      to={`/catalogo/${product.id}`}
+      className="flex flex-col gap-2 overflow-hidden rounded-2xl border border-line bg-surface-2 transition hover:border-brand"
+    >
+      {image ? (
+        <img
+          src={imageUrl(image.fileName)}
+          alt={product.title}
+          className="aspect-[4/3] w-full object-cover"
+        />
+      ) : (
+        <div className="flex aspect-[4/3] w-full items-center justify-center bg-surface text-sm text-ink-muted">
+          Sin imagen
+        </div>
+      )}
+      <div className="flex flex-1 flex-col gap-2 p-4">
+        <p className="text-xs text-ink-muted">{product.category.name}</p>
+        <h2 className="font-bold">{product.title}</h2>
+        <p className="text-sm text-ink-muted line-clamp-2">{product.description}</p>
+        <p className="mt-auto font-bold text-brand">
+          {price === null ? 'Sin precio' : formatMoney(price)}
+        </p>
+        <p className="text-xs text-ink-muted">{product.seller.storeName}</p>
+      </div>
+    </Link>
   );
 }
 
