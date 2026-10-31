@@ -23,7 +23,7 @@ export class UsersRepository {
 
   async findAddressesByUserId(userId: string): Promise<Address[]> {
     return this.prisma.address.findMany({
-      where: { userId },
+      where: { userId, deletedAt: null },
       orderBy: [{ isDefault: 'desc' }, { createdAt: 'desc' }],
     });
   }
@@ -36,12 +36,14 @@ export class UsersRepository {
 
   async createAddress(userId: string, data: AddressInput): Promise<Address> {
     return this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-      const existingAddresses = await tx.address.count({ where: { userId } });
+      const existingAddresses = await tx.address.count({
+        where: { userId, deletedAt: null },
+      });
       const makeDefault = data.isDefault || existingAddresses === 0;
 
       if (makeDefault) {
         await tx.address.updateMany({
-          where: { userId },
+          where: { userId, deletedAt: null },
           data: { isDefault: false },
         });
       }
@@ -68,7 +70,7 @@ export class UsersRepository {
     return this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       if (data.isDefault) {
         await tx.address.updateMany({
-          where: { userId },
+          where: { userId, deletedAt: null },
           data: { isDefault: false },
         });
       }
@@ -81,8 +83,9 @@ export class UsersRepository {
   }
 
   async deleteAddress(id: string): Promise<void> {
-    await this.prisma.address.delete({
+    await this.prisma.address.update({
       where: { id },
+      data: { deletedAt: new Date(), isDefault: false },
     });
   }
 }
