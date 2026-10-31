@@ -122,7 +122,36 @@ export class OrdersRepository {
     ]);
     return { items, total };
   }
+  async findShipmentOrders(page = 1, pageSize = 10) {
+    const where: Prisma.SubOrderWhereInput = {
+      status: { in: ['DESPACHADO', 'EN_TRANSITO', 'EN_REPARTO'] },
+      shipment: { isNot: null },
+    };
 
+    const [items, total] = await Promise.all([
+      this.prisma.subOrder.findMany({
+        where,
+        include: {
+          seller: { select: { id: true, storeName: true } },
+          order: {
+            include: {
+              buyer: { select: { id: true, email: true, fullName: true } },
+              address: true,
+            },
+          },
+          items: true,
+          shipment: {
+            include: { trackingEvents: { orderBy: { occurredAt: 'asc' } } },
+          },
+        },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        orderBy: { updatedAt: 'asc' },
+      }),
+      this.prisma.subOrder.count({ where }),
+    ]);
+    return { items, total };
+  }
   async findSubOrderById(id: string) {
     return this.prisma.subOrder.findUnique({
       where: { id },

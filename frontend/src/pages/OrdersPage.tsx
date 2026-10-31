@@ -1,4 +1,3 @@
-
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -241,6 +240,22 @@ function ReviewButton({ item }: { item: OrderItem }) {
   );
 }
 
+function SubOrderActions({ subOrder }: { subOrder: SubOrder }) {
+  const canClaim = ['ENTREGADO', 'EN_TRANSITO', 'EN_REPARTO'].includes(subOrder.status);
+
+  return (
+    <>
+      {subOrder.status === 'PAGADO' && <CancelSubOrder subOrder={subOrder} />}
+      {canClaim && (
+        <div className="flex flex-wrap gap-2">
+          {subOrder.status === 'ENTREGADO' && <ConfirmDelivery subOrder={subOrder} />}
+          <ClaimButton subOrder={subOrder} />
+        </div>
+      )}
+    </>
+  );
+}
+
 function OrderCard({ order }: { order: MyOrder }) {
   return (
     <article className="flex flex-col gap-4 rounded-2xl border border-line bg-surface-2 p-5">
@@ -273,16 +288,12 @@ function OrderCard({ order }: { order: MyOrder }) {
               </li>
             ))}
           </ul>
-          {sub.status === 'PAGADO' && <CancelSubOrder subOrder={sub} />}
-       {['ENTREGADO', 'EN_TRANSITO', 'EN_REPARTO'].includes(sub.status) && (
-  <div className="flex flex-wrap gap-2">
-    {sub.status === 'ENTREGADO' && <ConfirmDelivery subOrder={sub} />}
-    <ClaimButton subOrder={sub} />
-  </div>
-)}
+          <SubOrderActions subOrder={sub} />
         </div>
       ))}
-<OrderTimeline orderId={order.id} />
+
+      <OrderTimeline orderId={order.id} />
+
       <footer className="flex flex-wrap items-end justify-between gap-2 border-t border-line pt-3">
         <p className="text-xs text-ink-muted">
           Entrega: {order.address.label} · {order.address.line1}, {order.address.city},{' '}

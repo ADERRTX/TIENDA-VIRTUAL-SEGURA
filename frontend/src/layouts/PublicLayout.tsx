@@ -1,9 +1,10 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useLogout, useMe } from '../api/auth';
 import { useCart } from '../api/cart';
+import NotificationBell from '../components/NotificationBell';
 import { Button } from '../components/ui/Button';
 import { i18n } from '../i18n/es';
-import NotificationBell from '../components/NotificationBell';
+
 interface NavItem {
   to: string;
   label: string;
@@ -22,19 +23,27 @@ export default function PublicLayout() {
     { to: '/catalogo', label: i18n.nav.catalog },
     { to: '/carrito', label: i18n.nav.cart },
   ];
+
   if (user) {
-  links.push({ to: '/reclamos', label: i18n.claims.title });
-}
-if (user?.role === 'BUYER') {
-  links.push({ to: '/pedidos', label: i18n.nav.orders });
-  links.push({ to: '/vender', label: i18n.nav.sell });
-}
-if (user?.role === 'ADMIN') {
-  links.push({ to: '/admin/vendedores', label: i18n.nav.adminPanel });
-}
+    links.push({ to: '/reclamos', label: i18n.claims.title });
+  }
+  if (user?.role === 'BUYER') {
+    links.push({ to: '/pedidos', label: i18n.nav.orders });
+    links.push({ to: '/vender', label: i18n.nav.sell });
+  }
   if (user?.role === 'SELLER') {
-      links.push({ to: '/vendedor/productos', label: i18n.seller.myProducts });
+    links.push({ to: '/vendedor/productos', label: i18n.seller.myProducts });
     links.push({ to: '/vendedor/pedidos', label: i18n.seller.pendingOrders });
+  }
+  if (user?.role === 'SUPPORT' || user?.role === 'ADMIN') {
+    links.push({ to: '/envios', label: 'Envíos' });
+  }
+  if (user?.role === 'ADMIN') {
+    links.push({ to: '/admin/vendedores', label: 'Vendedores' });
+    links.push({ to: '/admin/usuarios', label: 'Usuarios' });
+    links.push({ to: '/admin/auditoria', label: 'Auditoría' });
+    links.push({ to: '/admin/configuracion', label: 'Configuración' });
+    links.push({ to: '/admin/reportes', label: 'Reportes' });
   }
 
   return (
@@ -59,7 +68,6 @@ if (user?.role === 'ADMIN') {
               >
                 {link.label}
                 {link.to === '/carrito' && cartCount > 0 && (
-                  
                   <span className="ml-1 rounded-full bg-brand px-2 py-0.5 text-xs text-white">
                     {cartCount}
                   </span>
@@ -71,7 +79,7 @@ if (user?.role === 'ADMIN') {
           <div className="flex items-center gap-2">
             {user ? (
               <>
-              <NotificationBell />
+                <NotificationBell />
                 <span className="text-sm text-ink-muted">
                   {user.fullName ?? user.email} · {i18n.roles[user.role]}
                 </span>

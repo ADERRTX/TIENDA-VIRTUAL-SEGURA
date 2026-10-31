@@ -38,8 +38,8 @@ export function useOrders() {
 export function useCancelOrder() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (orderId: string) => {
-      const response = await http<unknown>(`/orders/${orderId}/cancel`, { method: 'POST' });
+    mutationFn: async (subOrderId: string) => {
+      const response = await http<unknown>(`/orders/${subOrderId}/cancel`, { method: 'POST' });
       return response.data;
     },
     onSuccess: () => {

@@ -391,7 +391,9 @@ export class OrdersService {
       return updated;
     });
   }
-
+  async getShipmentOrders(page: number, pageSize: number) {
+    return this.ordersRepo.findShipmentOrders(page, pageSize);
+  }
   async addShipmentEvent(subOrderId: string, actorId: string, input: ShipmentEventInput) {
     const subOrder = await this.ordersRepo.findSubOrderById(subOrderId);
     if (!subOrder || !subOrder.shipment) {
