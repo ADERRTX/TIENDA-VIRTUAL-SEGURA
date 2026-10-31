@@ -158,7 +158,7 @@ model Address {
   country   String   @default("PE")
   isDefault Boolean  @default(false)
   createdAt DateTime @default(now()) @db.Timestamptz(3)
-
+  deletedAt DateTime? @db.Timestamptz(3)
   user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   orders Order[]
 

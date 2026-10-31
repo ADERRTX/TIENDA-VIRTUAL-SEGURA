@@ -65,7 +65,7 @@ export class UsersService {
 
   async updateAddress(id: string, userId: string, input: UpdateAddressInput): Promise<Address> {
     const existing = await this.usersRepo.findAddressById(id);
-    if (!existing || existing.userId !== userId) {
+    if (!existing || existing.userId !== userId || existing.deletedAt) {
       throw new NotFoundException({
         code: 'ADDRESS_NOT_FOUND',
         message: 'Dirección no encontrada',
@@ -84,7 +84,7 @@ export class UsersService {
 
   async deleteAddress(id: string, userId: string): Promise<void> {
     const existing = await this.usersRepo.findAddressById(id);
-    if (!existing || existing.userId !== userId) {
+    if (!existing || existing.userId !== userId || existing.deletedAt) {
       throw new NotFoundException({
         code: 'ADDRESS_NOT_FOUND',
         message: 'Dirección no encontrada',

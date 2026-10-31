@@ -1,4 +1,3 @@
-import EditProductForm from '../components/EditProductForm';
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { imageUrl } from '../api/products';
 import {
@@ -10,6 +9,7 @@ import {
   useUploadImage,
   type SellerProduct,
 } from '../api/sellerProducts';
+import EditProductForm from '../components/EditProductForm';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { i18n } from '../i18n/es';
@@ -139,20 +139,25 @@ function ProductRow({ product }: { product: SellerProduct }) {
   }
 
   const error = upload.error ?? removeImage.error ?? removeProduct.error;
-<Modal isOpen={editing} onClose={() => setEditing(false)} title={product.title}>
-  <EditProductForm key={product.id} product={product} onDone={() => setEditing(false)} />
-</Modal>
+
   return (
-    
     <article className="flex flex-col gap-3 rounded-2xl border border-line bg-surface-2 p-5">
-     <div className="flex gap-2">
-  <Button variant="secondary" size="sm" onClick={() => setEditing(true)}>
-    {i18n.common.edit}
-  </Button>
-  <Button variant="ghost" size="sm" isLoading={removeProduct.isPending} onClick={handleDelete}>
-    {i18n.common.delete}
-  </Button>
-</div>
+      <header className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h2 className="font-bold">{product.title}</h2>
+          <p className="text-xs text-ink-muted">
+            {product.category?.name ?? 'Sin categoría'} · {product.status}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="secondary" size="sm" onClick={() => setEditing(true)}>
+            {i18n.common.edit}
+          </Button>
+          <Button variant="ghost" size="sm" isLoading={removeProduct.isPending} onClick={handleDelete}>
+            {i18n.common.delete}
+          </Button>
+        </div>
+      </header>
 
       <ul className="flex flex-col gap-1 text-sm">
         {product.variants.map((variant) => (
@@ -178,7 +183,7 @@ function ProductRow({ product }: { product: SellerProduct }) {
               aria-label="Quitar imagen"
               disabled={removeImage.isPending}
               onClick={() => removeImage.mutate({ productId: product.id, imageId: image.id })}
-              className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-bg text-xs text-ink shadow border border-line"
+              className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border border-line bg-bg text-xs text-ink shadow"
             >
               ×
             </button>
@@ -198,6 +203,10 @@ function ProductRow({ product }: { product: SellerProduct }) {
       </div>
 
       {error && <p className="text-sm text-red-400">{errorMessage(error)}</p>}
+
+      <Modal isOpen={editing} onClose={() => setEditing(false)} title={product.title}>
+        <EditProductForm key={product.id} product={product} onDone={() => setEditing(false)} />
+      </Modal>
     </article>
   );
 }
