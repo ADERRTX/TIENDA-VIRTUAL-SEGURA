@@ -76,3 +76,31 @@ export function usePay() {
     },
   });
 }
+export function useUpdateAddress() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { id: string; data: Partial<NewAddress> }) => {
+      const response = await http<Address>(`/users/addresses/${input.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(input.data),
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['addresses'] });
+    },
+  });
+}
+
+export function useDeleteAddress() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await http<unknown>(`/users/addresses/${id}`, { method: 'DELETE' });
+      return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['addresses'] });
+    },
+  });
+}

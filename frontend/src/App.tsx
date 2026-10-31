@@ -1,3 +1,5 @@
+import AccountPage from './pages/AccountPage';
+import SellerStorePage from './pages/SellerStorePage';
 import AdminJobsPage from './pages/AdminJobsPage';
 import ShipmentsPage from './pages/ShipmentsPage';
 import AdminReportsPage from './pages/AdminReportsPage';
@@ -46,11 +48,16 @@ export default function App() {
         <Route element={<RequireRole roles={['BUYER', 'SELLER', 'SUPPORT', 'ADMIN']} />}>
           <Route path="reclamos" element={<ClaimsPage />} />
           <Route path="reclamos/:id" element={<ClaimDetailPage />} />
+                  <Route path="cuenta" element={<AccountPage />} />
+         
+          
         </Route>
 
         <Route element={<RequireRole roles={['SELLER']} />}>
           <Route path="vendedor/pedidos" element={<SellerOrdersPage />} />
           <Route path="vendedor/productos" element={<SellerProductsPage />} />
+          <Route path="vendedor/tienda" element={<SellerStorePage />} />
+             <Route path="cuenta" element={<AccountPage />} />
         </Route>
 
         <Route element={<RequireRole roles={['ADMIN']} />}>

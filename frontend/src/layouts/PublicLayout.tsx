@@ -26,6 +26,7 @@ export default function PublicLayout() {
 
   if (user) {
     links.push({ to: '/reclamos', label: i18n.claims.title });
+    links.push({ to: '/cuenta', label: 'Mi cuenta' });
   }
   if (user?.role === 'BUYER') {
     links.push({ to: '/pedidos', label: i18n.nav.orders });
@@ -34,6 +35,7 @@ export default function PublicLayout() {
   if (user?.role === 'SELLER') {
     links.push({ to: '/vendedor/productos', label: i18n.seller.myProducts });
     links.push({ to: '/vendedor/pedidos', label: i18n.seller.pendingOrders });
+    links.push({ to: '/vendedor/tienda', label: 'Mi tienda' });
   }
   if (user?.role === 'SUPPORT' || user?.role === 'ADMIN') {
     links.push({ to: '/envios', label: 'Envíos' });

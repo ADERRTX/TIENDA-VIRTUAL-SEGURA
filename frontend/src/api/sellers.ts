@@ -76,3 +76,18 @@ export function useAdminSellerAction() {
     },
   });
 }
+export function useUpdateMySeller() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { storeName?: string; description?: string }) => {
+      const response = await http<SellerProfile>('/sellers/me', {
+        method: 'PATCH',
+        body: JSON.stringify(input),
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['my-seller'] });
+    },
+  });
+}

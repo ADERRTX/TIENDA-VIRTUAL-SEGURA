@@ -61,3 +61,18 @@ export function useLogout() {
     onSuccess: () => queryClient.setQueryData(['me'], null),
   });
 }
+export function useUpdateProfile() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (fullName: string) => {
+      const response = await http<unknown>('/users/profile', {
+        method: 'PATCH',
+        body: JSON.stringify({ fullName }),
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['me'] });
+    },
+  });
+}

@@ -124,3 +124,51 @@ export function useDeleteImage() {
     onSuccess: refresh,
   });
 }
+export function useUpdateProduct() {
+  const refresh = useRefreshProducts();
+  return useMutation({
+    mutationFn: async (input: { id: string; data: { title?: string; description?: string } }) => {
+      const response = await http<unknown>(`/seller/products/${input.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(input.data),
+      });
+      return response.data;
+    },
+    onSuccess: refresh,
+  });
+}
+
+export function useUpdateVariant() {
+  const refresh = useRefreshProducts();
+  return useMutation({
+    mutationFn: async (input: {
+      productId: string;
+      variantId: string;
+      data: { name?: string; price?: number; stock?: number };
+    }) => {
+      const response = await http<unknown>(
+        `/seller/products/${input.productId}/variants/${input.variantId}`,
+        { method: 'PATCH', body: JSON.stringify(input.data) },
+      );
+      return response.data;
+    },
+    onSuccess: refresh,
+  });
+}
+
+export function useCreateVariant() {
+  const refresh = useRefreshProducts();
+  return useMutation({
+    mutationFn: async (input: {
+      productId: string;
+      data: { name: string; price: number; stock: number };
+    }) => {
+      const response = await http<unknown>(`/seller/products/${input.productId}/variants`, {
+        method: 'POST',
+        body: JSON.stringify(input.data),
+      });
+      return response.data;
+    },
+    onSuccess: refresh,
+  });
+}

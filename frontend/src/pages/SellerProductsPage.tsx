@@ -1,3 +1,4 @@
+import EditProductForm from '../components/EditProductForm';
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { imageUrl } from '../api/products';
 import {
@@ -123,6 +124,7 @@ function ProductRow({ product }: { product: SellerProduct }) {
   const upload = useUploadImage();
   const removeImage = useDeleteImage();
   const removeProduct = useDeleteProduct();
+  const [editing, setEditing] = useState(false);
 
   function handleFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -137,20 +139,20 @@ function ProductRow({ product }: { product: SellerProduct }) {
   }
 
   const error = upload.error ?? removeImage.error ?? removeProduct.error;
-
+<Modal isOpen={editing} onClose={() => setEditing(false)} title={product.title}>
+  <EditProductForm key={product.id} product={product} onDone={() => setEditing(false)} />
+</Modal>
   return (
+    
     <article className="flex flex-col gap-3 rounded-2xl border border-line bg-surface-2 p-5">
-      <header className="flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <h2 className="font-bold">{product.title}</h2>
-          <p className="text-xs text-ink-muted">
-            {product.category?.name ?? 'Sin categoría'} · {product.status}
-          </p>
-        </div>
-        <Button variant="ghost" size="sm" isLoading={removeProduct.isPending} onClick={handleDelete}>
-          {i18n.common.delete}
-        </Button>
-      </header>
+     <div className="flex gap-2">
+  <Button variant="secondary" size="sm" onClick={() => setEditing(true)}>
+    {i18n.common.edit}
+  </Button>
+  <Button variant="ghost" size="sm" isLoading={removeProduct.isPending} onClick={handleDelete}>
+    {i18n.common.delete}
+  </Button>
+</div>
 
       <ul className="flex flex-col gap-1 text-sm">
         {product.variants.map((variant) => (
