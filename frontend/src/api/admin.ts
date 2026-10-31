@@ -127,3 +127,14 @@ export function useReports() {
     },
   });
 }
+export function useRunJob() {
+  return useMutation({
+    mutationFn: async (job?: string) => {
+      const response = await http<unknown>('/admin/jobs/run', {
+        method: 'POST',
+        body: JSON.stringify(job ? { job } : {}),
+      });
+      return response.data;
+    },
+  });
+}

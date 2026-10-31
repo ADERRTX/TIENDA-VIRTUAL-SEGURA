@@ -1,8 +1,20 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { imageUrl, mainImage, useProducts, type Product } from '../api/products';
+import {
+  imageUrl,
+  mainImage,
+  useProductSearch,
+  type Product,
+  type ProductFilters,
+} from '../api/products';
+import { useCategories } from '../api/sellerProducts';
 import { Button } from '../components/ui/Button';
 import { i18n } from '../i18n/es';
 import { formatMoney } from '../lib/formatters';
+
+const inputClass =
+  'min-h-[44px] rounded-xl border border-line bg-bg px-3 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand';
+const emptyFilters: ProductFilters = { q: '', categoryId: '', inStock: false };
 
 function minPrice(product: Product): number | null {
   if (product.variants.length === 0) return null;
@@ -43,11 +55,75 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 export default function CatalogPage() {
-  const { data, isLoading, isError, refetch } = useProducts();
+  const [filters, setFilters] = useState<ProductFilters>(emptyFilters);
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const categories = useCategories();
+  const { data, isLoading, isError, refetch } = useProductSearch(filters, page);
+  const meta = data?.meta;
+  const lastPage = meta ? Math.max(1, Math.ceil(meta.total / meta.pageSize)) : 1;
+  const hasFilters = filters.q !== '' || filters.categoryId !== '' || filters.inStock;
+
+  const update = (patch: Partial<ProductFilters>) => {
+    setFilters({ ...filters, ...patch });
+    setPage(1);
+  };
 
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-2xl font-bold">{i18n.nav.catalog}</h1>
+
+      <form
+        className="flex flex-wrap items-center gap-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          update({ q: search.trim() });
+        }}
+      >
+        <input
+          className={`${inputClass} min-w-[200px] flex-1`}
+          placeholder={i18n.nav.searchPlaceholder}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <select
+          className={inputClass}
+          value={filters.categoryId}
+          onChange={(e) => update({ categoryId: e.target.value })}
+        >
+          <option value="">Todas las categorías</option>
+          {categories.data?.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={filters.inStock}
+            onChange={(e) => update({ inStock: e.target.checked })}
+          />
+          Solo con stock
+        </label>
+        <Button type="submit" size="sm">
+          Buscar
+        </Button>
+        {hasFilters && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setFilters(emptyFilters);
+              setSearch('');
+              setPage(1);
+            }}
+          >
+            Limpiar
+          </Button>
+        )}
+      </form>
 
       {isLoading && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -66,15 +142,31 @@ export default function CatalogPage() {
         </div>
       )}
 
-      {data && data.length === 0 && (
-        <p className="text-ink-muted">Aún no hay productos publicados.</p>
+      {data && data.items.length === 0 && (
+        <p className="text-ink-muted">
+          {hasFilters ? 'No hay productos con esos filtros.' : 'Aún no hay productos publicados.'}
+        </p>
       )}
 
-      {data && data.length > 0 && (
+      {data && data.items.length > 0 && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {data.map((product) => (
+          {data.items.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
+        </div>
+      )}
+
+      {meta && lastPage > 1 && (
+        <div className="flex items-center justify-between">
+          <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>
+            Anterior
+          </Button>
+          <span className="text-sm text-ink-muted">
+            Página {page} de {lastPage}
+          </span>
+          <Button variant="secondary" size="sm" disabled={page >= lastPage} onClick={() => setPage(page + 1)}>
+            Siguiente
+          </Button>
         </div>
       )}
     </section>

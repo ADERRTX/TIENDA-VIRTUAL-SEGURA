@@ -39,6 +39,7 @@ export default function PublicLayout() {
     links.push({ to: '/envios', label: 'Envíos' });
   }
   if (user?.role === 'ADMIN') {
+    links.push({ to: '/admin/simulador', label: 'Simulador' });
     links.push({ to: '/admin/vendedores', label: 'Vendedores' });
     links.push({ to: '/admin/usuarios', label: 'Usuarios' });
     links.push({ to: '/admin/auditoria', label: 'Auditoría' });

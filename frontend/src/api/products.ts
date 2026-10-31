@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { http } from '../lib/http';
+import type { PageMeta } from './seller';
 
 export interface ProductVariant {
   id: string;
@@ -13,6 +14,7 @@ export interface ProductImage {
   fileName: string;
   isMain: boolean;
 }
+
 export interface Product {
   id: string;
   title: string;
@@ -21,6 +23,14 @@ export interface Product {
   images: ProductImage[];
   seller: { id: string; storeName: string };
   category: { id: string; name: string };
+}
+
+export function imageUrl(fileName: string): string {
+  return `/api/v1/uploads/${encodeURIComponent(fileName)}`;
+}
+
+export function mainImage(product: Product): ProductImage | undefined {
+  return product.images.find((img) => img.isMain) ?? product.images[0];
 }
 
 export function useProducts() {
@@ -33,14 +43,6 @@ export function useProducts() {
   });
 }
 
-export function imageUrl(fileName: string): string {
-  return `/api/v1/uploads/${encodeURIComponent(fileName)}`;
-}
-
-export function mainImage(product: Product): ProductImage | undefined {
-  return product.images.find((img) => img.isMain) ?? product.images[0];
-}
-
 export function useProduct(id: string | undefined) {
   return useQuery({
     queryKey: ['products', id],
@@ -49,6 +51,26 @@ export function useProduct(id: string | undefined) {
       return response.data;
     },
     enabled: Boolean(id),
+  });
+}
+
+export interface ProductFilters {
+  q: string;
+  categoryId: string;
+  inStock: boolean;
+}
+
+export function useProductSearch(filters: ProductFilters, page: number) {
+  return useQuery({
+    queryKey: ['products', 'search', filters, page],
+    queryFn: async () => {
+      const params = new URLSearchParams({ page: String(page), pageSize: '12' });
+      if (filters.q) params.set('q', filters.q);
+      if (filters.categoryId) params.set('categoryId', filters.categoryId);
+      if (filters.inStock) params.set('inStock', 'true');
+      const response = await http<Product[], PageMeta>(`/products?${params}`);
+      return { items: response.data, meta: response.meta };
+    },
   });
 }
 

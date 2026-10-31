@@ -1,3 +1,4 @@
+import AdminJobsPage from './pages/AdminJobsPage';
 import ShipmentsPage from './pages/ShipmentsPage';
 import AdminReportsPage from './pages/AdminReportsPage';
 import { Route, Routes } from 'react-router-dom';
@@ -53,6 +54,7 @@ export default function App() {
         </Route>
 
         <Route element={<RequireRole roles={['ADMIN']} />}>
+        <Route path="admin/simulador" element={<AdminJobsPage />} />
           <Route path="admin/vendedores" element={<AdminSellersPage />} />
           <Route path="admin/usuarios" element={<AdminUsersPage />} />
           <Route path="admin/auditoria" element={<AdminAuditPage />} />
