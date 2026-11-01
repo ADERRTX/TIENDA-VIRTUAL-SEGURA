@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@tvs/shared/*": ["../shared/dist/*", "../shared/src/*"],
+      "@tvs/shared": ["../shared/dist", "../shared/src"],
+      "@shared": ["../shared/src"],
+      "@shared/*": ["../shared/src/*"],
+      "@modules/*": ["src/modules/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}

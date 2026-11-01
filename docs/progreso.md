@@ -28,4 +28,4 @@ Ver la sección "Puntos abiertos" de docs/maquina-estados.md (reclamo por no ent
 cancelación en EN_PREPARACION y destino de REEMPLAZO). Resolver antes de los Prompts 4 y 5.
 
 ## Notas por sesión
-(El agente añade aquí, al cerrar cada fase: qué se hizo, qué falta y riesgos.)
+- Portada TVS: se actualizó el hero y la navegación con tema oscuro, acentos turquesa y tarjetas glassmorphism; productos de portada consultan el catálogo real y se aclara que pagos/envíos y custodia son simulados. La fase completa de frontend/endurecimiento sigue pendiente.
