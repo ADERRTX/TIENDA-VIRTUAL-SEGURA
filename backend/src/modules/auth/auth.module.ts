@@ -1,16 +1,32 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthRepository } from './auth.repository';
-import { JWT_SECRET_DEFAULT } from '../../common/constants';
+
+const MIN_SECRET_LENGTH = 32;
+
+function readJwtSecret(config: ConfigService): string {
+  const secret = config.get<string>('JWT_SECRET') ?? config.get<string>('SESSION_SECRET');
+  if (!secret || secret.length < MIN_SECRET_LENGTH) {
+    throw new Error(
+      `Falta JWT_SECRET o SESSION_SECRET en .env, o tiene menos de ${MIN_SECRET_LENGTH} caracteres.`,
+    );
+  }
+  return secret;
+}
 
 @Module({
   imports: [
-    JwtModule.register({
+    JwtModule.registerAsync({
       global: true,
-      secret: process.env['JWT_SECRET'] || process.env['SESSION_SECRET'] || JWT_SECRET_DEFAULT,
-      signOptions: { expiresIn: '7d' },
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: readJwtSecret(config),
+        signOptions: { expiresIn: '7d' },
+      }),
     }),
   ],
   controllers: [AuthController],
