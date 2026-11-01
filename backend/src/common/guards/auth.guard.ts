@@ -64,7 +64,7 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token);
       const user = await this.prisma.user.findUnique({
         where: { id: payload.sub },
-        select: { id: true, email: true, role: true, status: true },
+        select: { id: true, email: true, role: true, status: true, tokensValidAfter: true },
       });
 
       if (!user || user.status === 'BLOCKED') {
@@ -72,6 +72,13 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException({
           code: 'USER_BLOCKED',
           message: 'Usuario bloqueado o no existe',
+        });
+      }
+            const revokedAt = user.tokensValidAfter;
+      if (revokedAt && Math.floor(revokedAt.getTime() / 1000) > payload.iat) {
+        throw new UnauthorizedException({
+          code: 'TOKEN_REVOKED',
+          message: 'Sesión cerrada. Inicia sesión de nuevo.',
         });
       }
 

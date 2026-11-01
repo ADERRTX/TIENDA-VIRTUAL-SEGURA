@@ -138,7 +138,15 @@ export class AuthService {
       },
     };
   }
-
+  async logout(userId: string): Promise<void> {
+    await this.authRepo.revokeTokens(userId, this.clock.now());
+    await this.auditService.log({
+      actorId: userId,
+      action: 'LOGOUT',
+      entity: 'user',
+      entityId: userId,
+    });
+  }
   async getMe(userId: string): Promise<Record<string, unknown> | null> {
     const user = await this.authRepo.findById(userId);
     if (!user) return null;

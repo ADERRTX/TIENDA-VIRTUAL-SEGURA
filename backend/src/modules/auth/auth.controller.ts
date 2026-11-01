@@ -9,6 +9,7 @@ import {
   HttpStatus,
   NotFoundException,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { Public } from '../../common/decorators/public.decorator';
@@ -17,11 +18,16 @@ import { ZodPipe } from '../../common/zod.pipe';
 import { registerSchema, RegisterInput, loginSchema, LoginInput } from './auth.dto';
 import { JWT_COOKIE_NAME } from '../../common/constants';
 
+const ONE_MINUTE_MS = 60_000;
+const AUTH_ATTEMPTS_PER_MINUTE = 5;
+const authLimit = { default: { limit: AUTH_ATTEMPTS_PER_MINUTE, ttl: ONE_MINUTE_MS } };
+const IS_PRODUCTION = process.env['NODE_ENV'] === 'production';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Public()
+  @Throttle(authLimit)
   @Post('register')
   @UsePipes(new ZodPipe(registerSchema))
   async register(@Body() body: RegisterInput): Promise<{ data: unknown }> {
@@ -30,6 +36,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle(authLimit)
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ZodPipe(loginSchema))
@@ -41,19 +48,24 @@ export class AuthController {
     res.cookie(JWT_COOKIE_NAME, result.token, {
       httpOnly: true,
       sameSite: 'lax',
-      secure: false, // in development
+      secure: IS_PRODUCTION, // in development
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     return { data: result.user };
   }
 
-  @Post('logout')
+    @Post('logout')
   @HttpCode(HttpStatus.OK)
-  logout(@Res({ passthrough: true }) res: Response): { data: { ok: boolean } } {
-    res.clearCookie(JWT_COOKIE_NAME, {
+  async logout(
+    @CurrentUser() currentUser: RequestUser,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<{ data: { ok: boolean } }> {
+    await this.authService.logout(currentUser.id);
+        res.clearCookie(JWT_COOKIE_NAME, {
       httpOnly: true,
       sameSite: 'lax',
+      secure: IS_PRODUCTION,
       path: '/',
     });
     return { data: { ok: true } };

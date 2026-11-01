@@ -8,6 +8,7 @@ import { AllExceptionsFilter } from './common/all-exceptions.filter';
 
 export async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
+  const isProduction = process.env['NODE_ENV'] === 'production';
 
   app.setGlobalPrefix('api/v1');
 
@@ -27,19 +28,23 @@ export async function bootstrap(): Promise<void> {
 
   app.useGlobalFilters(new AllExceptionsFilter());
 
-  const config = new DocumentBuilder()
-    .setTitle('Tienda Virtual Segura')
-    .setDescription('API del marketplace seguro')
-    .setVersion('1.0')
-    .addCookieAuth('jwt')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  if (!isProduction) {
+    const config = new DocumentBuilder()
+      .setTitle('Tienda Virtual Segura')
+      .setDescription('API del marketplace seguro')
+      .setVersion('1.0')
+      .addCookieAuth('jwt')
+      .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document);
+  }
 
   const port = Number(process.env['PORT'] ?? 3000);
   await app.listen(port);
   console.log(`API escuchando en http://localhost:${port}/api/v1`);
-  console.log(`Swagger en http://localhost:${port}/api/docs`);
+  if (!isProduction) {
+    console.log(`Swagger en http://localhost:${port}/api/docs`);
+  }
 }
 
 void bootstrap();

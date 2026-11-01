@@ -130,6 +130,7 @@ model User {
   status       UserStatus @default(ACTIVE)
   failedLogins Int        @default(0)
   lockedUntil  DateTime?  @db.Timestamptz(3)
+  tokensValidAfter DateTime? @db.Timestamptz(3)
   createdAt    DateTime   @default(now()) @db.Timestamptz(3)
   updatedAt    DateTime   @updatedAt @db.Timestamptz(3)
 

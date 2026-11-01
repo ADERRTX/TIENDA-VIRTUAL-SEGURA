@@ -60,4 +60,11 @@ export class AuthRepository {
       },
     });
   }
+  
+  async revokeTokens(id: string, at: Date): Promise<void> {
+    await this.prisma.user.update({
+      where: { id },
+      data: { tokensValidAfter: at },
+    });
+  }
 }
