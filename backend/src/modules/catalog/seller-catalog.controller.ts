@@ -86,7 +86,7 @@ export class SellerCatalogController {
   }
 
   @Post(':id/images')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 5 * 1024 * 1024, files: 1 } }))
   async uploadImage(
     @CurrentUser() user: RequestUser,
     @Param('id') id: string,
