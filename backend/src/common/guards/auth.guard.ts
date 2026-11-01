@@ -11,6 +11,16 @@ import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { JWT_COOKIE_NAME } from '../constants';
 import { PrismaService } from '../../prisma/prisma.service';
 
+const ALLOWED_ORIGINS = (
+  process.env['CORS_ORIGINS'] ??
+  'http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000'
+)
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const MUTATING_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE'];
+
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
@@ -26,27 +36,17 @@ export class AuthGuard implements CanActivate {
     ]);
 
     const request = context.switchToHttp().getRequest();
-    const token =
-      request.cookies?.[JWT_COOKIE_NAME] ||
-      request.headers.authorization?.replace(/^Bearer\s+/i, '');
+    const cookieToken = request.cookies?.[JWT_COOKIE_NAME];
+    const token = cookieToken || request.headers.authorization?.replace(/^Bearer\s+/i, '');
 
-    // Simple CSRF check on mutating requests
-    const mutatingMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
-    if (mutatingMethods.includes(request.method)) {
+    // CSRF: toda mutación con sesión por cookie debe venir de un origen permitido
+    if (MUTATING_METHODS.includes(request.method) && cookieToken) {
       const origin = request.headers['origin'];
-      if (origin) {
-        const allowedOrigins = [
-          'http://localhost:5173',
-          'http://localhost:3000',
-          'http://127.0.0.1:5173',
-          'http://127.0.0.1:3000',
-        ];
-        if (!allowedOrigins.includes(origin)) {
-          throw new ForbiddenException({
-            code: 'CSRF_INVALID_ORIGIN',
-            message: 'Origen no permitido para esta solicitud',
-          });
-        }
+      if (!origin || !ALLOWED_ORIGINS.includes(origin)) {
+        throw new ForbiddenException({
+          code: 'CSRF_INVALID_ORIGIN',
+          message: 'Origen no permitido para esta solicitud',
+        });
       }
     }
 
@@ -74,7 +74,8 @@ export class AuthGuard implements CanActivate {
           message: 'Usuario bloqueado o no existe',
         });
       }
-            const revokedAt = user.tokensValidAfter;
+
+      const revokedAt = user.tokensValidAfter;
       if (revokedAt && Math.floor(revokedAt.getTime() / 1000) > payload.iat) {
         throw new UnauthorizedException({
           code: 'TOKEN_REVOKED',
