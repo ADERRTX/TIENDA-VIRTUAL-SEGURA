@@ -1,0 +1,37 @@
+FROM node:20.11.0-alpine AS builder
+
+WORKDIR /app
+
+# Copiar archivos de workspace
+COPY package.json pnpm-lock.yaml .npmrc ./
+COPY pnpm-workspace.yaml ./
+COPY frontend/package.json frontend/
+COPY frontend/vite.config.ts frontend/
+COPY frontend/tsconfig.json frontend/
+COPY frontend/index.html frontend/
+COPY frontend/src frontend/src/
+COPY shared/package.json shared/
+COPY shared/src shared/src/
+
+# Instalar dependencias
+RUN npm install -g pnpm@9.4.0
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+
+# Build del frontend
+RUN pnpm --filter frontend build
+
+# Etapa de producción
+FROM nginx:1.26-alpine
+
+COPY --from=builder /app/frontend/dist /usr/share/nginx/html
+
+# Copiar configuración de nginx si es necesario
+# COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+# Health check simple
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD wget -qO- http://localhost/ || exit 1
+
+USER nginx

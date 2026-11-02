@@ -1,0 +1,21 @@
+node_modules
+dist
+build
+.env
+.env.*
+!.env.example
+.pnp
+.cache
+coverage
+.vscode
+.idea
+*.log
+.DS_Store
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+secrets.json
+*.key
+*.pem
+MODELO DE PRUEBA/**

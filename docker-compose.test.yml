@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: tienda_virtual_segura_test
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      TZ: UTC
+    ports:
+      - "5433:5432"
+    volumes:
+      - test_db_data:/var/lib/postgresql/data
+    networks:
+      - data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user -d tienda_virtual_segura_test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  storage:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9001:9000"
+      - "9002:9001"
+    volumes:
+      - test_storage_data:/data
+    networks:
+      - data
+
+  mailpit:
+    image: axllent/mailpit:latest
+    environment:
+      MP_SMTP_PORT: 1025
+      MP_HTTP_PORT: 8025
+    ports:
+      - "1026:1025"
+      - "8026:8025"
+    networks:
+      - data
+
+volumes:
+  test_db_data:
+  test_storage_data:
+
+networks:
+  data:
+    driver: bridge
+    internal: true

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    "AGENTS.md",
+    "docs/tecnico.md",
+    "docs/funcional.md",
+    "docs/maquina-estados.md"
+  ],
+  "permission": {
+    "edit": "ask",
+    "bash": {
+      "*": "ask",
+      "git status*": "allow",
+      "git diff*": "allow",
+      "git log*": "allow",
+      "git branch*": "allow",
+      "pnpm lint*": "allow",
+      "pnpm typecheck*": "allow",
+      "pnpm test*": "allow",
+      "pnpm verify*": "allow",
+      "git push*": "deny",
+      "git reset --hard*": "deny",
+      "Remove-Item -Recurse*": "deny"
+    }
+  }
+}
