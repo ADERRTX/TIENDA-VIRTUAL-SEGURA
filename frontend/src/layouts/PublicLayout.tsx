@@ -21,32 +21,43 @@ export default function PublicLayout() {
   const links: NavItem[] = [
     { to: '/', label: i18n.nav.home, end: true },
     { to: '/catalogo', label: i18n.nav.catalog },
-    { to: '/carrito', label: i18n.nav.cart },
   ];
 
-  if (user) {
-    links.push({ to: '/reclamos', label: i18n.claims.title });
-    links.push({ to: '/cuenta', label: 'Mi cuenta' });
+  if (!user || user.role === 'BUYER') {
+    links.push({ to: '/carrito', label: i18n.nav.cart });
   }
+
   if (user?.role === 'BUYER') {
     links.push({ to: '/pedidos', label: i18n.nav.orders });
+    links.push({ to: '/reclamos', label: i18n.claims.title });
     links.push({ to: '/vender', label: i18n.nav.sell });
   }
+
   if (user?.role === 'SELLER') {
     links.push({ to: '/vendedor/productos', label: i18n.seller.myProducts });
     links.push({ to: '/vendedor/pedidos', label: i18n.seller.pendingOrders });
     links.push({ to: '/vendedor/tienda', label: 'Mi tienda' });
+    links.push({ to: '/reclamos', label: i18n.claims.title });
   }
-  if (user?.role === 'SUPPORT' || user?.role === 'ADMIN') {
+
+  if (user?.role === 'SUPPORT') {
     links.push({ to: '/envios', label: 'Envíos' });
+    links.push({ to: '/reclamos', label: i18n.claims.title });
   }
+
   if (user?.role === 'ADMIN') {
-    links.push({ to: '/admin/simulador', label: 'Simulador' });
     links.push({ to: '/admin/vendedores', label: 'Vendedores' });
     links.push({ to: '/admin/usuarios', label: 'Usuarios' });
+    links.push({ to: '/envios', label: 'Envíos' });
+    links.push({ to: '/reclamos', label: i18n.claims.title });
+    links.push({ to: '/admin/reportes', label: 'Reportes' });
     links.push({ to: '/admin/auditoria', label: 'Auditoría' });
     links.push({ to: '/admin/configuracion', label: 'Configuración' });
-    links.push({ to: '/admin/reportes', label: 'Reportes' });
+    links.push({ to: '/admin/simulador', label: 'Simulador' });
+  }
+
+  if (user) {
+    links.push({ to: '/cuenta', label: 'Mi cuenta' });
   }
 
   return (

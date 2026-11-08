@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   Post,
   Body,
   Res,
@@ -54,7 +55,14 @@ export class AuthController {
     return { data: result.user };
   }
 
-    @Post('logout')
+    @Get('me')
+  @HttpCode(HttpStatus.OK)
+  async getMe(@CurrentUser() currentUser: RequestUser): Promise<{ data: unknown }> {
+    const user = await this.authService.getMe(currentUser.id);
+    return { data: user };
+  }
+
+  @Post('logout')
   @HttpCode(HttpStatus.OK)
   async logout(
     @CurrentUser() currentUser: RequestUser,

@@ -33,31 +33,29 @@ export default function App() {
         <Route path="catalogo" element={<CatalogPage />} />
         <Route path="catalogo/:id" element={<ProductDetailPage />} />
         <Route path="carrito" element={<CartPage />} />
-        <Route path="checkout" element={<CheckoutPage />} />
-        <Route path="pedidos" element={<OrdersPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="registro" element={<RegisterPage />} />
 
         <Route element={<RequireRole roles={['BUYER']} />}>
           <Route path="vender" element={<SellerApplyPage />} />
+          <Route path="checkout" element={<CheckoutPage />} />
+          <Route path="pedidos" element={<OrdersPage />} />
         </Route>
+
         <Route element={<RequireRole roles={['SUPPORT', 'ADMIN']} />}>
-  <Route path="envios" element={<ShipmentsPage />} />
-</Route>
+          <Route path="envios" element={<ShipmentsPage />} />
+        </Route>
 
         <Route element={<RequireRole roles={['BUYER', 'SELLER', 'SUPPORT', 'ADMIN']} />}>
           <Route path="reclamos" element={<ClaimsPage />} />
           <Route path="reclamos/:id" element={<ClaimDetailPage />} />
-                  <Route path="cuenta" element={<AccountPage />} />
-         
-          
+          <Route path="cuenta" element={<AccountPage />} />
         </Route>
 
         <Route element={<RequireRole roles={['SELLER']} />}>
           <Route path="vendedor/pedidos" element={<SellerOrdersPage />} />
           <Route path="vendedor/productos" element={<SellerProductsPage />} />
           <Route path="vendedor/tienda" element={<SellerStorePage />} />
-             <Route path="cuenta" element={<AccountPage />} />
         </Route>
 
         <Route element={<RequireRole roles={['ADMIN']} />}>

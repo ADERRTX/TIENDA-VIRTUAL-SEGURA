@@ -2,6 +2,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
+import cookieParser from 'cookie-parser';
 import { AppModule } from '../src/app.module';
 import { AllExceptionsFilter } from '../src/common/all-exceptions.filter';
 import { PrismaService } from '../src/prisma/prisma.service';
@@ -18,19 +19,32 @@ describe('Auth Password Recovery (e2e)', () => {
     }).compile();
     app = moduleRef.createNestApplication();
     app.setGlobalPrefix('api/v1');
+    app.use(cookieParser());
     app.useGlobalFilters(new AllExceptionsFilter());
     await app.init();
     prisma = moduleRef.get<PrismaService>(PrismaService);
     authService = moduleRef.get<AuthService>(AuthService);
+    const { hash } = await import('@node-rs/argon2');
+    await prisma.user.upsert({
+      where: { email: knownUserEmail },
+      update: { passwordHash: await hash('Password12345') },
+      create: {
+        email: knownUserEmail,
+        passwordHash: await hash('Password12345'),
+        fullName: 'Recovery Tester',
+        role: 'BUYER',
+      },
+    });
     // Clean up any previous password reset rows
     await prisma.passwordReset.deleteMany({});
   });
 
   afterAll(async () => {
+    await prisma.passwordReset.deleteMany({});
     await app.close();
   });
 
-  const knownUserEmail = 'comprador1@tvs.pe';
+  const knownUserEmail = 'recovery_test@tvs.pe';
   const unknownUserEmail = 'noexiste@tvs.pe';
 
   it('/auth/forgot-password (POST) with known email creates reset row and returns ok', async () => {
@@ -80,5 +94,28 @@ describe('Auth Password Recovery (e2e)', () => {
       .post('/api/v1/auth/reset-password')
       .send({ token: 'invalid-token', newPassword: 'Whatever123' })
       .expect(400);
+  });
+
+  it('/auth/me (GET) returns 401 when unauthenticated', async () => {
+    await request(app.getHttpServer())
+      .get('/api/v1/auth/me')
+      .expect(401);
+  });
+
+  it('/auth/me (GET) returns user data with role when authenticated', async () => {
+    const loginRes = await request(app.getHttpServer())
+      .post('/api/v1/auth/login')
+      .send({ email: knownUserEmail, password: 'NewPassword123!' })
+      .expect(200);
+
+    const cookie = loginRes.headers['set-cookie']!;
+    const meRes = await request(app.getHttpServer())
+      .get('/api/v1/auth/me')
+      .set('Cookie', cookie)
+      .expect(200);
+
+    expect(meRes.body.data).toHaveProperty('id');
+    expect(meRes.body.data.email).toBe(knownUserEmail);
+    expect(meRes.body.data).toHaveProperty('role');
   });
 });

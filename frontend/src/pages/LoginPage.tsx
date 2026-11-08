@@ -15,7 +15,19 @@ export default function LoginPage() {
     event.preventDefault();
     login.mutate(
       { email, password },
-      { onSuccess: () => navigate('/catalogo') },
+      {
+        onSuccess: (user) => {
+          if (user.role === 'ADMIN') {
+            navigate('/admin/vendedores');
+          } else if (user.role === 'SUPPORT') {
+            navigate('/envios');
+          } else if (user.role === 'SELLER') {
+            navigate('/vendedor/pedidos');
+          } else {
+            navigate('/catalogo');
+          }
+        },
+      },
     );
   }
 

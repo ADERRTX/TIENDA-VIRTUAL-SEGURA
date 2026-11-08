@@ -41,9 +41,14 @@ export function useMe() {
 export function useLogin() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: LoginInput) =>
-      http<unknown>('/auth/login', { method: 'POST', body: JSON.stringify(input) }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['me'] }),
+    mutationFn: async (input: LoginInput): Promise<User> => {
+      const response = await http<User>('/auth/login', { method: 'POST', body: JSON.stringify(input) });
+      return response.data;
+    },
+    onSuccess: (user) => {
+      queryClient.setQueryData(['me'], user);
+      queryClient.invalidateQueries({ queryKey: ['me'] });
+    },
   });
 }
 
