@@ -4,7 +4,10 @@ import {
   ForbiddenException,
   BadRequestException,
 } from '@nestjs/common';
+import 'multer';
 import * as fs from 'fs';
+import * as crypto from 'crypto';
+
 import * as path from 'path';
 import { CatalogRepository } from './catalog.repository';
 import { SellersRepository } from '../sellers/sellers.repository';

@@ -1,13 +1,11 @@
 import {
   Controller,
   Post,
-  Get,
   Body,
   Res,
   UsePipes,
   HttpCode,
   HttpStatus,
-  NotFoundException,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { Response } from 'express';
@@ -15,7 +13,8 @@ import { AuthService } from './auth.service';
 import { Public } from '../../common/decorators/public.decorator';
 import { CurrentUser, RequestUser } from '../../common/decorators/current-user.decorator';
 import { ZodPipe } from '../../common/zod.pipe';
-import { registerSchema, RegisterInput, loginSchema, LoginInput } from './auth.dto';
+
+import { registerSchema, RegisterInput, loginSchema, LoginInput, forgotPasswordSchema, ForgotPasswordInput, resetPasswordSchema, ResetPasswordInput } from './auth.dto';
 import { JWT_COOKIE_NAME } from '../../common/constants';
 
 const ONE_MINUTE_MS = 60_000;
@@ -71,15 +70,23 @@ export class AuthController {
     return { data: { ok: true } };
   }
 
-  @Get('me')
-  async me(@CurrentUser() currentUser: RequestUser): Promise<{ data: unknown }> {
-    const user = await this.authService.getMe(currentUser.id);
-    if (!user) {
-      throw new NotFoundException({
-        code: 'USER_NOT_FOUND',
-        message: 'Usuario no encontrado',
-      });
-    }
-    return { data: user };
+  @Public()
+  @Throttle(authLimit)
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ZodPipe(forgotPasswordSchema))
+  async forgotPassword(@Body() body: ForgotPasswordInput): Promise<{ data: { ok: boolean } }> {
+    await this.authService.forgotPassword(body.email);
+    return { data: { ok: true } };
+  }
+
+  @Public()
+  @Throttle(authLimit)
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ZodPipe(resetPasswordSchema))
+  async resetPassword(@Body() body: ResetPasswordInput): Promise<{ data: { ok: boolean } }> {
+    await this.authService.resetPassword(body.token, body.newPassword);
+    return { data: { ok: true } };
   }
 }

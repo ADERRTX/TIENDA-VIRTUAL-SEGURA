@@ -6,5 +6,6 @@ module.exports = {
   roots: ['<rootDir>/test'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^(\\.{1,2}/.*)\\.js$': '$1',
   },
 };

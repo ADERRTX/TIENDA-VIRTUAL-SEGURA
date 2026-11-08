@@ -6,8 +6,11 @@ import {
   Body,
   UsePipes,
 } from '@nestjs/common';
-import { SellersService } from './sellers.service';
 import { CurrentUser, RequestUser } from '../../common/decorators/current-user.decorator';
+import { SellersService } from './sellers.service';
+
+import { Roles } from '../../common/decorators/roles.decorator';
+import { UserRole } from '../../common/constants';
 import { ZodPipe } from '../../common/zod.pipe';
 import {
   applySellerSchema,
@@ -21,6 +24,7 @@ export class SellersController {
   constructor(private readonly sellersService: SellersService) {}
 
   @Post('apply')
+  @Roles(UserRole.BUYER)
   @UsePipes(new ZodPipe(applySellerSchema))
   async apply(
     @CurrentUser() user: RequestUser,

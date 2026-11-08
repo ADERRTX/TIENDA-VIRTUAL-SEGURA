@@ -16,6 +16,11 @@ export {
   NotificationType,
 } from '../generated/prisma/enums';
 
+export const ARGON2_OPTIONS = {
+  memoryCost: 19456,
+  timeCost: 2,
+  parallelism: 1,
+};
 export const JWT_COOKIE_NAME = 'jwt';
-export const IDEMPOTENCY_HEADER = 'idempotency-key';
+
 

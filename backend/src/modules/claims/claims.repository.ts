@@ -42,7 +42,7 @@ export class ClaimsRepository {
     if (role === 'BUYER') {
       where = { claimantId: userId };
     } else if (role === 'SELLER') {
-      where = { subOrder: { seller: { userId } } };
+      where = { subOrder: { seller: { userId: userId } } };
     }
     // ADMIN / SUPPORT sees all
 

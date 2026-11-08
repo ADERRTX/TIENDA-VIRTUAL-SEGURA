@@ -65,13 +65,20 @@ export class OrdersService {
       });
     }
 
-    const address = await this.prisma.address.findUnique({
-      where: { id: addressId },
+    const address = await this.prisma.address.findFirst({
+      where: { id: addressId, deletedAt: null },
     });
-    if (!address || address.userId !== userId) {
+    if (!address) {
       throw new NotFoundException({
         code: 'ADDRESS_NOT_FOUND',
         message: 'Dirección no encontrada',
+      });
+    }
+    if (address.userId !== userId) {
+      // Dirección pertenece a otro usuario
+      throw new BadRequestException({
+        code: 'ADDRESS_NOT_OWNED',
+        message: 'La dirección no pertenece al usuario',
       });
     }
 

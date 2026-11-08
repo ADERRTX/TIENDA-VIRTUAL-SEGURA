@@ -21,6 +21,8 @@ Money: always in **céntimos (Int)**. Enums in Spanish as in schema.prisma.
 |--------|------|-----|------|-----------|
 | POST | /auth/register | PUBLIC | `{email, password, fullName}` | `{ data: User }` |
 | POST | /auth/login | PUBLIC | `{email, password}` | `{ data: User }` + Set-Cookie jwt |
+| POST | /auth/forgot-password | PUBLIC | `{email}` | `{ data: { ok: true } }` | // envía URL de reset (solo log en dev) |
+| POST | /auth/reset-password | PUBLIC | `{token, newPassword}` | `{ data: { ok: true } }` | // actualiza contraseña, revoca sesiones
 | POST | /auth/logout | AUTH | - | `{ data: { ok: true } }` |
 | GET | /auth/me | AUTH | - | `{ data: User }` |
 | GET | /users/profile | AUTH | - | `{ data: UserProfile }` |
