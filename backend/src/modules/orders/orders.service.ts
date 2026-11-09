@@ -7,6 +7,7 @@ import { OrdersRepository } from './orders.repository';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ClockService } from '../../common/clock.service';
 import { AuditService } from '../../audit/audit.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import {
   validateTransition,
 } from './order-state-machine';
@@ -17,6 +18,7 @@ import {
   CustodyStatus,
   ShipmentStatus,
   TrackingEventType,
+  NotificationType,
 } from '../../common/constants';
 import { DispatchOrderInput, ShipmentEventInput } from './orders.dto';
 import { Prisma } from '../../generated/prisma/client';
@@ -28,6 +30,7 @@ export class OrdersService {
     private readonly prisma: PrismaService,
     private readonly clock: ClockService,
     private readonly auditService: AuditService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async createOrder(userId: string, addressId: string, idempotencyKey?: string): Promise<unknown> {
@@ -225,7 +228,7 @@ export class OrdersService {
 
     validateTransition(subOrder.status, SubOrderStatus.CANCELADO, 'COMPRADOR');
 
-    return this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const result = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // Return stock
       const items = await tx.orderItem.findMany({ where: { subOrderId } });
       for (const it of items) {
@@ -265,6 +268,16 @@ export class OrdersService {
 
       return updated;
     });
+
+    try {
+      await this.notificationsService.notify(
+        subOrder.seller.userId,
+        NotificationType.ORDER,
+        'El comprador canceló su sub-pedido antes del despacho. El stock ha sido devuelto.',
+      );
+    } catch {}
+
+    return result;
   }
 
   async confirmDelivery(userId: string, subOrderId: string) {
@@ -278,7 +291,7 @@ export class OrdersService {
 
     validateTransition(subOrder.status, SubOrderStatus.FINALIZADO, 'COMPRADOR');
 
-    return this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const result = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // Release custody to seller
       await tx.custody.updateMany({
         where: { subOrderId, status: CustodyStatus.RETENIDO },
@@ -297,6 +310,21 @@ export class OrdersService {
       );
       return updated;
     });
+
+    try {
+      await this.notificationsService.notify(
+        userId,
+        NotificationType.ORDER,
+        'Has confirmado la entrega. Tu pedido ha finalizado exitosamente.',
+      );
+      await this.notificationsService.notify(
+        subOrder.seller.userId,
+        NotificationType.ORDER,
+        'El comprador confirmó la entrega de su pedido. Los fondos en custodia han sido liberados.',
+      );
+    } catch {}
+
+    return result;
   }
 
   // Seller methods
@@ -329,6 +357,15 @@ export class OrdersService {
       entity: 'sub_order',
       entityId: subOrderId,
     });
+
+    try {
+      await this.notificationsService.notify(
+        subOrder.order.buyerId,
+        NotificationType.ORDER,
+        'El vendedor confirmó tu pedido y comenzará su preparación.',
+      );
+    } catch {}
+
     return updated;
   }
 
@@ -350,6 +387,15 @@ export class OrdersService {
       entity: 'sub_order',
       entityId: subOrderId,
     });
+
+    try {
+      await this.notificationsService.notify(
+        subOrder.order.buyerId,
+        NotificationType.ORDER,
+        'Tu pedido está siendo preparado para el despacho.',
+      );
+    } catch {}
+
     return updated;
   }
 
@@ -364,7 +410,7 @@ export class OrdersService {
 
     validateTransition(subOrder.status, SubOrderStatus.DESPACHADO, 'VENDEDOR');
 
-    return this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const result = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const shipment = await tx.shipment.create({
         data: {
           subOrderId,
@@ -397,6 +443,16 @@ export class OrdersService {
       );
       return updated;
     });
+
+    try {
+      await this.notificationsService.notify(
+        subOrder.order.buyerId,
+        NotificationType.ORDER,
+        `Tu sub-pedido ha sido despachado con la empresa ${input.carrier}. Código de guía: ${input.trackingCode}.`,
+      );
+    } catch {}
+
+    return result;
   }
   async getShipmentOrders(page: number, pageSize: number) {
     return this.ordersRepo.findShipmentOrders(page, pageSize);
@@ -423,7 +479,7 @@ export class OrdersService {
 
     validateTransition(subOrder.status, targetSubStatus, 'TRANSPORTISTA');
 
-    return this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const result = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       await tx.shipment.update({
         where: { id: subOrder.shipment!.id },
         data: { status: targetShipmentStatus },
@@ -450,5 +506,22 @@ export class OrdersService {
       );
       return updated;
     });
+
+    try {
+      if (input.type === TrackingEventType.ENTREGADO) {
+        await this.notificationsService.notify(
+          subOrder.order.buyerId,
+          NotificationType.ORDER,
+          'Tu pedido figura como entregado. Por favor ingresa a Mis Pedidos para confirmar la recepción.',
+        );
+        await this.notificationsService.notify(
+          subOrder.seller.userId,
+          NotificationType.ORDER,
+          'El paquete ha sido entregado al comprador.',
+        );
+      }
+    } catch {}
+
+    return result;
   }
 }

@@ -1,4 +1,10 @@
 import 'dotenv/config';
+
+if (process.env['NODE_ENV'] === 'production') {
+  console.error('El seeder no debe ejecutarse en entorno de producción por motivos de seguridad.');
+  process.exit(1);
+}
+
 import { hash } from '@node-rs/argon2';
 import { PrismaPg } from '@prisma/adapter-pg';
 import {
@@ -27,6 +33,11 @@ interface ProductRef {
 }
 
 async function main(): Promise<void> {
+  if (process.env['NODE_ENV'] === 'production') {
+    console.error('El seeder no debe ejecutarse en entorno de producción por motivos de seguridad.');
+    process.exit(1);
+  }
+
   const passwordHash = await hash(PASSWORD);
 
   // Users (upsert by email)

@@ -2,24 +2,120 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==============================================================================
+   TIENDA VIRTUAL SEGURA (TVS) — SISTEMA DE DISEÑO PREMIUM (TEMA OSCURO)
+   ==============================================================================
+   Paleta cromática:
+   - Base background (60%):    #0A1020  (--bg)
+   - Surface cards (30%):      #0F1A2E  (--surface)
+   - Elevated elements:        #14233B  (--surface-2)
+   - Interactive hover:        #1B2D4A  (--surface-3)
+   - 1px Borders / Dividers:   #24385A  (--line)
+   - Primary text (Ink):       #E8EEF7  (--ink)         [Contraste > 14:1]
+   - Secondary text (Muted):   #9FB0C8  (--ink-muted)   [Contraste > 7:1]
+   - Decorative text (Faint):  #6F819C  (--ink-faint)   [Contraste > 4.3:1]
+   - Brand Accent (10%):       #2DD4BF  (--brand)       [Turquesa seguridad]
+   - Text on Brand:            #04121F  (--brand-ink)   [Contraste > 10:1]
+   - Semantic Status:
+     * Success:                #4ADE80
+     * Warning:                #FBBF24
+     * Danger:                 #F87171
+     * Info:                   #60A5FA
+   ============================================================================== */
+
+:root {
+  --bg: #0A1020;
+  --surface: #0F1A2E;
+  --surface-2: #14233B;
+  --surface-3: #1B2D4A;
+  --line: #24385A;
+  --line-soft: #182842;
+  --ink: #E8EEF7;
+  --ink-muted: #9FB0C8;
+  --ink-faint: #6F819C;
+  --brand: #2DD4BF;
+  --brand-hover: #5EEAD4;
+  --brand-ink: #04121F;
+  --success: #4ADE80;
+  --warning: #FBBF24;
+  --danger: #F87171;
+  --info: #60A5FA;
+}
+
 @layer base {
+  html {
+    color-scheme: dark;
+  }
+
   body {
-    background-color: #090F1E;
-    color: #E9F0FA;
-    font-size: 16px;
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Headings scale */
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-weight: 600;
   }
 }
 
-/* Custom scrollbars */
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #24344F;
+  background: var(--line);
   border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-faint);
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 
+/* Glassmorphism utility */
+.glass {
+  background-color: rgba(10, 16, 32, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+
+/* Radial subtle mesh for marketing/hero */
+.bg-mesh {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle at 12% 15%, rgba(45, 212, 191, 0.06) 0%, transparent 45%),
+    radial-gradient(circle at 88% 25%, rgba(96, 165, 250, 0.05) 0%, transparent 45%);
+}
+
+/* Tabular figures for prices, dates and numbers */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Accessible focus outline */
+*:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--brand);
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

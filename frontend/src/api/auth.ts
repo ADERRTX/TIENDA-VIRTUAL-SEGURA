@@ -81,3 +81,15 @@ export function useUpdateProfile() {
     },
   });
 }
+
+export function useChangePassword() {
+  return useMutation({
+    mutationFn: async (input: { currentPassword: string; newPassword: string }) => {
+      const response = await http<{ ok: boolean }>('/auth/change-password', {
+        method: 'POST',
+        body: JSON.stringify(input),
+      });
+      return response.data;
+    },
+  });
+}

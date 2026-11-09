@@ -3,15 +3,27 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
-import { AuditInterceptor } from './common/interceptors/audit.interceptor';
-
-
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/all-exceptions.filter';
+import { getAllowedCorsOrigins } from './common/constants';
 
 export async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
   const isProduction = process.env['NODE_ENV'] === 'production';
+
+  if (isProduction) {
+    if (!process.env['DATABASE_URL'] || !process.env['DATABASE_URL'].trim()) {
+      throw new Error('DATABASE_URL must be defined in production');
+    }
+    const jwtSecret = process.env['JWT_SECRET'] ?? process.env['SESSION_SECRET'];
+    if (!jwtSecret || jwtSecret.length < 32) {
+      throw new Error('JWT_SECRET must be defined with at least 32 characters in production');
+    }
+  }
+
+  // Load allowed origins from environment (strict in production: throws if CORS_ORIGINS is not set)
+  const corsOrigins = getAllowedCorsOrigins();
+
+  const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api/v1');
 
@@ -22,18 +34,6 @@ export async function bootstrap(): Promise<void> {
     }),
   );
 
-  // Load allowed origins from environment (or fallback to localhost defaults)
-  const corsOrigins = (process.env['CORS_ORIGINS'] ??
-    'http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000')
-    .split(',')
-    .map(o => o.trim())
-    .filter(Boolean);
-
-  // In production, ensure CORS_ORIGINS is defined
-  if (isProduction && corsOrigins.length === 0) {
-    throw new Error('CORS_ORIGINS must be defined in production');
-  }
-
   app.enableCors({
     origin: corsOrigins,
     credentials: true,
@@ -43,8 +43,6 @@ export async function bootstrap(): Promise<void> {
 
 
   app.useGlobalFilters(new AllExceptionsFilter());
-  // Global interceptor to capture IP and User‑Agent for audit logs
-  app.useGlobalInterceptors(new AuditInterceptor());
 
 
   if (!isProduction) {

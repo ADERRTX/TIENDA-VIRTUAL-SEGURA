@@ -8,16 +8,8 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
-import { JWT_COOKIE_NAME } from '../constants';
+import { JWT_COOKIE_NAME, getAllowedCorsOrigins } from '../constants';
 import { PrismaService } from '../../prisma/prisma.service';
-
-const ALLOWED_ORIGINS = (
-  process.env['CORS_ORIGINS'] ??
-  'http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000'
-)
-  .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
 
 const MUTATING_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE'];
 
@@ -41,8 +33,9 @@ export class AuthGuard implements CanActivate {
 
     // CSRF: toda mutación con sesión por cookie debe venir de un origen permitido
     if (MUTATING_METHODS.includes(request.method) && cookieToken) {
+      const allowedOrigins = getAllowedCorsOrigins();
       const origin = request.headers['origin'];
-      if (!origin || !ALLOWED_ORIGINS.includes(origin)) {
+      if (!origin || !allowedOrigins.includes(origin)) {
         throw new ForbiddenException({
           code: 'CSRF_INVALID_ORIGIN',
           message: 'Origen no permitido para esta solicitud',

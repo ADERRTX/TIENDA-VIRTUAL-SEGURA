@@ -138,3 +138,35 @@ export function useRunJob() {
     },
   });
 }
+
+export function useBlockUser() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
+      const response = await http<unknown>(`/admin/users/${id}/block`, {
+        method: 'PATCH',
+        body: JSON.stringify({ reason }),
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    },
+  });
+}
+
+export function useUnblockUser() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
+      const response = await http<unknown>(`/admin/users/${id}/unblock`, {
+        method: 'PATCH',
+        body: JSON.stringify({ reason }),
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+    },
+  });
+}

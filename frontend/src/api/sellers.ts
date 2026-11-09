@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApiError, http } from '../lib/http';
 import type { PageMeta } from './seller';
 
-export type SellerStatus = 'PENDING' | 'ACTIVE' | 'SUSPENDED';
+export type SellerStatus = 'PENDING' | 'ACTIVE' | 'SUSPENDED' | 'REJECTED';
 
 export interface SellerProfile {
   id: string;

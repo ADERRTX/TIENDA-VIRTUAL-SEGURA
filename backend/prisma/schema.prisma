@@ -23,6 +23,7 @@ enum SellerStatus {
   PENDING
   ACTIVE
   SUSPENDED
+  REJECTED
 }
 
 enum ProductStatus {

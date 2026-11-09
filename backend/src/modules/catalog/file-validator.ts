@@ -42,6 +42,41 @@ export function validateImageMagicBytes(buffer: Buffer): 'jpg' | 'png' | 'webp' 
   });
 }
 
+export function validateImageFile(file: Express.Multer.File): 'jpg' | 'png' | 'webp' {
+  if (!file || !file.buffer) {
+    throw new BadRequestException({
+      code: 'NO_FILE_PROVIDED',
+      message: 'No se subió ningún archivo',
+    });
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    throw new BadRequestException({
+      code: 'FILE_TOO_LARGE',
+      message: 'La imagen excede el límite de 5 MB',
+    });
+  }
+
+  const detectedExt = validateImageMagicBytes(file.buffer);
+
+  // Comprueba que la extensión declarada coincide con los magic bytes reales
+  const originalExt = path.extname(file.originalname || '').toLowerCase().replace('.', '');
+  const allowedMap: Record<'jpg' | 'png' | 'webp', string[]> = {
+    jpg: ['jpg', 'jpeg'],
+    png: ['png'],
+    webp: ['webp'],
+  };
+
+  if (!allowedMap[detectedExt]?.includes(originalExt)) {
+    throw new BadRequestException({
+      code: 'INVALID_FILE_EXTENSION',
+      message: 'La extensión del archivo no coincide con el tipo real de la imagen',
+    });
+  }
+
+  return detectedExt;
+}
+
 export function getUploadsDir(): string {
   const dir = path.resolve(process.env['UPLOAD_DIR'] || './uploads');
   if (!fs.existsSync(dir)) {

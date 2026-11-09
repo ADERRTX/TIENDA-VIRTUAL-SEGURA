@@ -10,11 +10,13 @@ import { OrdersRepository } from '../orders/orders.repository';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ClockService } from '../../common/clock.service';
 import { AuditService } from '../../audit/audit.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import {
   ClaimStatus,
   ClaimResolution,
   SubOrderStatus,
   CustodyStatus,
+  NotificationType,
 } from '../../common/constants';
 import { CreateClaimInput, ResolveClaimInput } from './claims.dto';
 import { validateTransition } from '../orders/order-state-machine';
@@ -29,6 +31,7 @@ export class ClaimsService {
     private readonly prisma: PrismaService,
     private readonly clock: ClockService,
     private readonly auditService: AuditService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async createClaim(userId: string, input: CreateClaimInput): Promise<unknown> {
@@ -63,7 +66,7 @@ export class ClaimsService {
 
     validateTransition(subOrder.status, SubOrderStatus.RECLAMADO, 'COMPRADOR');
 
-    return this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const result = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // Freeze custody
       await tx.custody.updateMany({
         where: { subOrderId: input.subOrderId },
@@ -96,6 +99,16 @@ export class ClaimsService {
 
       return claim;
     });
+
+    try {
+      await this.notificationsService.notify(
+        subOrder.seller.userId,
+        NotificationType.CLAIM,
+        `Se ha abierto un reclamo sobre tu venta por el motivo: ${input.reason}. La custodia se encuentra congelada.`,
+      );
+    } catch {}
+
+    return result;
   }
 
   async getClaimDetail(id: string, userId: string, role: string) {
@@ -153,6 +166,33 @@ export class ClaimsService {
       });
     }
 
+    try {
+      if (isClaimant) {
+        await this.notificationsService.notify(
+          claim.subOrder.seller.userId,
+          NotificationType.CLAIM,
+          'Nuevo mensaje del comprador en el reclamo.',
+        );
+      } else if (isSeller) {
+        await this.notificationsService.notify(
+          claim.claimantId,
+          NotificationType.CLAIM,
+          'El vendedor ha respondido en el reclamo.',
+        );
+      } else {
+        await this.notificationsService.notify(
+          claim.claimantId,
+          NotificationType.CLAIM,
+          'Nuevo mensaje de soporte en el reclamo.',
+        );
+        await this.notificationsService.notify(
+          claim.subOrder.seller.userId,
+          NotificationType.CLAIM,
+          'Nuevo mensaje de soporte en el reclamo.',
+        );
+      }
+    } catch {}
+
     return message;
   }
 
@@ -176,7 +216,7 @@ export class ClaimsService {
     const subOrderId = claim.subOrderId;
     const subOrder = claim.subOrder;
 
-    return this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const result = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       let targetStatus: SubOrderStatus = SubOrderStatus.FINALIZADO;
 
       if (input.resolution === ClaimResolution.SIN_FUNDAMENTO) {
@@ -234,6 +274,21 @@ export class ClaimsService {
 
       return updatedClaim;
     });
+
+    try {
+      await this.notificationsService.notify(
+        claim.claimantId,
+        NotificationType.CLAIM,
+        `Tu reclamo ha sido resuelto por soporte/administración. Resolución: ${input.resolution}.`,
+      );
+      await this.notificationsService.notify(
+        claim.subOrder.seller.userId,
+        NotificationType.CLAIM,
+        `El reclamo ha sido resuelto por soporte/administración. Resolución: ${input.resolution}.`,
+      );
+    } catch {}
+
+    return result;
   }
 
   async appealClaim(claimId: string, userId: string) {
@@ -282,6 +337,22 @@ export class ClaimsService {
       entity: 'claim',
       entityId: claimId,
     });
+
+    try {
+      if (isClaimant) {
+        await this.notificationsService.notify(
+          claim.subOrder.seller.userId,
+          NotificationType.CLAIM,
+          'El comprador ha presentado una apelación al reclamo.',
+        );
+      } else {
+        await this.notificationsService.notify(
+          claim.claimantId,
+          NotificationType.CLAIM,
+          'El vendedor ha presentado una apelación al reclamo.',
+        );
+      }
+    } catch {}
 
     return updated;
   }

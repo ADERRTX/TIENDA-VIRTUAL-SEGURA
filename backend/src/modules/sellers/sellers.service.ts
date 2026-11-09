@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { SellersRepository } from './sellers.repository';
 import { AuditService } from '../../audit/audit.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationType } from '../../common/constants';
 import { ApplySellerInput, UpdateSellerMeInput } from './sellers.dto';
 import { Seller, SellerStatus } from '../../generated/prisma/client';
 
@@ -14,6 +16,7 @@ export class SellersService {
   constructor(
     private readonly sellersRepo: SellersRepository,
     private readonly auditService: AuditService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async apply(userId: string, input: ApplySellerInput): Promise<Seller> {
@@ -116,6 +119,14 @@ export class SellersService {
       payload: { previousStatus: seller.status, newStatus: SellerStatus.ACTIVE },
     });
 
+    try {
+      await this.notificationsService.notify(
+        seller.userId,
+        NotificationType.SELLER,
+        `¡Felicitaciones! Tu solicitud para la tienda "${seller.storeName}" ha sido aprobada. Ya puedes publicar productos.`,
+      );
+    } catch {}
+
     return approved;
   }
 
@@ -135,7 +146,7 @@ export class SellersService {
       });
     }
 
-    const rejected = await this.sellersRepo.updateStatusWithReason(sellerId, SellerStatus.SUSPENDED, reason);
+    const rejected = await this.sellersRepo.updateStatusWithReason(sellerId, SellerStatus.REJECTED, reason);
     await this.auditService.log({
       actorId: adminId,
       action: 'SELLER_REJECTED',
@@ -143,6 +154,14 @@ export class SellersService {
       entityId: sellerId,
       payload: { reason },
     });
+
+    try {
+      await this.notificationsService.notify(
+        seller.userId,
+        NotificationType.SELLER,
+        `Tu solicitud para la tienda "${seller.storeName}" fue rechazada por la administración. Motivo: ${reason}`,
+      );
+    } catch {}
 
     return rejected;
   }
@@ -171,6 +190,14 @@ export class SellersService {
       entityId: sellerId,
       payload: { reason },
     });
+
+    try {
+      await this.notificationsService.notify(
+        seller.userId,
+        NotificationType.SELLER,
+        `Tu tienda "${seller.storeName}" ha sido suspendida por la administración. Motivo: ${reason}`,
+      );
+    } catch {}
 
     return suspended;
   }

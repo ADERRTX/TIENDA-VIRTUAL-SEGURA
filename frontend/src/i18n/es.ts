@@ -45,6 +45,7 @@ export const i18n = {
     PENDING: 'En revisión',
     ACTIVE: 'Activo',
     SUSPENDED: 'Suspendido',
+    REJECTED: 'Rechazado',
   },
   cart: {
     title: 'Tu Carrito de Compras',

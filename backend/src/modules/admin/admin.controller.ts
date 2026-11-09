@@ -4,6 +4,7 @@ import {
   Patch,
   Query,
   Body,
+  Param,
   UsePipes,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
@@ -11,7 +12,14 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser, RequestUser } from '../../common/decorators/current-user.decorator';
 import { ZodPipe } from '../../common/zod.pipe';
 import { UserRole, UserStatus } from '../../common/constants';
-import { updateConfigSchema, UpdateConfigInput } from './admin.dto';
+import {
+  updateConfigSchema,
+  UpdateConfigInput,
+  blockUserSchema,
+  BlockUserInput,
+  unblockUserSchema,
+  UnblockUserInput,
+} from './admin.dto';
 
 @Controller('admin')
 @Roles(UserRole.ADMIN)
@@ -30,6 +38,28 @@ export class AdminController {
     const ps = Math.min(50, Math.max(1, parseInt(pageSize, 10) || 10));
     const result = await this.adminService.listUsers({ q, role, status, page: p, pageSize: ps });
     return { data: result.items, meta: { page: p, pageSize: ps, total: result.total } };
+  }
+
+  @Patch('users/:id/block')
+  @UsePipes(new ZodPipe(blockUserSchema))
+  async blockUser(
+    @Param('id') id: string,
+    @CurrentUser() user: RequestUser,
+    @Body() body: BlockUserInput,
+  ): Promise<{ data: unknown }> {
+    const result = await this.adminService.blockUser(id, user, body.reason);
+    return { data: result };
+  }
+
+  @Patch('users/:id/unblock')
+  @UsePipes(new ZodPipe(unblockUserSchema))
+  async unblockUser(
+    @Param('id') id: string,
+    @CurrentUser() user: RequestUser,
+    @Body() body: UnblockUserInput,
+  ): Promise<{ data: unknown }> {
+    const result = await this.adminService.unblockUser(id, user, body.reason);
+    return { data: result };
   }
 
   @Get('audit')

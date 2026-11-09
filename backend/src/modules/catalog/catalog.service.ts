@@ -2,7 +2,6 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
-  BadRequestException,
 } from '@nestjs/common';
 import 'multer';
 import * as fs from 'fs';
@@ -18,7 +17,7 @@ import {
   CreateVariantInput,
   UpdateVariantInput,
 } from './catalog.dto';
-import { validateImageMagicBytes, getUploadsDir } from './file-validator';
+import { validateImageFile, getUploadsDir } from './file-validator';
 import { ProductStatus, SellerStatus } from '../../common/constants';
 
 @Injectable()
@@ -72,6 +71,18 @@ export class CatalogService {
   async getProductDetail(id: string): Promise<unknown> {
     const product = await this.catalogRepo.findProductById(id);
     if (!product || product.status === ProductStatus.REMOVED) {
+      throw new NotFoundException({
+        code: 'PRODUCT_NOT_FOUND',
+        message: 'Producto no encontrado',
+      });
+    }
+    return product;
+  }
+
+  async getSellerProductDetail(userId: string, productId: string): Promise<unknown> {
+    const seller = await this.getActiveSellerOrThrow(userId);
+    const product = await this.catalogRepo.findProductById(productId);
+    if (!product || product.sellerId !== seller.id || product.status === ProductStatus.REMOVED) {
       throw new NotFoundException({
         code: 'PRODUCT_NOT_FOUND',
         message: 'Producto no encontrado',
@@ -166,39 +177,36 @@ export class CatalogService {
       });
     }
 
-    if (!file || !file.buffer) {
-      throw new BadRequestException({
-        code: 'NO_FILE_PROVIDED',
-        message: 'No se subió ningún archivo',
-      });
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      throw new BadRequestException({
-        code: 'FILE_TOO_LARGE',
-        message: 'La imagen excede el límite de 5 MB',
-      });
-    }
-
-    const ext = validateImageMagicBytes(file.buffer);
+    const ext = validateImageFile(file);
     const filename = `${crypto.randomUUID()}.${ext}`;
     const targetDir = getUploadsDir();
     const filePath = path.join(targetDir, filename);
 
     fs.writeFileSync(filePath, file.buffer);
 
-    const isMain = product.images.length === 0;
-    const image = await this.catalogRepo.addProductImage(productId, filename, isMain);
+    try {
+      const isMain = product.images.length === 0;
+      const image = await this.catalogRepo.addProductImage(productId, filename, isMain);
 
-    await this.auditService.log({
-      actorId: userId,
-      action: 'IMAGE_UPLOADED',
-      entity: 'product_image',
-      entityId: image.id,
-      payload: { filename },
-    });
+      await this.auditService.log({
+        actorId: userId,
+        action: 'IMAGE_UPLOADED',
+        entity: 'product_image',
+        entityId: image.id,
+        payload: { filename },
+      });
 
-    return image;
+      return image;
+    } catch (err) {
+      if (fs.existsSync(filePath)) {
+        try {
+          fs.unlinkSync(filePath);
+        } catch {
+          // ignore disk deletion error
+        }
+      }
+      throw err;
+    }
   }
 
   async deleteProductImage(userId: string, productId: string, imageId: string): Promise<void> {

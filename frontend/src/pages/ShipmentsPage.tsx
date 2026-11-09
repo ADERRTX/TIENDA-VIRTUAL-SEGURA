@@ -6,11 +6,26 @@ import {
   type ShipmentSubOrder,
 } from '../api/shipments';
 import { Button } from '../components/ui/Button';
+import { Card } from '../components/ui/Card';
+import { StatusBadge } from '../components/ui/StatusBadge';
+import { PageHeader } from '../components/ui/PageHeader';
+import { EmptyState } from '../components/ui/EmptyState';
+import { ErrorState } from '../components/ui/ErrorState';
+import { Pagination } from '../components/ui/Pagination';
+import { Skeleton } from '../components/ui/Skeleton';
 import { i18n } from '../i18n/es';
 import { formatDate, formatDateOnly } from '../lib/formatters';
 import { ApiError } from '../lib/http';
-
-const statusLabels = i18n.orderStatus as Record<string, string>;
+import {
+  Truck,
+  Store,
+  User,
+  MapPin,
+  Calendar,
+  Barcode,
+  ArrowRight,
+  AlertCircle,
+} from 'lucide-react';
 
 const eventLabels: Record<string, string> = {
   DESPACHADO: 'Despachado',
@@ -35,58 +50,113 @@ function ShipmentCard({ subOrder }: { subOrder: ShipmentSubOrder }) {
   const { shipment, order } = subOrder;
 
   return (
-    <article className="flex flex-col gap-3 rounded-2xl border border-line bg-surface-2 p-5">
-      <header className="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <h2 className="font-bold">Pedido #{subOrder.id.slice(0, 8)}</h2>
-          <p className="text-xs text-ink-muted">Tienda: {subOrder.seller.storeName}</p>
+    <Card padding="md" className="flex flex-col gap-4 shadow-sm">
+      <header className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-line/60">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-2 text-info border border-line">
+            <Truck className="h-4.5 w-4.5" />
+          </div>
+          <div className="flex flex-col">
+            <h2 className="font-bold text-sm text-ink">
+              Envío de Pedido #{subOrder.id.slice(0, 8).toUpperCase()}
+            </h2>
+            <div className="flex items-center gap-1.5 text-[11px] text-ink-muted">
+              <Store className="h-3 w-3 text-brand" />
+              <span>Tienda: {subOrder.seller.storeName}</span>
+            </div>
+          </div>
         </div>
-        <span className="rounded-full border border-brand/50 px-3 py-1 text-xs font-semibold text-brand">
-          {statusLabels[subOrder.status] ?? subOrder.status}
-        </span>
+
+        <StatusBadge status={subOrder.status} category="order" />
       </header>
 
-      <p className="text-sm">
-        Comprador: <strong>{order.buyer.fullName}</strong>
-      </p>
-      <p className="text-xs text-ink-muted">
-        Entrega: {order.address.label} · {order.address.line1}, {order.address.city},{' '}
-        {order.address.province}
-      </p>
-      <p className="text-xs text-ink-muted">
-        Transportista: {shipment.carrier} · Guía: {shipment.trackingCode} · Entrega estimada:{' '}
-        {formatDateOnly(shipment.estimatedDate)}
-      </p>
+      {/* Datos logísticos y guía */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 rounded-xl bg-surface-2/60 border border-line/60 text-xs">
+        <div className="flex items-center gap-2 text-ink">
+          <Truck className="h-4 w-4 text-info shrink-0" />
+          <div>
+            <span className="block text-[10px] text-ink-muted uppercase">Transportista</span>
+            <span className="font-bold">{shipment.carrier}</span>
+          </div>
+        </div>
 
-      <ul className="flex flex-col gap-1 border-t border-line pt-3 text-sm">
-        {subOrder.items.map((item) => (
-          <li key={item.id}>
-            {item.name} × {item.quantity}
-          </li>
-        ))}
-      </ul>
+        <div className="flex items-center gap-2 text-ink">
+          <Barcode className="h-4 w-4 text-brand shrink-0" />
+          <div>
+            <span className="block text-[10px] text-ink-muted uppercase">N° Guía</span>
+            <span className="font-mono font-bold">{shipment.trackingCode}</span>
+          </div>
+        </div>
 
-      <ol className="flex flex-col gap-1 border-t border-line pt-3 text-sm">
-        {shipment.trackingEvents.map((event) => (
-          <li key={event.id} className="flex justify-between gap-4">
-            <span>{eventLabels[event.type] ?? event.type}</span>
-            <span className="text-xs text-ink-muted">{formatDate(event.occurredAt)}</span>
-          </li>
-        ))}
-      </ol>
+        <div className="flex items-center gap-2 text-ink">
+          <Calendar className="h-4 w-4 text-warning shrink-0" />
+          <div>
+            <span className="block text-[10px] text-ink-muted uppercase">Entrega estimada</span>
+            <span className="font-semibold">{formatDateOnly(shipment.estimatedDate)}</span>
+          </div>
+        </div>
+      </div>
 
+      {/* Comprador y Dirección */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+        <div className="flex items-center gap-2 text-ink-muted">
+          <User className="h-4 w-4 text-brand shrink-0" />
+          <span>
+            Destinatario: <strong className="text-ink">{order.buyer.fullName}</strong>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2 text-ink-muted">
+          <MapPin className="h-4 w-4 text-info shrink-0" />
+          <span className="truncate">
+            {order.address.label} · {order.address.line1}, {order.address.city}
+          </span>
+        </div>
+      </div>
+
+      {/* Eventos de Trazabilidad Logística */}
+      <div className="flex flex-col gap-2 border-t border-line/60 pt-3 text-xs">
+        <span className="text-[11px] font-bold text-ink-muted uppercase tracking-wider">
+          Bitácora de Eventos de Encomienda:
+        </span>
+        <ol className="relative ml-2 flex flex-col gap-2.5 border-l-2 border-line/80 pl-3 py-1">
+          {shipment.trackingEvents.map((event) => (
+            <li key={event.id} className="relative flex items-center justify-between gap-3 text-xs">
+              <span className="absolute -left-[17px] top-1.5 flex h-2 w-2 rounded-full bg-info ring-2 ring-surface" />
+              <span className="font-semibold text-ink">
+                {eventLabels[event.type] ?? event.type}
+              </span>
+              <span className="text-[11px] text-ink-muted">
+                {formatDate(event.occurredAt)}
+              </span>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      {/* Botón para avanzar estado */}
       {next && (
-        <Button
-          size="sm"
-          className="self-start"
-          isLoading={add.isPending}
-          onClick={() => add.mutate({ subOrderId: subOrder.id, type: next })}
-        >
-          Registrar: {eventLabels[next]}
-        </Button>
+        <div className="pt-2 border-t border-line/60 flex items-center justify-between">
+          <Button
+            size="sm"
+            variant="primary"
+            className="font-semibold text-xs gap-1.5"
+            isLoading={add.isPending}
+            onClick={() => add.mutate({ subOrderId: subOrder.id, type: next })}
+          >
+            <span>Registrar avance: {eventLabels[next]}</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Button>
+
+          {add.isError && (
+            <p className="text-xs text-danger flex items-center gap-1">
+              <AlertCircle className="h-3.5 w-3.5" />
+              <span>{errorMessage(add.error)}</span>
+            </p>
+          )}
+        </div>
       )}
-      {add.isError && <p className="text-sm text-red-400">{errorMessage(add.error)}</p>}
-    </article>
+    </Card>
   );
 }
 
@@ -97,34 +167,59 @@ export default function ShipmentsPage() {
   const lastPage = meta ? Math.max(1, Math.ceil(meta.total / meta.pageSize)) : 1;
 
   return (
-    <section className="flex max-w-3xl flex-col gap-6">
-      <h1 className="text-2xl font-bold">Envíos en curso</h1>
+    <div className="flex flex-col gap-8 max-w-4xl mx-auto">
+      <PageHeader
+        title="Control de Envíos y Logística"
+        description="Supervisión en tiempo real de encomiendas despachadas por transportista."
+        breadcrumbs={[
+          { label: 'Inicio', to: '/' },
+          { label: 'Envíos en Curso' },
+        ]}
+      />
 
-      {isLoading && <div className="h-32 animate-pulse rounded-2xl bg-surface-2" />}
+      {isLoading && (
+        <div className="flex flex-col gap-4">
+          <Skeleton variant="block" className="h-40 w-full" />
+          <Skeleton variant="block" className="h-40 w-full" />
+        </div>
+      )}
+
       {isError && (
-        <div className="flex flex-col items-start gap-3 rounded-2xl border border-line bg-surface-2 p-5">
-          <p className="text-ink-muted">{errorMessage(error)}</p>
-          <Button variant="secondary" size="sm" onClick={() => refetch()}>
-            {i18n.common.retry}
-          </Button>
-        </div>
+        <ErrorState
+          title="Error al consultar envíos"
+          description={errorMessage(error)}
+          onRetry={() => refetch()}
+        />
       )}
-      {data && data.items.length === 0 && <p className="text-ink-muted">No hay envíos en curso.</p>}
-      {data?.items.map((subOrder) => <ShipmentCard key={subOrder.id} subOrder={subOrder} />)}
 
-      {meta && lastPage > 1 && (
-        <div className="flex items-center justify-between">
-          <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>
-            Anterior
-          </Button>
-          <span className="text-sm text-ink-muted">
-            Página {page} de {lastPage}
-          </span>
-          <Button variant="secondary" size="sm" disabled={page >= lastPage} onClick={() => setPage(page + 1)}>
-            Siguiente
-          </Button>
+      {!isLoading && !isError && data && data.items.length === 0 && (
+        <EmptyState
+          icon={<Truck className="h-8 w-8" />}
+          title="Sin envíos en tránsito"
+          description="Actualmente no hay pedidos con guías en proceso de entrega."
+        />
+      )}
+
+      {!isLoading && !isError && data && data.items.length > 0 && (
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
+            {data.items.map((subOrder) => (
+              <ShipmentCard key={subOrder.id} subOrder={subOrder} />
+            ))}
+          </div>
+
+          {meta && lastPage > 1 && (
+            <div className="pt-2 border-t border-line/40">
+              <Pagination
+                page={page}
+                totalPages={lastPage}
+                totalItems={meta.total}
+                onPageChange={setPage}
+              />
+            </div>
+          )}
         </div>
       )}
-    </section>
+    </div>
   );
 }

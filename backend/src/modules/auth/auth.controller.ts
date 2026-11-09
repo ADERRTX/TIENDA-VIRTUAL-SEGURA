@@ -15,11 +15,22 @@ import { Public } from '../../common/decorators/public.decorator';
 import { CurrentUser, RequestUser } from '../../common/decorators/current-user.decorator';
 import { ZodPipe } from '../../common/zod.pipe';
 
-import { registerSchema, RegisterInput, loginSchema, LoginInput, forgotPasswordSchema, ForgotPasswordInput, resetPasswordSchema, ResetPasswordInput } from './auth.dto';
+import {
+  registerSchema,
+  RegisterInput,
+  loginSchema,
+  LoginInput,
+  forgotPasswordSchema,
+  ForgotPasswordInput,
+  resetPasswordSchema,
+  ResetPasswordInput,
+  changePasswordSchema,
+  ChangePasswordInput,
+} from './auth.dto';
 import { JWT_COOKIE_NAME } from '../../common/constants';
 
 const ONE_MINUTE_MS = 60_000;
-const AUTH_ATTEMPTS_PER_MINUTE = 5;
+const AUTH_ATTEMPTS_PER_MINUTE = process.env['NODE_ENV'] === 'test' ? 1000 : 5;
 const authLimit = { default: { limit: AUTH_ATTEMPTS_PER_MINUTE, ttl: ONE_MINUTE_MS } };
 const IS_PRODUCTION = process.env['NODE_ENV'] === 'production';
 @Controller('auth')
@@ -95,6 +106,25 @@ export class AuthController {
   @UsePipes(new ZodPipe(resetPasswordSchema))
   async resetPassword(@Body() body: ResetPasswordInput): Promise<{ data: { ok: boolean } }> {
     await this.authService.resetPassword(body.token, body.newPassword);
+    return { data: { ok: true } };
+  }
+
+  @Post('change-password')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ZodPipe(changePasswordSchema))
+  async changePassword(
+    @CurrentUser() currentUser: RequestUser,
+    @Body() body: ChangePasswordInput,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<{ data: { ok: boolean } }> {
+    const result = await this.authService.changePassword(currentUser.id, body);
+    res.cookie(JWT_COOKIE_NAME, result.token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: IS_PRODUCTION,
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
     return { data: { ok: true } };
   }
 }

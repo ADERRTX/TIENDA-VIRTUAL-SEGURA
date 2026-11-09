@@ -118,4 +118,61 @@ describe('Auth Password Recovery (e2e)', () => {
     expect(meRes.body.data.email).toBe(knownUserEmail);
     expect(meRes.body.data).toHaveProperty('role');
   });
+
+  it('/auth/change-password (POST) returns 401 when unauthenticated', async () => {
+    await request(app.getHttpServer())
+      .post('/api/v1/auth/change-password')
+      .send({ currentPassword: 'NewPassword123!', newPassword: 'UpdatedPassword123!' })
+      .expect(401);
+  });
+
+  it('/auth/change-password (POST) validates same password rejection and accepts valid change', async () => {
+    const loginRes = await request(app.getHttpServer())
+      .post('/api/v1/auth/login')
+      .send({ email: knownUserEmail, password: 'NewPassword123!' })
+      .expect(200);
+
+    const cookie = loginRes.headers['set-cookie']!;
+
+    // Cannot change to same password
+    await request(app.getHttpServer())
+      .post('/api/v1/auth/change-password')
+      .set('Cookie', cookie)
+      .set('Origin', 'http://localhost:5173')
+      .send({ currentPassword: 'NewPassword123!', newPassword: 'NewPassword123!' })
+      .expect(400);
+
+    // Incorrect current password
+    await request(app.getHttpServer())
+      .post('/api/v1/auth/change-password')
+      .set('Cookie', cookie)
+      .set('Origin', 'http://localhost:5173')
+      .send({ currentPassword: 'WrongPassword123!', newPassword: 'UpdatedPassword123!' })
+      .expect(400);
+
+    // Wait 1 second so that JWT iat (second-precision) is strictly before tokensValidAfter
+    await new Promise((resolve) => setTimeout(resolve, 1100));
+
+    // Valid change password
+    const changeRes = await request(app.getHttpServer())
+      .post('/api/v1/auth/change-password')
+      .set('Cookie', cookie)
+      .set('Origin', 'http://localhost:5173')
+      .send({ currentPassword: 'NewPassword123!', newPassword: 'UpdatedPassword123!' })
+      .expect(200);
+
+    expect(changeRes.body).toEqual({ data: { ok: true } });
+
+    // Verify old session cookie is now revoked due to tokensValidAfter
+    await request(app.getHttpServer())
+      .get('/api/v1/auth/me')
+      .set('Cookie', cookie)
+      .expect(401);
+
+    // Verify login with new password works
+    await request(app.getHttpServer())
+      .post('/api/v1/auth/login')
+      .send({ email: knownUserEmail, password: 'UpdatedPassword123!' })
+      .expect(200);
+  });
 });

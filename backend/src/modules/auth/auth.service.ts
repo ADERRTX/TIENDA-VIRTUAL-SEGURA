@@ -6,7 +6,7 @@ import { AuditService } from '../../audit/audit.service';
 import { ClockService } from '../../common/clock.service';
 import { randomBytes, createHash } from 'crypto';
 import { PrismaService } from '../../prisma/prisma.service';
-import { RegisterInput, LoginInput } from './auth.dto';
+import { RegisterInput, LoginInput, ChangePasswordInput } from './auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -39,6 +39,19 @@ export class AuthService {
     const user = await this.authRepo.findByEmail(input.email);
     if (!user) {
       throw new UnauthorizedException({ code: 'INVALID_CREDENTIALS', message: 'Credenciales incorrectas' });
+    }
+    if (user.status === 'BLOCKED') {
+      await this.auditService.log({
+        actorId: user.id,
+        action: 'LOGIN_BLOCKED_ATTEMPT',
+        entity: 'user',
+        entityId: user.id,
+        payload: { email: user.email },
+      });
+      throw new UnauthorizedException({
+        code: 'USER_BLOCKED',
+        message: 'Tu cuenta ha sido bloqueada por la administración. Contacta al soporte.',
+      });
     }
     const now = this.clock.now();
     if (user.lockedUntil && user.lockedUntil > now) {
@@ -79,8 +92,6 @@ export class AuthService {
       entity: 'user',
       entityId: user?.id ?? '',
       payload: { email, token },
-      ip: '',
-      userAgent: '',
     });
   }
 
@@ -92,7 +103,13 @@ export class AuthService {
   async generatePasswordResetToken(email: string): Promise<string> {
     const user = await this.authRepo.findByEmail(email);
     if (!user) {
-      await this.auditService.log({ actorId: null, action: 'FORGOT_PASSWORD_REQUEST', entity: 'user', entityId: '', payload: { email }, ip: '', userAgent: '' });
+      await this.auditService.log({
+        actorId: null,
+        action: 'FORGOT_PASSWORD_REQUEST',
+        entity: 'user',
+        entityId: '',
+        payload: { email },
+      });
       throw new BadRequestException({ code: 'USER_NOT_FOUND', message: 'Usuario no encontrado' });
     }
     const tokenPlain = randomBytes(32).toString('hex');
@@ -127,9 +144,45 @@ export class AuthService {
       action: 'PASSWORD_RESET',
       entity: 'user',
       entityId: reset.userId,
-      ip: '',
-      userAgent: '',
     });
+  }
+
+  async changePassword(userId: string, input: ChangePasswordInput): Promise<{ token: string }> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new UnauthorizedException({ code: 'AUTH_REQUIRED', message: 'Usuario no encontrado' });
+    }
+    const isCurrentValid = await verify(user.passwordHash, input.currentPassword);
+    if (!isCurrentValid) {
+      throw new BadRequestException({ code: 'INVALID_CURRENT_PASSWORD', message: 'La contraseña actual es incorrecta' });
+    }
+    if (input.currentPassword === input.newPassword) {
+      throw new BadRequestException({ code: 'SAME_PASSWORD', message: 'La nueva contraseña debe ser distinta de la actual' });
+    }
+    const isSameAsCurrent = await verify(user.passwordHash, input.newPassword);
+    if (isSameAsCurrent) {
+      throw new BadRequestException({ code: 'SAME_PASSWORD', message: 'La nueva contraseña debe ser distinta de la actual' });
+    }
+    const passwordHash = await hash(input.newPassword);
+    const now = this.clock.now();
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        passwordHash,
+        tokensValidAfter: now,
+        failedLogins: 0,
+        lockedUntil: null,
+      },
+    });
+    await this.auditService.log({
+      actorId: userId,
+      action: 'PASSWORD_CHANGED',
+      entity: 'user',
+      entityId: userId,
+    });
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const token = await this.jwtService.signAsync(payload);
+    return { token };
   }
 
   async getMe(userId: string): Promise<Record<string, unknown> | null> {

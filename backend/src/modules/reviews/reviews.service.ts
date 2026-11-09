@@ -52,12 +52,12 @@ export class ReviewsService {
       });
     }
 
-    // Must be ENTREGADO or FINALIZADO
-    const validStatuses: SubOrderStatus[] = [SubOrderStatus.ENTREGADO, SubOrderStatus.FINALIZADO];
+    // Must be ENTREGADO
+    const validStatuses: SubOrderStatus[] = [SubOrderStatus.ENTREGADO];
     if (!validStatuses.includes(orderItem.subOrder.status)) {
       throw new ConflictException({
         code: 'REVIEW_NOT_ELIGIBLE',
-        message: 'Solo se pueden calificar pedidos entregados o finalizados',
+        message: 'Solo se pueden calificar pedidos entregados',
       });
     }
 

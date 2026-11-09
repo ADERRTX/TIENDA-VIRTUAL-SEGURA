@@ -1,0 +1,62 @@
+# ==============================================================================
+# Docker Compose de Producción — Tienda Virtual Segura (TVS)
+# ==============================================================================
+# Instrucciones de despliegue:
+# 1. Configurar variables de entorno en el archivo .env de producción
+# 2. Desplegar con: docker compose -f docker-compose.prod.yml up -d --build
+# ==============================================================================
+
+services:
+  # Base de Datos PostgreSQL 16 (Aislada, sin puertos públicos hacia el host)
+  db:
+    image: postgres:16.4-alpine
+    container_name: tvs-prod-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-tvs_prod_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_in_production_strong_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-tienda_virtual_segura}
+    networks:
+      - tvs_internal
+    # IMPORTANTE: No se exponen puertos (ports) hacia el exterior/host por seguridad
+    volumes:
+      - tvs_prod_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-tvs_prod_user} -d ${POSTGRES_DB:-tienda_virtual_segura}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Backend NestJS (Multi-stage, usuario no-root, migraciones automáticas al iniciar, sin seed)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tvs-prod-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    # Ejecuta migraciones de producción (prisma migrate deploy) antes de arrancar el servidor
+    command: sh -c "pnpm prisma migrate deploy && node dist/src/main.js"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-tvs_prod_user}:${POSTGRES_PASSWORD:-change_in_production_strong_secret}@tvs-prod-db:5432/${POSTGRES_DB:-tienda_virtual_segura}?schema=public
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      UPLOAD_DIR: /app/uploads
+    ports:
+      - "3000:3000"
+    volumes:
+      - tvs_prod_uploads:/app/uploads
+    networks:
+      - tvs_internal
+
+networks:
+  tvs_internal:
+    driver: bridge
+
+volumes:
+  tvs_prod_pgdata:
+  tvs_prod_uploads:

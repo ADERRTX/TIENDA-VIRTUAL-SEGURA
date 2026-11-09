@@ -16,6 +16,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     const requestId = crypto.randomUUID();
+    const isProduction = process.env['NODE_ENV'] === 'production';
 
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
@@ -26,18 +27,26 @@ export class AllExceptionsFilter implements ExceptionFilter {
       this.logger.warn(
         `[${requestId}] ${request.method} ${request.url} → ${status}: ${JSON.stringify(res)}`,
       );
+
+      // In production, server errors (>= 500) must not leak internal details
+      const message =
+        isProduction && status >= 500
+          ? 'Ocurrió un error interno en el servidor.'
+          : Array.isArray(res.message)
+            ? res.message.join('; ')
+            : (res.message ?? exception.message);
+
       response.status(status).json({
         error: {
-          code: res.code ?? 'ERROR_HTTP',
-          message: Array.isArray(res.message)
-            ? res.message.join('; ')
-            : (res.message ?? exception.message),
+          code: isProduction && status >= 500 ? 'ERROR_INTERNO' : (res.code ?? 'ERROR_HTTP'),
+          message,
           request_id: requestId,
         },
       });
       return;
     }
 
+    // Unhandled exception: stack is sent strictly to the server log, never in response
     this.logger.error(
       `[${requestId}] Error inesperado en ${request.method} ${request.url}`,
       exception instanceof Error ? exception.stack : String(exception),

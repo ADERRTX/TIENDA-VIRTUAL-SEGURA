@@ -1,10 +1,16 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useClaims } from '../api/claims';
-import { Button } from '../components/ui/Button';
+import { StatusBadge } from '../components/ui/StatusBadge';
+import { PageHeader } from '../components/ui/PageHeader';
+import { EmptyState } from '../components/ui/EmptyState';
+import { ErrorState } from '../components/ui/ErrorState';
+import { Pagination } from '../components/ui/Pagination';
+import { Skeleton } from '../components/ui/Skeleton';
 import { i18n } from '../i18n/es';
 import { formatDate } from '../lib/formatters';
 import { ApiError } from '../lib/http';
+import { Scale, Store, User, Clock } from 'lucide-react';
 
 export const claimStatusLabels: Record<string, string> = {
   ABIERTO: 'Abierto',
@@ -20,60 +26,106 @@ export default function ClaimsPage() {
   const lastPage = meta ? Math.max(1, Math.ceil(meta.total / meta.pageSize)) : 1;
 
   return (
-    <section className="flex max-w-3xl flex-col gap-6">
-      <h1 className="text-2xl font-bold">{i18n.claims.title}</h1>
+    <div className="flex flex-col gap-8 max-w-4xl mx-auto">
+      <PageHeader
+        title={i18n.claims.title}
+        description="Centro formal de mediación, resolución de controversias y garantías de compra."
+        breadcrumbs={[
+          { label: 'Inicio', to: '/' },
+          { label: 'Reclamos y Mediación' },
+        ]}
+      />
 
-      {isLoading && <div className="h-32 animate-pulse rounded-2xl bg-surface-2" />}
+      {isLoading && (
+        <div className="flex flex-col gap-4">
+          <Skeleton variant="block" className="h-32 w-full" />
+          <Skeleton variant="block" className="h-32 w-full" />
+        </div>
+      )}
 
       {isError && (
-        <div className="flex flex-col items-start gap-3 rounded-2xl border border-line bg-surface-2 p-5">
-          <p className="text-ink-muted">
-            {error instanceof ApiError ? error.message : i18n.common.error}
-          </p>
-          <Button variant="secondary" size="sm" onClick={() => refetch()}>
-            {i18n.common.retry}
-          </Button>
-        </div>
+        <ErrorState
+          title="Error al consultar reclamos"
+          description={error instanceof ApiError ? error.message : i18n.common.error}
+          onRetry={() => refetch()}
+        />
       )}
 
-      {data && data.items.length === 0 && (
-        <p className="text-ink-muted">No hay reclamos registrados.</p>
+      {!isLoading && !isError && data && data.items.length === 0 && (
+        <EmptyState
+          icon={<Scale className="h-8 w-8" />}
+          title="Sin reclamos activos"
+          description="No tienes controversias abiertas ni mediaciones pendientes registradas."
+        />
       )}
 
-      {data?.items.map((claim) => (
-        <Link
-          key={claim.id}
-          to={`/reclamos/${claim.id}`}
-          className="flex flex-col gap-2 rounded-2xl border border-line bg-surface-2 p-5 transition hover:border-brand"
-        >
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="font-bold">Reclamo #{claim.id.slice(0, 8)}</h2>
-            <span className="rounded-full border border-brand/50 px-3 py-1 text-xs font-semibold text-brand">
-              {claimStatusLabels[claim.status] ?? claim.status}
-            </span>
+      {!isLoading && !isError && data && data.items.length > 0 && (
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
+            {data.items.map((claim) => (
+              <Link
+                key={claim.id}
+                to={`/reclamos/${claim.id}`}
+                className="group flex flex-col gap-3 rounded-xl border border-line bg-surface p-5 transition-all duration-150 hover:border-brand/50 hover:bg-surface-2/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-2 text-warning border border-line">
+                      <Scale className="h-4 w-4" />
+                    </div>
+                    <span className="font-extrabold text-sm text-ink group-hover:text-brand transition-colors">
+                      Reclamo #{claim.id.slice(0, 8).toUpperCase()}
+                    </span>
+                  </div>
+
+                  <StatusBadge status={claim.status} category="claim" />
+                </div>
+
+                <p className="text-xs text-ink-muted line-clamp-2 leading-relaxed">
+                  "{claim.reason}"
+                </p>
+
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-line/40 text-[11px] text-ink-muted">
+                  <div className="flex items-center gap-3">
+                    {claim.subOrder?.seller?.storeName && (
+                      <span className="flex items-center gap-1">
+                        <Store className="h-3 w-3 text-brand" />
+                        <span>{claim.subOrder.seller.storeName}</span>
+                      </span>
+                    )}
+
+                    {claim.claimant?.fullName && (
+                      <span className="flex items-center gap-1">
+                        <User className="h-3 w-3 text-info" />
+                        <span>{claim.claimant.fullName}</span>
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-3 w-3" />
+                    <span>{formatDate(claim.createdAt)}</span>
+                    <span className="text-brand font-semibold group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
+                      Ingresar a mediación →
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
-          <p className="line-clamp-2 text-sm text-ink-muted">{claim.reason}</p>
-          <p className="text-xs text-ink-muted">
-            {claim.subOrder?.seller?.storeName ?? ''}
-            {claim.claimant?.fullName ? ` · ${claim.claimant.fullName}` : ''} ·{' '}
-            {formatDate(claim.createdAt)}
-          </p>
-        </Link>
-      ))}
 
-      {meta && lastPage > 1 && (
-        <div className="flex items-center justify-between">
-          <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>
-            Anterior
-          </Button>
-          <span className="text-sm text-ink-muted">
-            Página {page} de {lastPage}
-          </span>
-          <Button variant="secondary" size="sm" disabled={page >= lastPage} onClick={() => setPage(page + 1)}>
-            Siguiente
-          </Button>
+          {meta && lastPage > 1 && (
+            <div className="pt-2 border-t border-line/40">
+              <Pagination
+                page={page}
+                totalPages={lastPage}
+                totalItems={meta.total}
+                onPageChange={setPage}
+              />
+            </div>
+          )}
         </div>
       )}
-    </section>
+    </div>
   );
 }

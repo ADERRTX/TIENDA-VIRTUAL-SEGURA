@@ -58,9 +58,10 @@ export class SellerCatalogController {
 
   @Get(':id')
   async getOne(
+    @CurrentUser() user: RequestUser,
     @Param('id') id: string,
   ): Promise<{ data: unknown }> {
-    const product = await this.catalogService.getProductDetail(id);
+    const product = await this.catalogService.getSellerProductDetail(user.id, id);
     return { data: product };
   }
 

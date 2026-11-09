@@ -11,13 +11,26 @@ import {
 } from '../api/sellerProducts';
 import EditProductForm from '../components/EditProductForm';
 import { Button } from '../components/ui/Button';
+import { Card } from '../components/ui/Card';
 import { Modal } from '../components/ui/Modal';
+import { StatusBadge } from '../components/ui/StatusBadge';
+import { PageHeader } from '../components/ui/PageHeader';
+import { EmptyState } from '../components/ui/EmptyState';
+import { ErrorState } from '../components/ui/ErrorState';
+import { Pagination } from '../components/ui/Pagination';
+import { Skeleton } from '../components/ui/Skeleton';
 import { i18n } from '../i18n/es';
 import { formatMoney } from '../lib/formatters';
 import { ApiError } from '../lib/http';
-
-const inputClass =
-  'w-full min-h-[44px] rounded-xl border border-line bg-bg px-3 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand';
+import {
+  Plus,
+  Package,
+  Trash2,
+  Edit2,
+  Upload,
+  AlertCircle,
+  Tag,
+} from 'lucide-react';
 
 function errorMessage(error: unknown): string {
   return error instanceof ApiError ? error.message : i18n.common.error;
@@ -50,25 +63,40 @@ function CreateProductForm({ onDone }: { onDone: () => void }) {
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-3">
-      <label className="flex flex-col gap-1 text-sm">
-        Título
-        <input className={inputClass} value={title} required minLength={3} onChange={(e) => setTitle(e.target.value)} />
+    <form onSubmit={submit} className="flex flex-col gap-4">
+      <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
+        <span>Título del producto</span>
+        <input
+          className="h-10 px-3.5 rounded-lg border border-line bg-surface-2 text-xs text-ink placeholder:text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
+          placeholder="Ej. Mochila Antirrobo Impermeable con Candado TSA"
+          value={title}
+          required
+          minLength={3}
+          onChange={(e) => setTitle(e.target.value)}
+        />
       </label>
-      <label className="flex flex-col gap-1 text-sm">
-        Descripción (mínimo 10 caracteres)
+
+      <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
+        <span>Descripción completa (mínimo 10 caracteres)</span>
         <textarea
-          className={`${inputClass} py-2`}
+          className="w-full min-h-[80px] rounded-lg border border-line bg-surface-2 p-3 text-xs text-ink placeholder:text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
           rows={3}
+          placeholder="Describe materiales, especificaciones técnicas y características del artículo..."
           value={description}
           required
           minLength={10}
           onChange={(e) => setDescription(e.target.value)}
         />
       </label>
-      <label className="flex flex-col gap-1 text-sm">
-        Categoría
-        <select className={inputClass} value={categoryId} required onChange={(e) => setCategoryId(e.target.value)}>
+
+      <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
+        <span>Categoría del producto</span>
+        <select
+          className="h-10 px-3 rounded-lg border border-line bg-surface-2 text-xs text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
+          value={categoryId}
+          required
+          onChange={(e) => setCategoryId(e.target.value)}
+        >
           <option value="">Selecciona una categoría</option>
           {categories.data?.map((category) => (
             <option key={category.id} value={category.id}>
@@ -77,42 +105,58 @@ function CreateProductForm({ onDone }: { onDone: () => void }) {
           ))}
         </select>
       </label>
-      <label className="flex flex-col gap-1 text-sm">
-        Nombre de la variante
-        <input className={inputClass} value={variantName} required onChange={(e) => setVariantName(e.target.value)} />
-      </label>
-      <div className="grid grid-cols-2 gap-3">
-        <label className="flex flex-col gap-1 text-sm">
-          Precio (S/)
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
+          <span>Nombre de variante inicial</span>
+          <input
+            className="h-10 px-3 rounded-lg border border-line bg-surface-2 text-xs text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
+            value={variantName}
+            required
+            onChange={(e) => setVariantName(e.target.value)}
+          />
+        </label>
+
+        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
+          <span>Precio (S/.)</span>
           <input
             type="number"
             min="0.01"
             step="0.01"
-            className={inputClass}
+            className="h-10 px-3 rounded-lg border border-line bg-surface-2 text-xs text-ink tabular focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
             value={price}
             required
+            placeholder="0.00"
             onChange={(e) => setPrice(e.target.value)}
           />
         </label>
-        <label className="flex flex-col gap-1 text-sm">
-          Stock
+
+        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
+          <span>Stock inicial</span>
           <input
             type="number"
             min="0"
             step="1"
-            className={inputClass}
+            className="h-10 px-3 rounded-lg border border-line bg-surface-2 text-xs text-ink tabular focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
             value={stock}
             required
             onChange={(e) => setStock(e.target.value)}
           />
         </label>
       </div>
-      {create.isError && <p className="text-sm text-red-400">{errorMessage(create.error)}</p>}
-      <div className="flex justify-end gap-2">
-        <Button type="button" variant="secondary" size="sm" onClick={onDone}>
+
+      {create.isError && (
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-danger-soft text-danger border border-danger/30 text-xs font-medium">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          <span>{errorMessage(create.error)}</span>
+        </div>
+      )}
+
+      <div className="flex justify-end gap-2 pt-3 border-t border-line/60">
+        <Button type="button" variant="ghost" size="sm" onClick={onDone}>
           {i18n.common.cancel}
         </Button>
-        <Button type="submit" size="sm" isLoading={create.isPending}>
+        <Button type="submit" size="sm" isLoading={create.isPending} className="font-semibold px-5">
           {i18n.common.save}
         </Button>
       </div>
@@ -133,7 +177,7 @@ function ProductRow({ product }: { product: SellerProduct }) {
   }
 
   function handleDelete() {
-    if (window.confirm(`¿Eliminar "${product.title}"?`)) {
+    if (window.confirm(`¿Eliminar definitivamente el producto "${product.title}"?`)) {
       removeProduct.mutate(product.id);
     }
   }
@@ -141,57 +185,89 @@ function ProductRow({ product }: { product: SellerProduct }) {
   const error = upload.error ?? removeImage.error ?? removeProduct.error;
 
   return (
-    <article className="flex flex-col gap-3 rounded-2xl border border-line bg-surface-2 p-5">
-      <header className="flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <h2 className="font-bold">{product.title}</h2>
-          <p className="text-xs text-ink-muted">
-            {product.category?.name ?? 'Sin categoría'} · {product.status}
-          </p>
+    <Card padding="md" className="flex flex-col gap-4">
+      <header className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-line/60">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-2 text-brand border border-line">
+            <Package className="h-4.5 w-4.5" />
+          </div>
+          <div className="flex flex-col">
+            <h2 className="font-bold text-sm text-ink">{product.title}</h2>
+            <div className="flex items-center gap-2 text-[11px] text-ink-muted">
+              <span>{product.category?.name ?? 'Sin categoría'}</span>
+              <span>·</span>
+              <StatusBadge status={product.status} category="product" size="sm" />
+            </div>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="secondary" size="sm" onClick={() => setEditing(true)}>
+
+        <div className="flex items-center gap-1.5">
+          <Button variant="secondary" size="sm" className="h-8 text-xs px-2.5" onClick={() => setEditing(true)}>
+            <Edit2 className="h-3.5 w-3.5 mr-1" />
             {i18n.common.edit}
           </Button>
-          <Button variant="ghost" size="sm" isLoading={removeProduct.isPending} onClick={handleDelete}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 text-xs px-2 text-danger hover:bg-danger-soft"
+            isLoading={removeProduct.isPending}
+            onClick={handleDelete}
+          >
+            <Trash2 className="h-3.5 w-3.5 mr-1" />
             {i18n.common.delete}
           </Button>
         </div>
       </header>
 
-      <ul className="flex flex-col gap-1 text-sm">
-        {product.variants.map((variant) => (
-          <li key={variant.id} className="flex justify-between gap-4">
-            <span>{variant.name}</span>
-            <span>
-              {formatMoney(variant.price)} · stock {variant.stock}
-            </span>
-          </li>
-        ))}
-      </ul>
+      {/* Variantes y Precios */}
+      <div className="flex flex-col gap-1.5 text-xs">
+        <span className="font-semibold text-ink-muted text-[11px] uppercase tracking-wider">
+          Variantes registradas:
+        </span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+          {product.variants.map((variant) => (
+            <div
+              key={variant.id}
+              className="flex items-center justify-between p-2 rounded-lg bg-surface-2 border border-line/60"
+            >
+              <span className="font-medium text-ink">{variant.name}</span>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-brand tabular">{formatMoney(variant.price)}</span>
+                <span className="text-[10px] text-ink-muted bg-surface px-1.5 py-0.5 rounded border border-line/40">
+                  Stock: {variant.stock}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
-      <div className="flex flex-wrap items-center gap-3 border-t border-line pt-3">
+      {/* Galería de Imágenes y Subida */}
+      <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-line/40">
         {product.images.map((image) => (
-          <div key={image.id} className="relative">
+          <div key={image.id} className="relative group">
             <img
               src={imageUrl(image.fileName)}
               alt={product.title}
-              className={`h-20 w-20 rounded-xl object-cover ${image.isMain ? 'ring-2 ring-brand' : ''}`}
+              className={`h-16 w-16 rounded-lg object-cover border border-line bg-surface-2 ${
+                image.isMain ? 'ring-2 ring-brand' : ''
+              }`}
             />
             <button
               type="button"
               aria-label="Quitar imagen"
               disabled={removeImage.isPending}
               onClick={() => removeImage.mutate({ productId: product.id, imageId: image.id })}
-              className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border border-line bg-bg text-xs text-ink shadow"
+              className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full border border-line bg-surface text-xs text-danger shadow hover:bg-danger-soft transition-colors"
             >
               ×
             </button>
           </div>
         ))}
 
-        <label className="flex h-20 w-20 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-line text-center text-xs text-ink-muted hover:border-brand">
-          {upload.isPending ? 'Subiendo...' : '+ Imagen'}
+        <label className="flex h-16 w-16 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-line text-center text-[10px] text-ink-muted hover:border-brand hover:text-brand transition-colors bg-surface-2/30">
+          <Upload className="h-4 w-4 mb-0.5" />
+          <span>{upload.isPending ? '...' : '+ Foto'}</span>
           <input
             type="file"
             accept="image/jpeg,image/png"
@@ -202,12 +278,17 @@ function ProductRow({ product }: { product: SellerProduct }) {
         </label>
       </div>
 
-      {error && <p className="text-sm text-red-400">{errorMessage(error)}</p>}
+      {error && (
+        <p className="text-xs text-danger flex items-center gap-1.5">
+          <AlertCircle className="h-3.5 w-3.5" />
+          <span>{errorMessage(error)}</span>
+        </p>
+      )}
 
-      <Modal isOpen={editing} onClose={() => setEditing(false)} title={product.title}>
+      <Modal isOpen={editing} onClose={() => setEditing(false)} title={`Editar: ${product.title}`} size="lg">
         <EditProductForm key={product.id} product={product} onDone={() => setEditing(false)} />
       </Modal>
-    </article>
+    </Card>
   );
 }
 
@@ -219,48 +300,72 @@ export default function SellerProductsPage() {
   const lastPage = meta ? Math.max(1, Math.ceil(meta.total / meta.pageSize)) : 1;
 
   return (
-    <section className="flex max-w-3xl flex-col gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold">{i18n.seller.myProducts}</h1>
-        <Button size="sm" onClick={() => setCreating(true)}>
-          {i18n.seller.addProduct}
-        </Button>
-      </div>
+    <div className="flex flex-col gap-8 max-w-4xl mx-auto">
+      <PageHeader
+        title={i18n.seller.myProducts}
+        description="Publica y gestiona el inventario de artículos de tu comercio verificado."
+        breadcrumbs={[
+          { label: 'Inicio', to: '/' },
+          { label: 'Panel de Vendedor' },
+          { label: 'Mis Productos' },
+        ]}
+        actions={
+          <Button size="sm" variant="primary" onClick={() => setCreating(true)} className="gap-1.5 font-semibold">
+            <Plus className="h-4 w-4" />
+            <span>{i18n.seller.addProduct}</span>
+          </Button>
+        }
+      />
 
-      <Modal isOpen={creating} onClose={() => setCreating(false)} title={i18n.seller.addProduct}>
+      <Modal isOpen={creating} onClose={() => setCreating(false)} title={i18n.seller.addProduct} size="md">
         <CreateProductForm onDone={() => setCreating(false)} />
       </Modal>
 
-      {isLoading && <div className="h-32 animate-pulse rounded-2xl bg-surface-2" />}
+      {isLoading && (
+        <div className="flex flex-col gap-4">
+          <Skeleton variant="block" className="h-32 w-full" />
+          <Skeleton variant="block" className="h-32 w-full" />
+        </div>
+      )}
 
       {isError && (
-        <div className="flex flex-col items-start gap-3 rounded-2xl border border-line bg-surface-2 p-5">
-          <p className="text-ink-muted">{errorMessage(error)}</p>
-          <Button variant="secondary" size="sm" onClick={() => refetch()}>
-            {i18n.common.retry}
-          </Button>
+        <ErrorState
+          title="Error al consultar tus productos"
+          description={errorMessage(error)}
+          onRetry={() => refetch()}
+        />
+      )}
+
+      {!isLoading && !isError && data && data.items.length === 0 && (
+        <EmptyState
+          icon={<Tag className="h-8 w-8" />}
+          title="Sin productos publicados"
+          description="Aún no has publicado productos en tu catálogo comercial. Comienza publicando el primero."
+          actionLabel={i18n.seller.addProduct}
+          onAction={() => setCreating(true)}
+        />
+      )}
+
+      {!isLoading && !isError && data && data.items.length > 0 && (
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
+            {data.items.map((product) => (
+              <ProductRow key={product.id} product={product} />
+            ))}
+          </div>
+
+          {meta && lastPage > 1 && (
+            <div className="pt-2 border-t border-line/40">
+              <Pagination
+                page={page}
+                totalPages={lastPage}
+                totalItems={meta.total}
+                onPageChange={setPage}
+              />
+            </div>
+          )}
         </div>
       )}
-
-      {data && data.items.length === 0 && (
-        <p className="text-ink-muted">Aún no tienes productos publicados.</p>
-      )}
-
-      {data?.items.map((product) => <ProductRow key={product.id} product={product} />)}
-
-      {meta && lastPage > 1 && (
-        <div className="flex items-center justify-between">
-          <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>
-            Anterior
-          </Button>
-          <span className="text-sm text-ink-muted">
-            Página {page} de {lastPage}
-          </span>
-          <Button variant="secondary" size="sm" disabled={page >= lastPage} onClick={() => setPage(page + 1)}>
-            Siguiente
-          </Button>
-        </div>
-      )}
-    </section>
+    </div>
   );
 }

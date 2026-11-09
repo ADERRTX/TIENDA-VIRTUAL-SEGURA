@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { CommonModule } from './common/common.module';
 import { AuthGuard } from './common/guards/auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
+import { AuditInterceptor } from './common/interceptors/audit.interceptor';
 
 import { HealthController } from './modules/health/health.controller';
 import { AuthModule } from './modules/auth/auth.module';
@@ -22,7 +23,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { AdminModule } from './modules/admin/admin.module';
 
 const ONE_MINUTE_MS = 60_000;
-const GENERAL_LIMIT_PER_MINUTE = 200;
+const GENERAL_LIMIT_PER_MINUTE = process.env['NODE_ENV'] === 'test' ? 10000 : 200;
 
 @Module({
   imports: [
@@ -45,6 +46,10 @@ const GENERAL_LIMIT_PER_MINUTE = 200;
   ],
   controllers: [HealthController],
   providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuditInterceptor,
+    },
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

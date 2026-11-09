@@ -8,7 +8,6 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
-import { PaymentsRepository } from './payments.repository';
 import { CurrentUser, RequestUser } from '../../common/decorators/current-user.decorator';
 import { ZodPipe } from '../../common/zod.pipe';
 import { processPaymentSchema, ProcessPaymentInput } from './payments.dto';
@@ -17,7 +16,6 @@ import { processPaymentSchema, ProcessPaymentInput } from './payments.dto';
 export class PaymentsController {
   constructor(
     private readonly paymentsService: PaymentsService,
-    private readonly paymentsRepo: PaymentsRepository,
   ) {}
 
   @Post()
@@ -33,9 +31,10 @@ export class PaymentsController {
 
   @Get(':orderId')
   async getPayment(
+    @CurrentUser() user: RequestUser,
     @Param('orderId') orderId: string,
   ): Promise<{ data: unknown }> {
-    const payment = await this.paymentsRepo.findApprovedPaymentByOrder(orderId);
+    const payment = await this.paymentsService.getPaymentByOrder(user.id, user.role, orderId);
     return { data: payment };
   }
 }

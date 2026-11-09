@@ -9,6 +9,7 @@ import { OrdersRepository } from '../orders/orders.repository';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ClockService } from '../../common/clock.service';
 import { AuditService } from '../../audit/audit.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import {
   PaymentStatus,
   OrderStatus,
@@ -16,6 +17,8 @@ import {
   OrderPaymentStatus,
   CustodyStatus,
   RefundStatus,
+  NotificationType,
+  UserRole,
 } from '../../common/constants';
 import { ProcessPaymentInput } from './payments.dto';
 import { Prisma } from '../../generated/prisma/client';
@@ -28,6 +31,7 @@ export class PaymentsService {
     private readonly prisma: PrismaService,
     private readonly clock: ClockService,
     private readonly auditService: AuditService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async processPayment(
@@ -86,74 +90,110 @@ export class PaymentsService {
     const isSuccess = input.token === 'tok_ok';
     const status = isSuccess ? PaymentStatus.APROBADO : PaymentStatus.RECHAZADO;
 
-    const result = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-      const payment = await tx.payment.create({
-        data: {
-          orderId: order.id,
-          subOrderId: null,
-          amount: totalAmount,
-          status,
-        },
-      });
+    let result: unknown;
+    try {
+      result = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+        const payment = await tx.payment.create({
+          data: {
+            orderId: order.id,
+            subOrderId: null,
+            amount: totalAmount,
+            status,
+          },
+        });
 
-      if (isSuccess) {
-        for (const sub of order.subOrders) {
-          const subTotal = subOrderTotals.get(sub.id) || 0;
-          await tx.subOrder.update({
-            where: { id: sub.id },
-            data: { status: SubOrderStatus.PAGADO },
-          });
+        if (isSuccess) {
+          for (const sub of order.subOrders) {
+            const subTotal = subOrderTotals.get(sub.id) || 0;
+            await tx.subOrder.update({
+              where: { id: sub.id },
+              data: { status: SubOrderStatus.PAGADO },
+            });
 
-          await tx.custody.create({
+            await tx.custody.create({
+              data: {
+                subOrderId: sub.id,
+                amount: subTotal,
+                status: CustodyStatus.RETENIDO,
+              },
+            });
+          }
+
+          await tx.order.update({
+            where: { id: order.id },
             data: {
-              subOrderId: sub.id,
-              amount: subTotal,
-              status: CustodyStatus.RETENIDO,
+              status: OrderStatus.PAGADO,
+              paymentStatus: OrderPaymentStatus.PAGADO,
             },
           });
         }
 
-        await tx.order.update({
-          where: { id: order.id },
-          data: {
-            status: OrderStatus.PAGADO,
-            paymentStatus: OrderPaymentStatus.PAGADO,
+        const responsePayload = {
+          paymentId: payment.id,
+          orderId: order.id,
+          amount: totalAmount,
+          status: payment.status,
+          cardLast4: '4242',
+          cardBrand: 'Visa Simulator',
+        };
+
+        if (idempotencyKey) {
+          await tx.idempotencyKey.create({
+            data: {
+              key: idempotencyKey,
+              userId,
+              response: responsePayload as unknown as Prisma.InputJsonValue,
+            },
+          });
+        }
+
+        await this.auditService.log(
+          {
+            actorId: userId,
+            action: isSuccess ? 'PAYMENT_APPROVED' : 'PAYMENT_REJECTED',
+            entity: 'payment',
+            entityId: payment.id,
+            payload: { amount: totalAmount, status },
           },
-        });
+          tx,
+        );
+
+        return responsePayload;
+      });
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
+        if (idempotencyKey) {
+          const cached = await this.ordersRepo.findIdempotency(idempotencyKey, userId);
+          if (cached) return cached;
+        }
+        const existingApproved = await this.paymentsRepo.findApprovedPaymentByOrder(order.id);
+        if (existingApproved) {
+          throw new ConflictException({
+            code: 'PAYMENT_ALREADY_APPROVED',
+            message: 'El pedido ya cuenta con un pago aprobado',
+          });
+        }
       }
+      throw err;
+    }
 
-      const responsePayload = {
-        paymentId: payment.id,
-        orderId: order.id,
-        amount: totalAmount,
-        status: payment.status,
-        cardLast4: '4242',
-        cardBrand: 'Visa Simulator',
-      };
-
-      if (idempotencyKey) {
-        await tx.idempotencyKey.create({
-          data: {
-            key: idempotencyKey,
-            userId,
-            response: responsePayload as unknown as Prisma.InputJsonValue,
-          },
-        });
+    try {
+      if (isSuccess) {
+        await this.notificationsService.notify(
+          order.buyerId,
+          NotificationType.ORDER,
+          `Tu pago por S/ ${(totalAmount / 100).toFixed(2)} para el pedido ha sido aprobado exitosamente.`,
+        );
+      } else {
+        await this.notificationsService.notify(
+          order.buyerId,
+          NotificationType.ORDER,
+          'El pago de tu pedido fue rechazado por la pasarela de pagos. Por favor intenta nuevamente.',
+        );
       }
-
-      await this.auditService.log(
-        {
-          actorId: userId,
-          action: isSuccess ? 'PAYMENT_APPROVED' : 'PAYMENT_REJECTED',
-          entity: 'payment',
-          entityId: payment.id,
-          payload: { amount: totalAmount, status },
-        },
-        tx,
-      );
-
-      return responsePayload;
-    });
+    } catch {
+      // Evita interrumpir la respuesta si falla el canal de notificación
+    }
 
     return result;
   }
@@ -229,5 +269,39 @@ export class PaymentsService {
       return execute(txClient);
     }
     return this.prisma.$transaction(execute);
+  }
+
+  async getPaymentByOrder(userId: string, role: string, orderId: string): Promise<unknown> {
+    const order = await this.ordersRepo.findOrderById(orderId);
+    if (!order) {
+      throw new NotFoundException({
+        code: 'ORDER_NOT_FOUND',
+        message: 'Pedido no encontrado',
+      });
+    }
+
+    const orderObj = order as Record<string, unknown>;
+    const buyerObj = orderObj['buyer'] as { id: string } | undefined;
+    const subOrdersObj = (orderObj['subOrders'] || []) as Array<{ seller?: { userId: string } }>;
+
+    const isBuyer = buyerObj?.id === userId;
+    const isSeller = subOrdersObj.some((s) => s.seller?.userId === userId);
+    const isStaff = role === UserRole.ADMIN || role === UserRole.SUPPORT;
+
+    if (!isBuyer && !isSeller && !isStaff) {
+      throw new NotFoundException({
+        code: 'ORDER_NOT_FOUND',
+        message: 'Pedido no encontrado',
+      });
+    }
+
+    const payment = await this.paymentsRepo.findApprovedPaymentByOrder(orderId);
+    if (!payment) {
+      throw new NotFoundException({
+        code: 'PAYMENT_NOT_FOUND',
+        message: 'Pago no encontrado',
+      });
+    }
+    return payment;
   }
 }

@@ -30,3 +30,20 @@ export const resetPasswordSchema = z.object({
     .refine((val) => /[^A-Za-z0-9]/.test(val), { message: 'Debe incluir al menos un carácter especial' }),
 });
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'La contraseña actual es requerida'),
+    newPassword: z
+      .string()
+      .min(12, 'La nueva contraseña debe tener al menos 12 caracteres')
+      .refine((val) => /[A-Z]/.test(val), { message: 'Debe incluir al menos una letra mayúscula' })
+      .refine((val) => /[a-z]/.test(val), { message: 'Debe incluir al menos una letra minúscula' })
+      .refine((val) => /[0-9]/.test(val), { message: 'Debe incluir al menos un número' })
+      .refine((val) => /[^A-Za-z0-9]/.test(val), { message: 'Debe incluir al menos un carácter especial' }),
+  })
+  .refine((data) => data.currentPassword !== data.newPassword, {
+    message: 'La nueva contraseña debe ser distinta de la actual',
+    path: ['newPassword'],
+  });
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;

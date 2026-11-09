@@ -1,12 +1,28 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMe } from '../api/auth';
 import { useCart, useRemoveCartItem, useUpdateCartItem } from '../api/cart';
 import { imageUrl } from '../api/products';
 import { Button } from '../components/ui/Button';
+import { Card } from '../components/ui/Card';
+import { PageHeader } from '../components/ui/PageHeader';
+import { EmptyState } from '../components/ui/EmptyState';
+import { ErrorState } from '../components/ui/ErrorState';
+import { Skeleton } from '../components/ui/Skeleton';
 import { i18n } from '../i18n/es';
 import { formatMoney } from '../lib/formatters';
+import {
+  ShoppingCart,
+  Trash2,
+  Store,
+  ShieldCheck,
+  ArrowRight,
+  AlertTriangle,
+  Minus,
+  Plus,
+} from 'lucide-react';
 
 export default function CartPage() {
+  const navigate = useNavigate();
   const { data: user, isLoading: loadingUser } = useMe();
   const { data: cart, isLoading, isError, refetch } = useCart(Boolean(user));
   const updateItem = useUpdateCartItem();
@@ -14,147 +30,248 @@ export default function CartPage() {
   const busy = updateItem.isPending || removeItem.isPending;
 
   if (loadingUser) {
-    return <div className="h-32 animate-pulse rounded-2xl bg-surface-2" />;
+    return (
+      <div className="flex flex-col gap-4 max-w-4xl">
+        <Skeleton variant="block" className="h-10 w-48" />
+        <Skeleton variant="block" className="h-40 w-full" />
+      </div>
+    );
   }
 
   if (!user) {
     return (
-      <section className="flex flex-col items-start gap-3">
-        <h1 className="text-2xl font-bold">{i18n.cart.title}</h1>
-        <p className="text-ink-muted">Inicia sesión para ver tu carrito.</p>
-        <Link to="/login" className="text-brand underline">
-          {i18n.nav.login}
-        </Link>
-      </section>
+      <EmptyState
+        icon={<ShoppingCart className="h-8 w-8" />}
+        title="Inicia sesión para gestionar tu carrito"
+        description="Para guardar artículos y disfrutar de compras con custodia segura, inicia sesión con tu cuenta."
+        actionLabel={i18n.nav.login}
+        onAction={() => navigate('/login')}
+      />
     );
   }
 
+  const hasItems = cart && cart.groups.length > 0;
+
   return (
-    <section className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold">{i18n.cart.title}</h1>
+    <div className="flex flex-col gap-8 max-w-5xl">
+      {/* Encabezado */}
+      <PageHeader
+        title={i18n.cart.title}
+        description="Revisa los productos seleccionados antes de proceder a la custodia y pago."
+        breadcrumbs={[
+          { label: 'Inicio', to: '/' },
+          { label: 'Catálogo', to: '/catalogo' },
+          { label: 'Carrito de Compras' },
+        ]}
+      />
 
-      {isLoading && <div className="h-32 animate-pulse rounded-2xl bg-surface-2" />}
+      {/* Estados de Carga */}
+      {isLoading && (
+        <div className="flex flex-col gap-4">
+          <Skeleton variant="block" className="h-32 w-full" />
+          <Skeleton variant="block" className="h-32 w-full" />
+        </div>
+      )}
 
+      {/* Error al cargar */}
       {isError && (
-        <div className="flex flex-col items-start gap-3 rounded-2xl border border-line bg-surface-2 p-5">
-          <p className="text-ink-muted">{i18n.common.error}</p>
-          <Button variant="secondary" size="sm" onClick={() => refetch()}>
-            {i18n.common.retry}
-          </Button>
-        </div>
+        <ErrorState
+          title="Error al consultar tu carrito"
+          description="No se pudieron sincronizar los artículos del carrito con el servidor."
+          onRetry={() => refetch()}
+        />
       )}
 
-      {cart && cart.groups.length === 0 && (
-        <div className="flex flex-col items-start gap-3">
-          <p className="text-ink-muted">{i18n.cart.empty}</p>
-          <Link to="/catalogo" className="text-brand underline">
-            {i18n.cart.startShopping}
-          </Link>
-        </div>
+      {/* Carrito Vacío */}
+      {!isLoading && !isError && !hasItems && (
+        <EmptyState
+          icon={<ShoppingCart className="h-8 w-8" />}
+          title={i18n.cart.empty}
+          description="No tienes productos en tu carrito de compras actualmente."
+          actionLabel={i18n.cart.startShopping}
+          onAction={() => navigate('/catalogo')}
+        />
       )}
 
+      {/* Advertencias de stock o precio */}
       {cart && cart.warnings.length > 0 && (
-        <div className="rounded-2xl border border-line bg-surface-2 p-4">
-          <p className="mb-2 font-bold">{i18n.cart.warnings}</p>
-          <ul className="list-disc pl-5 text-sm text-red-500">
-            {cart.warnings.map((warning) => (
-              <li key={warning}>{warning}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {cart &&
-        cart.groups.map((group) => (
-          <div key={group.sellerId} className="flex flex-col gap-3">
-            <h2 className="text-sm text-ink-muted">
-              {i18n.cart.sellerGroup} <span className="font-bold">{group.storeName}</span>
-            </h2>
-
-            {group.items.map((item) => (
-              <div
-                key={item.id}
-                className="flex flex-wrap items-center gap-4 rounded-2xl border border-line bg-surface-2 p-3"
-              >
-                {item.image ? (
-                  <img
-                    src={imageUrl(item.image)}
-                    alt={item.title}
-                    className="h-16 w-16 rounded-xl object-cover"
-                  />
-                ) : (
-                  <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-surface text-xs text-ink-muted">
-                    Sin imagen
-                  </div>
-                )}
-
-                <div className="min-w-0 flex-1">
-                  <Link to={`/catalogo/${item.productId}`} className="font-bold hover:text-brand">
-                    {item.title}
-                  </Link>
-                  <p className="text-xs text-ink-muted">{item.variantName}</p>
-                  <p className="text-sm text-brand">{formatMoney(item.price)}</p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    aria-label="Disminuir cantidad"
-                    disabled={busy || item.quantity <= 1}
-                    onClick={() =>
-                      updateItem.mutate({ variantId: item.variantId, quantity: item.quantity - 1 })
-                    }
-                  >
-                    −
-                  </Button>
-                  <span className="w-6 text-center font-bold">{item.quantity}</span>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    aria-label="Aumentar cantidad"
-                    disabled={busy || item.quantity >= item.stock}
-                    onClick={() =>
-                      updateItem.mutate({ variantId: item.variantId, quantity: item.quantity + 1 })
-                    }
-                  >
-                    +
-                  </Button>
-                </div>
-
-                <p className="w-24 text-right font-bold">{formatMoney(item.total)}</p>
-
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  disabled={busy}
-                  onClick={() => removeItem.mutate(item.variantId)}
-                >
-                  {i18n.cart.remove}
-                </Button>
-              </div>
-            ))}
-
-            <p className="text-right text-sm text-ink-muted">
-              {i18n.cart.subtotal}: <span className="font-bold">{formatMoney(group.subtotal)}</span>
-            </p>
+        <div className="rounded-xl border border-warning/40 bg-warning-soft p-4 flex items-start gap-3">
+          <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
+          <div className="flex flex-col gap-1">
+            <span className="text-xs font-bold text-warning uppercase tracking-wider">
+              {i18n.cart.warnings}
+            </span>
+            <ul className="text-xs text-ink-muted list-disc pl-4 space-y-0.5">
+              {cart.warnings.map((warning, idx) => (
+                <li key={idx}>{warning}</li>
+              ))}
+            </ul>
           </div>
-        ))}
-
-      {cart && cart.groups.length > 0 && (
-        <div className="flex flex-col items-end gap-3 border-t border-line pt-4">
-          <p className="text-lg">
-            {i18n.cart.total}: <span className="font-bold text-brand">{formatMoney(cart.total)}</span>
-          </p>
-          {/* El checkout se conecta en el siguiente paso */}
-          <Link
-  to="/checkout"
-  className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-brand/50 bg-gradient-to-b from-[#3FE0CB] to-[#14B8A6] px-5 py-2.5 text-sm font-bold text-[#04211D] shadow-[0_0_18px_rgba(45,212,191,0.35)] hover:brightness-110"
->
-  {i18n.cart.checkout}
-</Link>
         </div>
       )}
-    </section>
+
+      {/* Contenido del Carrito (Layout 2 columnas en desktop) */}
+      {!isLoading && !isError && hasItems && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          {/* Lista de Grupos por Vendedor (2 columnas) */}
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            {cart.groups.map((group) => (
+              <Card key={group.sellerId} padding="md" className="flex flex-col gap-4">
+                {/* Cabecera del vendedor */}
+                <div className="flex items-center justify-between pb-3 border-b border-line/60">
+                  <div className="flex items-center gap-2">
+                    <Store className="h-4 w-4 text-brand" />
+                    <span className="text-xs text-ink-muted">{i18n.cart.sellerGroup}</span>
+                    <span className="text-sm font-bold text-ink">{group.storeName}</span>
+                  </div>
+                  <span className="text-xs text-ink-muted font-medium">
+                    Sub-pedido independiente
+                  </span>
+                </div>
+
+                {/* Items del vendedor */}
+                <div className="flex flex-col divide-y divide-line/40">
+                  {group.items.map((item) => (
+                    <div key={item.id} className="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                      {/* Imagen */}
+                      <div className="h-16 w-16 shrink-0 rounded-lg overflow-hidden border border-line bg-surface-2">
+                        {item.image ? (
+                          <img
+                            src={imageUrl(item.image)}
+                            alt={item.title}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-[10px] text-ink-muted">
+                            Sin foto
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Info del producto */}
+                      <div className="flex-1 min-w-0">
+                        <Link
+                          to={`/catalogo/${item.productId}`}
+                          className="text-sm font-semibold text-ink hover:text-brand transition-colors line-clamp-1"
+                        >
+                          {item.title}
+                        </Link>
+                        <p className="text-xs text-ink-muted">{item.variantName}</p>
+                        <p className="text-xs font-semibold text-brand tabular mt-1">
+                          {formatMoney(item.price)} c/u
+                        </p>
+                      </div>
+
+                      {/* Selector de cantidad */}
+                      <div className="flex items-center gap-1.5 border border-line rounded-lg p-0.5 bg-surface-2">
+                        <button
+                          type="button"
+                          aria-label="Disminuir cantidad"
+                          disabled={busy || item.quantity <= 1}
+                          onClick={() =>
+                            updateItem.mutate({ variantId: item.variantId, quantity: item.quantity - 1 })
+                          }
+                          className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-surface text-ink-muted hover:text-ink disabled:opacity-30 transition-colors"
+                        >
+                          <Minus className="h-3 w-3" />
+                        </button>
+                        <span className="w-7 text-center text-xs font-bold tabular text-ink">
+                          {item.quantity}
+                        </span>
+                        <button
+                          type="button"
+                          aria-label="Aumentar cantidad"
+                          disabled={busy || item.quantity >= item.stock}
+                          onClick={() =>
+                            updateItem.mutate({ variantId: item.variantId, quantity: item.quantity + 1 })
+                          }
+                          className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-surface text-ink-muted hover:text-ink disabled:opacity-30 transition-colors"
+                        >
+                          <Plus className="h-3 w-3" />
+                        </button>
+                      </div>
+
+                      {/* Total por línea */}
+                      <span className="text-sm font-bold text-ink tabular min-w-[80px] text-right">
+                        {formatMoney(item.total)}
+                      </span>
+
+                      {/* Botón eliminar */}
+                      <button
+                        type="button"
+                        aria-label="Eliminar producto"
+                        disabled={busy}
+                        onClick={() => removeItem.mutate(item.variantId)}
+                        className="p-1.5 rounded-lg text-ink-muted hover:text-danger hover:bg-danger-soft transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Subtotal del grupo */}
+                <div className="pt-3 border-t border-line/60 flex items-center justify-between text-xs">
+                  <span className="text-ink-muted">{i18n.cart.subtotal} del comercio:</span>
+                  <span className="font-bold text-ink tabular text-sm">
+                    {formatMoney(group.subtotal)}
+                  </span>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          {/* Resumen de Compra (Columna lateral sticky) */}
+          <div className="lg:sticky lg:top-24 flex flex-col gap-4">
+            <Card padding="lg" className="flex flex-col gap-4 shadow-xl">
+              <h2 className="text-base font-bold text-ink border-b border-line/60 pb-3">
+                Resumen de la Orden
+              </h2>
+
+              <div className="flex flex-col gap-2.5 text-xs">
+                <div className="flex justify-between text-ink-muted">
+                  <span>Comercios participantes:</span>
+                  <span className="font-semibold text-ink">{cart.groups.length}</span>
+                </div>
+                <div className="flex justify-between text-ink-muted">
+                  <span>Total de artículos:</span>
+                  <span className="font-semibold text-ink">{cart.totalItems}</span>
+                </div>
+                <div className="flex justify-between text-ink-muted">
+                  <span>Costo de custodia (Escrow):</span>
+                  <span className="text-brand font-semibold">Gratis</span>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-line flex items-baseline justify-between">
+                <span className="text-sm font-bold text-ink">{i18n.cart.total}:</span>
+                <span className="text-2xl font-black text-brand tabular">
+                  {formatMoney(cart.total)}
+                </span>
+              </div>
+
+              {/* Botón de Checkout */}
+              <Button
+                size="lg"
+                variant="primary"
+                onClick={() => navigate('/checkout')}
+                className="w-full font-bold gap-2 mt-2 shadow-lg shadow-brand/10"
+              >
+                <span>{i18n.cart.checkout}</span>
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+
+              {/* Garantía de custodia */}
+              <div className="flex items-start gap-2 pt-2 text-[11px] text-ink-muted leading-relaxed">
+                <ShieldCheck className="h-4 w-4 text-brand shrink-0 mt-0.5" />
+                <span>
+                  Tu compra está protegida por custodia bancaria simulada. El vendedor solo cobra tras tu confirmación.
+                </span>
+              </div>
+            </Card>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

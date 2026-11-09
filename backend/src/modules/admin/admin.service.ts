@@ -1,6 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuditService } from '../../audit/audit.service';
+import { ClockService } from '../../common/clock.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationType } from '../../common/constants';
+import { RequestUser } from '../../common/decorators/current-user.decorator';
 import { UserRole, UserStatus, Prisma } from '../../generated/prisma/client';
 
 @Injectable()
@@ -8,6 +12,8 @@ export class AdminService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly auditService: AuditService,
+    private readonly clock: ClockService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async listUsers(params: {
@@ -189,5 +195,97 @@ export class AdminService {
     );
 
     return populated;
+  }
+
+  async blockUser(targetUserId: string, adminUser: RequestUser, reason: string): Promise<unknown> {
+    if (targetUserId === adminUser.id) {
+      throw new BadRequestException({ code: 'CANNOT_BLOCK_SELF', message: 'No puedes bloquear tu propia cuenta' });
+    }
+    const targetUser = await this.prisma.user.findUnique({ where: { id: targetUserId } });
+    if (!targetUser) {
+      throw new NotFoundException({ code: 'USER_NOT_FOUND', message: 'Usuario no encontrado' });
+    }
+    if (targetUser.role === UserRole.ADMIN) {
+      throw new BadRequestException({ code: 'CANNOT_BLOCK_ADMIN', message: 'No se puede bloquear a otro administrador' });
+    }
+    if (targetUser.status === UserStatus.BLOCKED) {
+      throw new ConflictException({ code: 'USER_ALREADY_BLOCKED', message: 'El usuario ya se encuentra bloqueado' });
+    }
+
+    const now = this.clock.now();
+    const updated = await this.prisma.user.update({
+      where: { id: targetUserId },
+      data: {
+        status: UserStatus.BLOCKED,
+        tokensValidAfter: now,
+      },
+    });
+
+    await this.auditService.log({
+      actorId: adminUser.id,
+      action: 'USER_BLOCKED',
+      entity: 'user',
+      entityId: targetUserId,
+      payload: { reason },
+    });
+
+    try {
+      await this.notificationsService.notify(
+        targetUserId,
+        NotificationType.SYSTEM,
+        `Tu cuenta ha sido bloqueada por la administración. Motivo: ${reason}`,
+      );
+    } catch {
+      // Evita romper la transacción de bloqueo en caso de fallo en el canal de notificación
+    }
+
+    return { id: updated.id, email: updated.email, status: updated.status };
+  }
+
+  async unblockUser(targetUserId: string, adminUser: RequestUser, reason: string): Promise<unknown> {
+    if (targetUserId === adminUser.id) {
+      throw new BadRequestException({ code: 'CANNOT_UNBLOCK_SELF', message: 'No puedes realizar esta acción sobre tu propia cuenta' });
+    }
+    const targetUser = await this.prisma.user.findUnique({ where: { id: targetUserId } });
+    if (!targetUser) {
+      throw new NotFoundException({ code: 'USER_NOT_FOUND', message: 'Usuario no encontrado' });
+    }
+    if (targetUser.role === UserRole.ADMIN) {
+      throw new BadRequestException({ code: 'CANNOT_UNBLOCK_ADMIN', message: 'No se puede modificar a otro administrador' });
+    }
+    if (targetUser.status === UserStatus.ACTIVE) {
+      throw new ConflictException({ code: 'USER_ALREADY_ACTIVE', message: 'El usuario ya se encuentra activo' });
+    }
+
+    const now = this.clock.now();
+    const updated = await this.prisma.user.update({
+      where: { id: targetUserId },
+      data: {
+        status: UserStatus.ACTIVE,
+        tokensValidAfter: now,
+        failedLogins: 0,
+        lockedUntil: null,
+      },
+    });
+
+    await this.auditService.log({
+      actorId: adminUser.id,
+      action: 'USER_UNBLOCKED',
+      entity: 'user',
+      entityId: targetUserId,
+      payload: { reason },
+    });
+
+    try {
+      await this.notificationsService.notify(
+        targetUserId,
+        NotificationType.SYSTEM,
+        `Tu cuenta ha sido reactivada por la administración. Motivo: ${reason}`,
+      );
+    } catch {
+      // Evita romper la transacción de desbloqueo en caso de fallo en el canal de notificación
+    }
+
+    return { id: updated.id, email: updated.email, status: updated.status };
   }
 }
