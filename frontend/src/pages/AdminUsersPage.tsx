@@ -11,12 +11,14 @@ import { EmptyState } from '../components/ui/EmptyState';
 import { ErrorState } from '../components/ui/ErrorState';
 import { Pagination } from '../components/ui/Pagination';
 import { Skeleton } from '../components/ui/Skeleton';
+import { Input } from '../components/ui/Input';
+import { Select } from '../components/ui/Select';
+import { Textarea } from '../components/ui/Textarea';
 import { i18n } from '../i18n/es';
 import { formatDateOnly } from '../lib/formatters';
 import { ApiError } from '../lib/http';
 import {
   Users,
-  Search,
   User,
   Store,
   Calendar,
@@ -73,11 +75,11 @@ function UserRow({ user }: { user: AdminUser }) {
         <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-line/60">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-2 text-brand border border-line">
-              <User className="h-4.5 w-4.5" />
+              <User className="h-5 w-5" />
             </div>
             <div className="flex flex-col">
-              <h2 className="font-bold text-sm text-ink">{user.fullName}</h2>
-              <span className="text-[11px] text-ink-muted">{user.email}</span>
+              <h2 className="font-semibold text-sm text-ink">{user.fullName}</h2>
+              <span className="text-xs text-ink-muted">{user.email}</span>
             </div>
           </div>
 
@@ -152,17 +154,14 @@ function UserRow({ user }: { user: AdminUser }) {
             </span>
           </div>
 
-          <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-            <span>Motivo obligatorio de la acción (mínimo 5 caracteres)</span>
-            <textarea
-              className="w-full min-h-[90px] rounded-lg border border-line bg-surface-2 p-3 text-xs text-ink placeholder:text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-              placeholder="Indica la razón administrativa documentada..."
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              required
-              minLength={5}
-            />
-          </label>
+          <Textarea
+            label="Motivo obligatorio de la acción (mínimo 5 caracteres)"
+            placeholder="Indica la razón administrativa documentada..."
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            required
+            minLength={5}
+          />
 
           {activeMutation.isError && (
             <p className="text-xs text-danger">
@@ -226,31 +225,30 @@ export default function AdminUsersPage() {
             update({ q: search.trim() });
           }}
         >
-          <div className="relative flex-1 min-w-[220px]">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted pointer-events-none" />
-            <input
+          <div className="flex-1 min-w-[220px]">
+            <Input
               type="text"
               placeholder="Buscar por nombre o correo electrónico..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-10 pl-10 pr-3 rounded-lg border border-line bg-surface-2 text-xs text-ink placeholder:text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
             />
           </div>
 
-          <select
-            className="h-10 px-3 rounded-lg border border-line bg-surface-2 text-xs text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand min-w-[160px]"
-            value={filters.role}
-            onChange={(e) => update({ role: e.target.value })}
-          >
-            <option value="">Todos los roles</option>
-            {Object.entries(roleLabels).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
+          <div className="min-w-[160px]">
+            <Select
+              value={filters.role}
+              onChange={(e) => update({ role: e.target.value })}
+            >
+              <option value="">Todos los roles</option>
+              {Object.entries(roleLabels).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </Select>
+          </div>
 
-          <Button type="submit" size="sm" className="font-semibold px-4">
+          <Button type="submit" size="sm" className="font-semibold px-4 h-11">
             Buscar
           </Button>
         </form>

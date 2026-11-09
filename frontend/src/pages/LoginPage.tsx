@@ -4,8 +4,9 @@ import { useLogin } from '../api/auth';
 import { ApiError } from '../lib/http';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
+import { Input } from '../components/ui/Input';
 import { i18n } from '../i18n/es';
-import { ShieldCheck, Mail, Lock, AlertCircle, ArrowRight } from 'lucide-react';
+import { ShieldCheck, AlertCircle, ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -46,13 +47,13 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-[calc(100vh-16rem)] items-center justify-center py-8">
-      <Card padding="lg" className="w-full max-w-md shadow-2xl flex flex-col gap-6">
+      <Card padding="lg" className="w-full max-w-md  flex flex-col gap-6">
         {/* Encabezado con Icono */}
         <div className="flex flex-col items-center text-center gap-2">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand/10 border border-brand/30 text-brand shadow-sm">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10 border border-brand/30 text-brand shadow-sm">
             <ShieldCheck className="h-6 w-6" />
           </div>
-          <h1 className="text-xl sm:text-2xl font-black text-ink tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-semibold text-ink tracking-tight">
             Iniciar Sesión
           </h1>
           <p className="text-xs text-ink-muted">
@@ -70,44 +71,32 @@ export default function LoginPage() {
 
         {/* Formulario */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-            <span>Correo electrónico</span>
-            <div className="relative">
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted pointer-events-none" />
-              <input
-                type="email"
-                required
-                autoComplete="email"
-                placeholder="ejemplo@correo.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-11 pl-10 pr-3 rounded-lg border border-line bg-surface-2 text-sm text-ink placeholder:text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-              />
-            </div>
-          </label>
+          <Input
+            label="Correo electrónico"
+            type="email"
+            required
+            autoComplete="email"
+            placeholder="ejemplo@correo.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-          <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-            <span>Contraseña</span>
-            <div className="relative">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted pointer-events-none" />
-              <input
-                type="password"
-                required
-                autoComplete="current-password"
-                placeholder="••••••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full h-11 pl-10 pr-3 rounded-lg border border-line bg-surface-2 text-sm text-ink placeholder:text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-              />
-            </div>
-          </label>
+          <Input
+            label="Contraseña"
+            type="password"
+            required
+            autoComplete="current-password"
+            placeholder="••••••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
 
           <Button
             type="submit"
             size="lg"
             variant="primary"
             isLoading={login.isPending}
-            className="w-full font-bold mt-2 shadow-lg shadow-brand/10"
+            className="w-full font-medium mt-2 "
           >
             <span>{login.isPending ? i18n.common.loading : i18n.nav.login}</span>
             <ArrowRight className="h-4 w-4 ml-1.5" />
@@ -117,7 +106,7 @@ export default function LoginPage() {
         {/* Pie de tarjeta con link de registro */}
         <div className="pt-4 border-t border-line/60 text-center text-xs text-ink-muted">
           ¿No tienes una cuenta aún?{' '}
-          <Link to="/registro" className="font-bold text-brand hover:text-brand-hover underline">
+          <Link to="/registro" className="font-medium text-brand hover:text-brand-hover underline">
             {i18n.nav.register}
           </Link>
         </div>

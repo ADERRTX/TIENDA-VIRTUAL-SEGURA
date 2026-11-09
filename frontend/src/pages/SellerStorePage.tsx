@@ -4,6 +4,8 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Skeleton } from '../components/ui/Skeleton';
+import { Input } from '../components/ui/Input';
+import { Textarea } from '../components/ui/Textarea';
 import { i18n } from '../i18n/es';
 import { ApiError } from '../lib/http';
 import { Store, CheckCircle2, AlertCircle } from 'lucide-react';
@@ -25,32 +27,26 @@ function StoreForm({ seller }: { seller: SellerProfile }) {
           <Store className="h-5 w-5" />
         </div>
         <div className="flex flex-col">
-          <h2 className="text-base font-bold text-ink">Información del Comercio</h2>
+          <h2 className="text-base font-semibold text-ink">Información del Comercio</h2>
           <span className="text-xs text-ink-muted">Configura los datos públicos visibles para tus compradores</span>
         </div>
       </div>
 
       <form onSubmit={submit} className="flex flex-col gap-4">
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-          <span>{i18n.seller.storeNamePrompt}</span>
-          <input
-            className="h-11 px-3.5 rounded-lg border border-line bg-surface-2 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-            required
-            minLength={3}
-            value={storeName}
-            onChange={(e) => setStoreName(e.target.value)}
-          />
-        </label>
+        <Input
+          label={i18n.seller.storeNamePrompt}
+          required
+          minLength={3}
+          value={storeName}
+          onChange={(e) => setStoreName(e.target.value)}
+        />
 
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-          <span>{i18n.seller.descriptionPrompt}</span>
-          <textarea
-            className="w-full min-h-[90px] rounded-lg border border-line bg-surface-2 p-3 text-xs text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-            rows={4}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </label>
+        <Textarea
+          label={i18n.seller.descriptionPrompt}
+          rows={4}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
 
         {update.isError && (
           <div className="flex items-center gap-2 p-3 rounded-lg bg-danger-soft text-danger border border-danger/30 text-xs font-medium">

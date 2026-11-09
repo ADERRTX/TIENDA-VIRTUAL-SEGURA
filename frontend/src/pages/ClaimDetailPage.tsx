@@ -13,6 +13,9 @@ import { StatusBadge } from '../components/ui/StatusBadge';
 import { Badge } from '../components/ui/Badge';
 import { Skeleton } from '../components/ui/Skeleton';
 import { ErrorState } from '../components/ui/ErrorState';
+import { Textarea } from '../components/ui/Textarea';
+import { Select } from '../components/ui/Select';
+import { Input } from '../components/ui/Input';
 import { i18n } from '../i18n/es';
 import { formatDate } from '../lib/formatters';
 import { ApiError } from '../lib/http';
@@ -93,17 +96,17 @@ export default function ClaimDetailPage() {
       {claim && (
         <div className="flex flex-col gap-6">
           {/* Cabecera del Reclamo */}
-          <Card padding="lg" className="flex flex-col gap-4 shadow-md">
+          <Card padding="lg" className="flex flex-col gap-4 ">
             <header className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-line/60">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warning/10 border border-warning/30 text-warning">
                   <Scale className="h-5 w-5" />
                 </div>
                 <div className="flex flex-col">
-                  <h1 className="text-base font-extrabold text-ink">
+                  <h1 className="text-base font-semibold text-ink">
                     Expediente de Mediación #{claim.id.slice(0, 8).toUpperCase()}
                   </h1>
-                  <span className="text-[11px] text-ink-muted">
+                  <span className="text-xs text-ink-muted">
                     Iniciado el {formatDate(claim.createdAt)}
                   </span>
                 </div>
@@ -133,7 +136,7 @@ export default function ClaimDetailPage() {
 
             {/* Motivo original */}
             <div className="p-3.5 rounded-xl border border-line bg-surface-2/60 flex flex-col gap-1 text-xs">
-              <span className="font-bold text-ink uppercase tracking-wider text-[10px]">
+              <span className="font-medium text-ink uppercase tracking-wider text-xs">
                 Motivo del Reclamo:
               </span>
               <p className="text-ink-muted leading-relaxed whitespace-pre-wrap">
@@ -146,7 +149,7 @@ export default function ClaimDetailPage() {
               <div className="p-4 rounded-xl border border-brand/30 bg-brand-soft/40 flex items-start gap-3 text-xs">
                 <Gavel className="h-5 w-5 text-brand shrink-0 mt-0.5" />
                 <div className="flex flex-col gap-1">
-                  <span className="font-bold text-brand uppercase tracking-wider">
+                  <span className="font-semibold text-brand uppercase tracking-wider">
                     {i18n.claims.resolutionTitle}
                   </span>
                   <p className="text-ink font-semibold">
@@ -180,7 +183,7 @@ export default function ClaimDetailPage() {
           <Card padding="lg" className="flex flex-col gap-5">
             <div className="flex items-center gap-2 pb-3 border-b border-line/60">
               <MessageSquare className="h-5 w-5 text-brand" />
-              <h2 className="text-sm font-bold text-ink uppercase tracking-wider">
+              <h2 className="text-sm font-medium text-ink uppercase tracking-wider">
                 {i18n.claims.messages}
               </h2>
             </div>
@@ -211,7 +214,7 @@ export default function ClaimDetailPage() {
                   >
                     <div className="flex items-center justify-between gap-2 pb-1 border-b border-line/30">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-ink">
+                        <span className="font-medium text-ink">
                           {message.author?.fullName ?? message.author?.email ?? 'Usuario'}
                         </span>
                         {role && (
@@ -230,7 +233,7 @@ export default function ClaimDetailPage() {
                         )}
                       </div>
 
-                      <span className="text-[10px] text-ink-muted">
+                      <span className="text-xs text-ink-muted">
                         {formatDate(message.createdAt)}
                       </span>
                     </div>
@@ -246,18 +249,15 @@ export default function ClaimDetailPage() {
             {/* Formulario para enviar mensaje */}
             {claim.status !== 'RESUELTO' && (
               <form onSubmit={sendMessage} className="flex flex-col gap-3 pt-3 border-t border-line/60">
-                <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-                  <span>Responder en el caso</span>
-                  <textarea
-                    className="w-full min-h-[80px] rounded-lg border border-line bg-surface-2 p-3 text-xs text-ink placeholder:text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-                    rows={3}
-                    required
-                    minLength={2}
-                    placeholder="Escribe tu mensaje para el comprador, vendedor y equipo de soporte..."
-                    value={body}
-                    onChange={(e) => setBody(e.target.value)}
-                  />
-                </label>
+                <Textarea
+                  label="Responder en el caso"
+                  rows={3}
+                  required
+                  minLength={2}
+                  placeholder="Escribe tu mensaje para el comprador, vendedor y equipo de soporte..."
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                />
 
                 {addMessage.isError && (
                   <p className="text-xs text-danger">{errorMessage(addMessage.error)}</p>
@@ -282,7 +282,7 @@ export default function ClaimDetailPage() {
               <div className="flex items-center gap-2.5 pb-3 border-b border-line/60">
                 <Gavel className="h-5 w-5 text-brand" />
                 <div className="flex flex-col">
-                  <h2 className="text-sm font-bold text-ink uppercase tracking-wider">
+                  <h2 className="text-sm font-medium text-ink uppercase tracking-wider">
                     Resolución Oficial de Soporte
                   </h2>
                   <span className="text-xs text-ink-muted">
@@ -292,34 +292,28 @@ export default function ClaimDetailPage() {
               </div>
 
               <form onSubmit={submitResolution} className="flex flex-col gap-4">
-                <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-                  <span>Dictamen de resolución</span>
-                  <select
-                    className="h-10 px-3 rounded-lg border border-line bg-surface-2 text-xs text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-                    value={resolution}
-                    onChange={(e) => setResolution(e.target.value)}
-                  >
-                    {Object.entries(i18n.claims.resolutions).map(([val, label]) => (
-                      <option key={val} value={val}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <Select
+                  label="Dictamen de resolución"
+                  value={resolution}
+                  onChange={(e) => setResolution(e.target.value)}
+                >
+                  {Object.entries(i18n.claims.resolutions).map(([val, label]) => (
+                    <option key={val} value={val}>
+                      {label}
+                    </option>
+                  ))}
+                </Select>
 
                 {resolution === 'REEMBOLSO' && (
-                  <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-                    <span>Monto a reembolsar (S/., opcional para reembolso parcial)</span>
-                    <input
-                      type="number"
-                      min="0.01"
-                      step="0.01"
-                      placeholder="Monto exacto en soles"
-                      className="h-10 px-3 rounded-lg border border-line bg-surface-2 text-xs text-ink tabular focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-                      value={refund}
-                      onChange={(e) => setRefund(e.target.value)}
-                    />
-                  </label>
+                  <Input
+                    label="Monto a reembolsar (S/., opcional para reembolso parcial)"
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    placeholder="Monto exacto en soles"
+                    value={refund}
+                    onChange={(e) => setRefund(e.target.value)}
+                  />
                 )}
 
                 {resolve.isError && (

@@ -5,6 +5,7 @@ import { Card } from '../components/ui/Card';
 import { PageHeader } from '../components/ui/PageHeader';
 import { ErrorState } from '../components/ui/ErrorState';
 import { Skeleton } from '../components/ui/Skeleton';
+import { Input } from '../components/ui/Input';
 import { i18n } from '../i18n/es';
 import { ApiError } from '../lib/http';
 import { Clock, CheckCircle2, AlertCircle, Save } from 'lucide-react';
@@ -35,30 +36,32 @@ function ConfigRow({ entry }: { entry: ConfigEntry }) {
       <form onSubmit={submit} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-2 text-brand border border-line shrink-0">
-            <Clock className="h-4.5 w-4.5" />
+            <Clock className="h-5 w-5" />
           </div>
           <div className="flex flex-col">
-            <h2 className="font-bold text-xs sm:text-sm text-ink">
+            <h2 className="font-semibold text-xs sm:text-sm text-ink">
               {labels[entry.key] ?? entry.key}
             </h2>
-            <span className="font-mono text-[10px] text-ink-muted">
+            <span className="font-mono text-xs text-ink-muted">
               SystemConfig: {entry.key}
             </span>
           </div>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <input
-            type="number"
-            min={1}
-            required
-            className="w-24 h-10 px-3 rounded-lg border border-line bg-surface-2 text-xs text-ink font-bold tabular focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand text-center transition-all"
-            value={value}
-            onChange={(e) => {
-              setValue(e.target.value);
-              update.reset();
-            }}
-          />
+          <div className="w-24">
+            <Input
+              type="number"
+              min={1}
+              required
+              className="text-center font-medium tabular"
+              value={value}
+              onChange={(e) => {
+                setValue(e.target.value);
+                update.reset();
+              }}
+            />
+          </div>
 
           <Button
             type="submit"

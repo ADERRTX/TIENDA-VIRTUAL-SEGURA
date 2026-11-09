@@ -8,18 +8,18 @@ export default function NotFoundPage() {
 
   return (
     <div className="flex min-h-[calc(100vh-20rem)] items-center justify-center py-12">
-      <Card padding="lg" className="w-full max-w-lg shadow-2xl flex flex-col items-center text-center gap-6 animate-scale-in">
+      <Card padding="lg" className="w-full max-w-lg  flex flex-col items-center text-center gap-6 animate-scale-in">
         {/* Icono central */}
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand/10 border border-brand/30 text-brand shadow-sm">
-          <Compass className="h-8 w-8 animate-pulse" />
+        <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-brand/10 border border-brand/30 text-brand shadow-sm">
+          <Compass className="h-8 w-8" />
         </div>
 
         {/* Cifra 404 */}
         <div className="flex flex-col gap-2">
-          <span className="text-xs font-bold text-brand uppercase tracking-widest">
+          <span className="text-xs font-semibold text-brand uppercase tracking-widest">
             Error 404 · Ruta no encontrada
           </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-ink tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-ink tracking-tight">
             Página No Encontrada
           </h1>
           <p className="text-xs sm:text-sm text-ink-muted leading-relaxed max-w-sm">
@@ -33,7 +33,7 @@ export default function NotFoundPage() {
             size="md"
             variant="primary"
             onClick={() => navigate('/')}
-            className="font-bold text-xs gap-2"
+            className="font-medium text-xs gap-2"
           >
             <Home className="h-4 w-4" />
             <span>Volver al Inicio</span>

@@ -7,10 +7,11 @@ import { EmptyState } from '../components/ui/EmptyState';
 import { ErrorState } from '../components/ui/ErrorState';
 import { Pagination } from '../components/ui/Pagination';
 import { Skeleton } from '../components/ui/Skeleton';
+import { Tabs } from '../components/ui/Tabs';
 import { i18n } from '../i18n/es';
 import { formatDate } from '../lib/formatters';
 import { ApiError } from '../lib/http';
-import { Scale, Store, User, Clock } from 'lucide-react';
+import { Scale, Store, User, Clock, ArrowRight } from 'lucide-react';
 
 export const claimStatusLabels: Record<string, string> = {
   ABIERTO: 'Abierto',
@@ -21,9 +22,21 @@ export const claimStatusLabels: Record<string, string> = {
 
 export default function ClaimsPage() {
   const [page, setPage] = useState(1);
+  const [activeTab, setActiveTab] = useState('ALL');
   const { data, isLoading, isError, error, refetch } = useClaims(page);
   const meta = data?.meta;
   const lastPage = meta ? Math.max(1, Math.ceil(meta.total / meta.pageSize)) : 1;
+
+  const tabs = [
+    { id: 'ALL', label: 'Todos', count: data?.items?.length },
+    { id: 'ABIERTO', label: 'Abiertos' },
+    { id: 'EN_RESPUESTA', label: 'En respuesta' },
+    { id: 'RESUELTO', label: 'Resueltos' },
+  ];
+
+  const items = (data?.items ?? []).filter(
+    (claim) => activeTab === 'ALL' || claim.status === activeTab,
+  );
 
   return (
     <div className="flex flex-col gap-8 max-w-4xl mx-auto">
@@ -35,6 +48,8 @@ export default function ClaimsPage() {
           { label: 'Reclamos y Mediación' },
         ]}
       />
+
+      <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
 
       {isLoading && (
         <div className="flex flex-col gap-4">
@@ -51,18 +66,18 @@ export default function ClaimsPage() {
         />
       )}
 
-      {!isLoading && !isError && data && data.items.length === 0 && (
+      {!isLoading && !isError && items.length === 0 && (
         <EmptyState
           icon={<Scale className="h-8 w-8" />}
-          title="Sin reclamos activos"
-          description="No tienes controversias abiertas ni mediaciones pendientes registradas."
+          title="Sin reclamos en esta categoría"
+          description="No se encontraron controversias o mediaciones bajo el filtro seleccionado."
         />
       )}
 
-      {!isLoading && !isError && data && data.items.length > 0 && (
+      {!isLoading && !isError && items.length > 0 && (
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-4">
-            {data.items.map((claim) => (
+            {items.map((claim) => (
               <Link
                 key={claim.id}
                 to={`/reclamos/${claim.id}`}
@@ -73,7 +88,7 @@ export default function ClaimsPage() {
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-2 text-warning border border-line">
                       <Scale className="h-4 w-4" />
                     </div>
-                    <span className="font-extrabold text-sm text-ink group-hover:text-brand transition-colors">
+                    <span className="font-semibold text-sm text-ink group-hover:text-brand transition-colors">
                       Reclamo #{claim.id.slice(0, 8).toUpperCase()}
                     </span>
                   </div>
@@ -85,7 +100,7 @@ export default function ClaimsPage() {
                   "{claim.reason}"
                 </p>
 
-                <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-line/40 text-[11px] text-ink-muted">
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-line/40 text-xs text-ink-muted">
                   <div className="flex items-center gap-3">
                     {claim.subOrder?.seller?.storeName && (
                       <span className="flex items-center gap-1">
@@ -105,8 +120,9 @@ export default function ClaimsPage() {
                   <div className="flex items-center gap-2">
                     <Clock className="h-3 w-3" />
                     <span>{formatDate(claim.createdAt)}</span>
-                    <span className="text-brand font-semibold group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
-                      Ingresar a mediación →
+                    <span className="text-brand font-semibold group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
+                      <span>Ingresar a mediación</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
                     </span>
                   </div>
                 </div>

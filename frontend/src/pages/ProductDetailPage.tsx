@@ -14,6 +14,7 @@ import { formatMoney } from '../lib/formatters';
 import { ApiError } from '../lib/http';
 import {
   ArrowLeft,
+  ArrowRight,
   ShieldCheck,
   Store,
   CheckCircle2,
@@ -103,11 +104,13 @@ export default function ProductDetailPage() {
         <div className="flex flex-col gap-10">
           <div className="grid gap-8 md:grid-cols-2 items-start">
             {/* Imagen Principal */}
-            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-line bg-surface-2 shadow-lg">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-line bg-surface-2 ">
               {image ? (
                 <img
                   src={imageUrl(image.fileName)}
-                  alt={product.title}
+                  alt={`Imagen principal de ${product.title}`}
+                  loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -134,7 +137,7 @@ export default function ProductDetailPage() {
               </div>
 
               {/* Título */}
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-ink tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-semibold text-ink tracking-tight">
                 {product.title}
               </h1>
 
@@ -145,7 +148,7 @@ export default function ProductDetailPage() {
 
               {/* Variantes y Selección */}
               <div className="flex flex-col gap-3 pt-2">
-                <h2 className="text-sm font-bold text-ink uppercase tracking-wider">
+                <h2 className="text-sm font-semibold text-ink uppercase tracking-wider">
                   Variantes y Precios
                 </h2>
 
@@ -171,7 +174,7 @@ export default function ProductDetailPage() {
                         </div>
 
                         <div className="flex items-center gap-4">
-                          <span className="text-base font-bold text-brand tabular">
+                          <span className="text-base font-semibold text-brand tabular">
                             {formatMoney(variant.price)}
                           </span>
                           <Button
@@ -206,8 +209,9 @@ export default function ProductDetailPage() {
                     )}
                     <span>{feedback.text}</span>
                     {feedback.ok && (
-                      <Link to="/carrito" className="underline ml-auto font-bold text-brand hover:text-brand-hover">
-                        Ver carrito →
+                      <Link to="/carrito" className="underline ml-auto font-medium text-brand hover:text-brand-hover inline-flex items-center gap-1">
+                        <span>Ver carrito</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
                       </Link>
                     )}
                   </div>
@@ -216,7 +220,7 @@ export default function ProductDetailPage() {
 
               {/* Tarjeta de Garantía de Custodia TVS */}
               <div className="rounded-xl border border-brand/30 bg-surface-2/60 p-4 flex flex-col gap-2 mt-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-brand">
+                <div className="flex items-center gap-2 text-xs font-semibold text-brand">
                   <ShieldCheck className="h-4 w-4" />
                   <span>Protección Integral de Pago TVS (Custodia Escrow)</span>
                 </div>

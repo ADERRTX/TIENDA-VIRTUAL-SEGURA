@@ -1,12 +1,13 @@
 import { Link, Outlet } from 'react-router-dom';
 import { useMe, type UserRole } from '../api/auth';
+import { Skeleton } from './ui/Skeleton';
 import { i18n } from '../i18n/es';
 
 export default function RequireRole({ roles }: { roles: UserRole[] }) {
   const { data: user, isLoading } = useMe();
 
   if (isLoading) {
-    return <div className="h-32 animate-pulse rounded-2xl bg-surface-2" />;
+    return <Skeleton variant="block" className="h-32 w-full rounded-xl" />;
   }
 
   if (!user) {

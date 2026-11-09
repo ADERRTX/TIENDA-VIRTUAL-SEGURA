@@ -79,8 +79,8 @@ export const Tabs: React.FC<TabsProps> = ({
             <span>{tab.label}</span>
             {typeof tab.count === 'number' && (
               <span
-                className={`text-[11px] px-1.5 py-0.2 rounded-full tabular ${
-                  isActive ? 'bg-brand/20 text-brand font-bold' : 'bg-surface-3 text-ink-muted'
+                className={`text-xs px-1.5 py-0.5 rounded-full tabular ${
+                  isActive ? 'bg-brand/20 text-brand font-medium' : 'bg-surface-3 text-ink-muted'
                 }`}
               >
                 {tab.count}

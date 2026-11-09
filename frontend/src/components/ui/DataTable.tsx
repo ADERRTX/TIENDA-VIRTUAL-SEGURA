@@ -1,4 +1,5 @@
 import React from 'react';
+import { Skeleton } from './Skeleton';
 
 export interface Column<T> {
   key: string;
@@ -41,10 +42,10 @@ export function DataTable<T>({
           <tbody className="divide-y divide-line/60 text-sm">
             {isLoading ? (
               Array.from({ length: 4 }).map((_, rIdx) => (
-                <tr key={rIdx} className="animate-pulse">
+                <tr key={rIdx}>
                   {columns.map((_, cIdx) => (
                     <td key={cIdx} className="px-4 py-3.5">
-                      <div className="h-4 bg-surface-2 rounded-md w-3/4" />
+                      <Skeleton variant="line" className="h-4 w-3/4" />
                     </td>
                   ))}
                 </tr>

@@ -13,6 +13,8 @@ import { EmptyState } from '../components/ui/EmptyState';
 import { ErrorState } from '../components/ui/ErrorState';
 import { Pagination } from '../components/ui/Pagination';
 import { Skeleton } from '../components/ui/Skeleton';
+import { Select } from '../components/ui/Select';
+import { Textarea } from '../components/ui/Textarea';
 import { i18n } from '../i18n/es';
 import { ApiError } from '../lib/http';
 import {
@@ -55,9 +57,9 @@ function SellerRow({ seller }: { seller: SellerProfile }) {
             <Store className="h-5 w-5" />
           </div>
           <div className="flex flex-col">
-            <h2 className="font-bold text-sm text-ink">{seller.storeName}</h2>
+            <h2 className="font-semibold text-sm text-ink">{seller.storeName}</h2>
             {seller.user && (
-              <div className="flex items-center gap-2 text-[11px] text-ink-muted">
+              <div className="flex items-center gap-2 text-xs text-ink-muted">
                 <span className="flex items-center gap-1">
                   <User className="h-3 w-3 text-info" />
                   <span>{seller.user.fullName}</span>
@@ -134,18 +136,15 @@ function SellerRow({ seller }: { seller: SellerProfile }) {
         size="md"
       >
         <form onSubmit={submitReason} className="flex flex-col gap-4">
-          <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-            <span>{i18n.admin.reasonPrompt}</span>
-            <textarea
-              className="w-full min-h-[90px] rounded-lg border border-line bg-surface-2 p-3 text-xs text-ink placeholder:text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-              rows={3}
-              required
-              minLength={3}
-              placeholder="Indica el motivo justificado de la decisión administrativa..."
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-            />
-          </label>
+          <Textarea
+            label={i18n.admin.reasonPrompt}
+            rows={3}
+            required
+            minLength={3}
+            placeholder="Indica el motivo justificado de la decisión administrativa..."
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+          />
 
           {action.isError && (
             <p className="text-xs text-danger">{errorMessage(action.error)}</p>
@@ -191,22 +190,23 @@ export default function AdminSellersPage() {
       />
 
       {/* Filtro por estado */}
-      <Card padding="sm" className="flex items-center justify-between gap-4">
-        <span className="text-xs font-medium text-ink-muted pl-2">Filtrar por estado:</span>
-        <select
-          className="h-10 px-3 rounded-lg border border-line bg-surface-2 text-xs text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand min-w-[200px]"
-          value={status}
-          onChange={(e) => {
-            setStatus(e.target.value);
-            setPage(1);
-          }}
-        >
-          <option value="">Todos los comercios</option>
-          <option value="PENDING">{statusLabels.PENDING}</option>
-          <option value="ACTIVE">{statusLabels.ACTIVE}</option>
-          <option value="SUSPENDED">{statusLabels.SUSPENDED}</option>
-          <option value="REJECTED">{statusLabels.REJECTED}</option>
-        </select>
+      <Card padding="sm" className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <span className="text-xs font-semibold text-ink-muted pl-1">Filtrar por estado:</span>
+        <div className="w-full sm:w-64">
+          <Select
+            value={status}
+            onChange={(e) => {
+              setStatus(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="">Todos los comercios</option>
+            <option value="PENDING">{statusLabels.PENDING}</option>
+            <option value="ACTIVE">{statusLabels.ACTIVE}</option>
+            <option value="SUSPENDED">{statusLabels.SUSPENDED}</option>
+            <option value="REJECTED">{statusLabels.REJECTED}</option>
+          </Select>
+        </div>
       </Card>
 
       {isLoading && (

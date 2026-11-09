@@ -44,22 +44,22 @@ export default function NotificationBell() {
         onClick={() => setOpen((prev) => !prev)}
         className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-line/60 bg-surface-2/60 text-ink-muted transition-all duration-150 hover:border-line hover:bg-surface-2 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
       >
-        <Bell className="h-4.5 w-4.5" />
+        <Bell className="h-5 w-5" />
         {unread > 0 && (
-          <span className="absolute -top-1 -right-1 flex h-4.5 min-w-[18px] items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold text-brand-ink shadow-sm animate-fade-in">
+          <span className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-brand px-1 text-xs font-medium text-brand-ink shadow-sm animate-fade-in">
             {unread > 99 ? '99+' : unread}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 z-50 mt-2 flex max-h-[28rem] w-80 sm:w-96 flex-col overflow-hidden rounded-xl border border-line bg-surface shadow-2xl animate-scale-in">
+        <div className="absolute right-0 z-50 mt-2 flex max-h-[28rem] w-80 sm:w-96 flex-col overflow-hidden rounded-xl border border-line bg-surface shadow-lg animate-scale-in">
           {/* Cabecera del popover */}
           <div className="flex items-center justify-between border-b border-line/60 bg-surface-2/50 px-4 py-3">
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold text-ink">Notificaciones</span>
               {unread > 0 && (
-                <span className="rounded-full bg-brand-soft px-2 py-0.5 text-[11px] font-bold text-brand border border-brand/20">
+                <span className="rounded-full bg-brand-soft px-2 py-0.5 text-xs font-medium text-brand border border-brand/20">
                   {unread} nueva{unread > 1 ? 's' : ''}
                 </span>
               )}
@@ -110,7 +110,7 @@ export default function NotificationBell() {
                       <p className="text-xs text-ink leading-relaxed font-normal break-words">
                         {n.message}
                       </p>
-                      <span className="mt-1 block text-[10px] text-ink-muted">
+                      <span className="mt-1 block text-xs text-ink-muted">
                         {formatDate(n.createdAt)}
                       </span>
                     </div>

@@ -66,17 +66,17 @@ export default function OrderTimeline({ orderId }: { orderId: string }) {
               {/* Nodo circular */}
               <span className="absolute -left-[21px] top-1 flex h-2.5 w-2.5 rounded-full bg-brand ring-4 ring-surface" />
 
-              <span className="text-xs font-bold text-ink leading-tight">
+              <span className="text-xs font-semibold text-ink leading-tight">
                 {entry.title}
               </span>
 
               {entry.description && (
-                <span className="text-[11px] text-ink-muted leading-relaxed">
+                <span className="text-xs text-ink-muted leading-relaxed">
                   {entry.description}
                 </span>
               )}
 
-              <div className="flex items-center gap-2 text-[10px] text-ink-muted mt-0.5">
+              <div className="flex items-center gap-2 text-xs text-ink-muted mt-0.5">
                 <Clock className="h-3 w-3" />
                 <span>{formatDate(entry.timestamp)}</span>
                 {entry.actor && (

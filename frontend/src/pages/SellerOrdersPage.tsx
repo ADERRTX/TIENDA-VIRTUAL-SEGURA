@@ -14,6 +14,8 @@ import { EmptyState } from '../components/ui/EmptyState';
 import { ErrorState } from '../components/ui/ErrorState';
 import { Pagination } from '../components/ui/Pagination';
 import { Skeleton } from '../components/ui/Skeleton';
+import { Input } from '../components/ui/Input';
+import { Tabs } from '../components/ui/Tabs';
 import { i18n } from '../i18n/es';
 import { formatDate, formatMoney } from '../lib/formatters';
 import { ApiError } from '../lib/http';
@@ -64,40 +66,31 @@ function DispatchButton({ subOrder }: { subOrder: SellerSubOrder }) {
 
       <Modal isOpen={open} onClose={close} title={text.title} size="md">
         <form onSubmit={submit} className="flex flex-col gap-4">
-          <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-            <span>{text.carrier}</span>
-            <input
-              className="h-10 px-3.5 rounded-lg border border-line bg-surface-2 text-xs text-ink placeholder:text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-              placeholder="Ej. Olva Courier, Shalom, Urbano"
-              value={carrier}
-              required
-              minLength={2}
-              onChange={(e) => setCarrier(e.target.value)}
-            />
-          </label>
+          <Input
+            label={text.carrier}
+            placeholder="Ej. Olva Courier, Shalom, Urbano"
+            value={carrier}
+            required
+            minLength={2}
+            onChange={(e) => setCarrier(e.target.value)}
+          />
 
-          <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-            <span>{text.trackingCode}</span>
-            <input
-              className="h-10 px-3.5 rounded-lg border border-line bg-surface-2 text-xs text-ink placeholder:text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-              placeholder="Ej. TRK-98234-PE"
-              value={trackingCode}
-              required
-              minLength={3}
-              onChange={(e) => setTrackingCode(e.target.value)}
-            />
-          </label>
+          <Input
+            label={text.trackingCode}
+            placeholder="Ej. TRK-98234-PE"
+            value={trackingCode}
+            required
+            minLength={3}
+            onChange={(e) => setTrackingCode(e.target.value)}
+          />
 
-          <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-            <span>{text.estimatedDate}</span>
-            <input
-              type="date"
-              className="h-10 px-3.5 rounded-lg border border-line bg-surface-2 text-xs text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-              value={date}
-              required
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </label>
+          <Input
+            label={text.estimatedDate}
+            type="date"
+            value={date}
+            required
+            onChange={(e) => setDate(e.target.value)}
+          />
 
           {dispatch.isError && (
             <p className="text-xs text-danger flex items-center gap-1.5">
@@ -173,13 +166,13 @@ function SubOrderCard({ subOrder }: { subOrder: SellerSubOrder }) {
       <header className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-line/60">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-2 text-brand border border-line">
-            <Package className="h-4.5 w-4.5" />
+            <Package className="h-5 w-5" />
           </div>
           <div className="flex flex-col">
-            <h2 className="font-bold text-sm text-ink">
+            <h2 className="font-semibold text-sm text-ink">
               Sub-pedido #{subOrder.id.slice(0, 8).toUpperCase()}
             </h2>
-            <span className="text-[11px] text-ink-muted">
+            <span className="text-xs text-ink-muted">
               {formatDate(subOrder.createdAt)}
             </span>
           </div>
@@ -213,7 +206,7 @@ function SubOrderCard({ subOrder }: { subOrder: SellerSubOrder }) {
               <span className="text-ink font-medium">{item.name}</span>
               <span className="text-ink-muted">× {item.quantity}</span>
             </div>
-            <span className="font-bold text-ink tabular">
+            <span className="font-medium text-ink tabular">
               {formatMoney(item.unitPrice * item.quantity)}
             </span>
           </li>
@@ -226,7 +219,7 @@ function SubOrderCard({ subOrder }: { subOrder: SellerSubOrder }) {
 
         <div className="flex items-baseline gap-2">
           <span className="text-xs text-ink-muted font-medium">{i18n.cart.total}:</span>
-          <span className="text-base font-black text-brand tabular">
+          <span className="text-base font-semibold text-brand tabular">
             {formatMoney(total)}
           </span>
         </div>
@@ -237,10 +230,22 @@ function SubOrderCard({ subOrder }: { subOrder: SellerSubOrder }) {
 
 export default function SellerOrdersPage() {
   const [page, setPage] = useState(1);
+  const [activeTab, setActiveTab] = useState('ALL');
   const { data, isLoading, isError, error, refetch } = useSellerOrders(page);
   const needsLogin = error instanceof ApiError && error.status === 401;
   const meta = data?.meta;
   const lastPage = meta ? Math.max(1, Math.ceil(meta.total / meta.pageSize)) : 1;
+
+  const tabs = [
+    { id: 'ALL', label: 'Todos', count: data?.items?.length },
+    { id: 'PENDIENTE', label: 'Pendientes' },
+    { id: 'EN_TRANSITO', label: 'En tránsito' },
+    { id: 'ENTREGADO', label: 'Entregados' },
+  ];
+
+  const items = (data?.items ?? []).filter(
+    (order) => activeTab === 'ALL' || order.status === activeTab,
+  );
 
   return (
     <div className="flex flex-col gap-8 max-w-4xl mx-auto">
@@ -253,6 +258,8 @@ export default function SellerOrdersPage() {
           { label: 'Pedidos por Atender' },
         ]}
       />
+
+      <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
 
       {isLoading && (
         <div className="flex flex-col gap-4">
@@ -274,18 +281,18 @@ export default function SellerOrdersPage() {
         />
       )}
 
-      {!isLoading && !isError && data && data.items.length === 0 && (
+      {!isLoading && !isError && items.length === 0 && (
         <EmptyState
           icon={<Package className="h-8 w-8" />}
-          title="Sin pedidos pendientes"
-          description="Actualmente no tienes pedidos pendientes de confirmación o despacho."
+          title="Sin pedidos en esta sección"
+          description="No se encontraron pedidos con el estado seleccionado."
         />
       )}
 
-      {!isLoading && !isError && data && data.items.length > 0 && (
+      {!isLoading && !isError && items.length > 0 && (
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-4">
-            {data.items.map((subOrder) => (
+            {items.map((subOrder) => (
               <SubOrderCard key={subOrder.id} subOrder={subOrder} />
             ))}
           </div>

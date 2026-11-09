@@ -13,6 +13,7 @@ import { EmptyState } from '../components/ui/EmptyState';
 import { ErrorState } from '../components/ui/ErrorState';
 import { Pagination } from '../components/ui/Pagination';
 import { Skeleton } from '../components/ui/Skeleton';
+import { Tabs } from '../components/ui/Tabs';
 import { i18n } from '../i18n/es';
 import { formatDate, formatDateOnly } from '../lib/formatters';
 import { ApiError } from '../lib/http';
@@ -54,13 +55,13 @@ function ShipmentCard({ subOrder }: { subOrder: ShipmentSubOrder }) {
       <header className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-line/60">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-2 text-info border border-line">
-            <Truck className="h-4.5 w-4.5" />
+            <Truck className="h-5 w-5" />
           </div>
           <div className="flex flex-col">
-            <h2 className="font-bold text-sm text-ink">
+            <h2 className="font-semibold text-sm text-ink">
               Envío de Pedido #{subOrder.id.slice(0, 8).toUpperCase()}
             </h2>
-            <div className="flex items-center gap-1.5 text-[11px] text-ink-muted">
+            <div className="flex items-center gap-1.5 text-xs text-ink-muted">
               <Store className="h-3 w-3 text-brand" />
               <span>Tienda: {subOrder.seller.storeName}</span>
             </div>
@@ -75,23 +76,23 @@ function ShipmentCard({ subOrder }: { subOrder: ShipmentSubOrder }) {
         <div className="flex items-center gap-2 text-ink">
           <Truck className="h-4 w-4 text-info shrink-0" />
           <div>
-            <span className="block text-[10px] text-ink-muted uppercase">Transportista</span>
-            <span className="font-bold">{shipment.carrier}</span>
+            <span className="block text-xs text-ink-muted uppercase">Transportista</span>
+            <span className="font-medium">{shipment.carrier}</span>
           </div>
         </div>
 
         <div className="flex items-center gap-2 text-ink">
           <Barcode className="h-4 w-4 text-brand shrink-0" />
           <div>
-            <span className="block text-[10px] text-ink-muted uppercase">N° Guía</span>
-            <span className="font-mono font-bold">{shipment.trackingCode}</span>
+            <span className="block text-xs text-ink-muted uppercase">N° Guía</span>
+            <span className="font-mono font-medium">{shipment.trackingCode}</span>
           </div>
         </div>
 
         <div className="flex items-center gap-2 text-ink">
           <Calendar className="h-4 w-4 text-warning shrink-0" />
           <div>
-            <span className="block text-[10px] text-ink-muted uppercase">Entrega estimada</span>
+            <span className="block text-xs text-ink-muted uppercase">Entrega estimada</span>
             <span className="font-semibold">{formatDateOnly(shipment.estimatedDate)}</span>
           </div>
         </div>
@@ -116,7 +117,7 @@ function ShipmentCard({ subOrder }: { subOrder: ShipmentSubOrder }) {
 
       {/* Eventos de Trazabilidad Logística */}
       <div className="flex flex-col gap-2 border-t border-line/60 pt-3 text-xs">
-        <span className="text-[11px] font-bold text-ink-muted uppercase tracking-wider">
+        <span className="text-xs font-medium text-ink-muted uppercase tracking-wider">
           Bitácora de Eventos de Encomienda:
         </span>
         <ol className="relative ml-2 flex flex-col gap-2.5 border-l-2 border-line/80 pl-3 py-1">
@@ -126,7 +127,7 @@ function ShipmentCard({ subOrder }: { subOrder: ShipmentSubOrder }) {
               <span className="font-semibold text-ink">
                 {eventLabels[event.type] ?? event.type}
               </span>
-              <span className="text-[11px] text-ink-muted">
+              <span className="text-xs text-ink-muted">
                 {formatDate(event.occurredAt)}
               </span>
             </li>
@@ -162,9 +163,21 @@ function ShipmentCard({ subOrder }: { subOrder: ShipmentSubOrder }) {
 
 export default function ShipmentsPage() {
   const [page, setPage] = useState(1);
+  const [activeTab, setActiveTab] = useState('ALL');
   const { data, isLoading, isError, error, refetch } = useShipments(page);
   const meta = data?.meta;
   const lastPage = meta ? Math.max(1, Math.ceil(meta.total / meta.pageSize)) : 1;
+
+  const tabs = [
+    { id: 'ALL', label: 'Todos', count: data?.items?.length },
+    { id: 'DESPACHADO', label: 'Despachados' },
+    { id: 'EN_TRANSITO', label: 'En tránsito' },
+    { id: 'ENTREGADO', label: 'Entregados' },
+  ];
+
+  const items = (data?.items ?? []).filter(
+    (subOrder) => activeTab === 'ALL' || subOrder.status === activeTab,
+  );
 
   return (
     <div className="flex flex-col gap-8 max-w-4xl mx-auto">
@@ -176,6 +189,8 @@ export default function ShipmentsPage() {
           { label: 'Envíos en Curso' },
         ]}
       />
+
+      <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
 
       {isLoading && (
         <div className="flex flex-col gap-4">
@@ -192,18 +207,18 @@ export default function ShipmentsPage() {
         />
       )}
 
-      {!isLoading && !isError && data && data.items.length === 0 && (
+      {!isLoading && !isError && items.length === 0 && (
         <EmptyState
           icon={<Truck className="h-8 w-8" />}
-          title="Sin envíos en tránsito"
-          description="Actualmente no hay pedidos con guías en proceso de entrega."
+          title="Sin envíos en este estado"
+          description="Actualmente no hay pedidos con guías en la sección seleccionada."
         />
       )}
 
-      {!isLoading && !isError && data && data.items.length > 0 && (
+      {!isLoading && !isError && items.length > 0 && (
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-4">
-            {data.items.map((subOrder) => (
+            {items.map((subOrder) => (
               <ShipmentCard key={subOrder.id} subOrder={subOrder} />
             ))}
           </div>

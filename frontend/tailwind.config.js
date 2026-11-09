@@ -82,16 +82,15 @@ export default {
         sm: '6px',
         DEFAULT: '8px',
         md: '8px',
-        lg: '10px',
+        lg: '8px',
         xl: '12px',
         '2xl': '16px',
+        full: '9999px',
       },
       boxShadow: {
         sm: '0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2)',
         DEFAULT: '0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3)',
-        md: '0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3)',
         lg: '0 10px 25px -3px rgba(0, 0, 0, 0.5), 0 4px 10px -4px rgba(0, 0, 0, 0.4)',
-        xl: '0 20px 30px -5px rgba(0, 0, 0, 0.6), 0 8px 15px -6px rgba(0, 0, 0, 0.4)',
       },
       keyframes: {
         'fade-in': {

@@ -18,6 +18,7 @@ import { PageHeader } from '../components/ui/PageHeader';
 import { EmptyState } from '../components/ui/EmptyState';
 import { ErrorState } from '../components/ui/ErrorState';
 import { Skeleton } from '../components/ui/Skeleton';
+import { Textarea } from '../components/ui/Textarea';
 import { i18n } from '../i18n/es';
 import { formatDate, formatMoney } from '../lib/formatters';
 import { ApiError } from '../lib/http';
@@ -178,18 +179,15 @@ function ClaimButton({ subOrder }: { subOrder: SubOrder }) {
 
       <Modal isOpen={open} onClose={close} title={i18n.claims.openTitle} size="md">
         <form onSubmit={submit} className="flex flex-col gap-4">
-          <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-            <span>{i18n.claims.reasonPrompt}</span>
-            <textarea
-              className="w-full min-h-[90px] rounded-lg border border-line bg-surface-2 p-3 text-xs text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
-              rows={4}
-              required
-              minLength={10}
-              placeholder="Explica qué ocurrió con tu producto o entrega para que el mediador evalúe tu caso..."
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-            />
-          </label>
+          <Textarea
+            label={i18n.claims.reasonPrompt}
+            rows={4}
+            required
+            minLength={10}
+            placeholder="Explica qué ocurrió con tu producto o entrega para que el mediador evalúe tu caso..."
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+          />
 
           {claim.isError && (
             <p className="text-xs text-danger">{errorMessage(claim.error)}</p>
@@ -252,27 +250,26 @@ function ReviewButton({ item }: { item: OrderItem }) {
                   type="button"
                   aria-label={`${n} estrellas`}
                   onClick={() => setStars(n)}
-                  className={`p-1 text-2xl transition-transform hover:scale-110 ${
-                    n <= stars ? 'text-brand' : 'text-ink-muted/30'
-                  }`}
+                  className="p-1 transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand rounded"
                 >
-                  ★
+                  <Star
+                    className={`h-6 w-6 transition-colors ${
+                      n <= stars ? 'text-brand fill-brand' : 'text-ink-muted/30 fill-transparent'
+                    }`}
+                  />
                 </button>
               ))}
             </div>
           </div>
 
-          <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-            <span>{i18n.reviews.commentPrompt}</span>
-            <textarea
-              className="w-full min-h-[80px] rounded-lg border border-line bg-surface-2 p-3 text-xs text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
-              rows={3}
-              maxLength={500}
-              placeholder="Comparte tu experiencia con este producto..."
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-          </label>
+          <Textarea
+            label={i18n.reviews.commentPrompt}
+            rows={3}
+            maxLength={500}
+            placeholder="Comparte tu experiencia con este producto..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
 
           {review.isError && (
             <p className="text-xs text-danger">{errorMessage(review.error)}</p>
@@ -310,7 +307,7 @@ function SubOrderActions({ subOrder }: { subOrder: SubOrder }) {
 
 function OrderCard({ order }: { order: MyOrder }) {
   return (
-    <Card padding="lg" className="flex flex-col gap-5 shadow-md">
+    <Card padding="lg" className="flex flex-col gap-5 ">
       {/* Cabecera del Pedido Principal */}
       <header className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-line/60">
         <div className="flex items-center gap-3">
@@ -318,10 +315,10 @@ function OrderCard({ order }: { order: MyOrder }) {
             <Package className="h-5 w-5" />
           </div>
           <div className="flex flex-col">
-            <span className="font-extrabold text-sm text-ink">
+            <span className="font-semibold text-sm text-ink">
               Pedido #{order.id.slice(0, 8).toUpperCase()}
             </span>
-            <span className="text-[11px] text-ink-muted">
+            <span className="text-xs text-ink-muted">
               {formatDate(order.createdAt)}
             </span>
           </div>
@@ -338,7 +335,7 @@ function OrderCard({ order }: { order: MyOrder }) {
               <div className="flex items-center gap-2">
                 <Store className="h-4 w-4 text-brand" />
                 <span className="text-xs text-ink-muted">{i18n.cart.sellerGroup}</span>
-                <span className="text-xs font-bold text-ink">{sub.seller.storeName}</span>
+                <span className="text-xs font-medium text-ink">{sub.seller.storeName}</span>
               </div>
               <StatusBadge status={sub.status} category="order" size="sm" />
             </div>
@@ -353,7 +350,7 @@ function OrderCard({ order }: { order: MyOrder }) {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="font-bold text-ink tabular">
+                    <span className="font-medium text-ink tabular">
                       {formatMoney(item.unitPrice * item.quantity)}
                     </span>
                     {sub.status === 'ENTREGADO' && <ReviewButton item={item} />}
@@ -382,7 +379,7 @@ function OrderCard({ order }: { order: MyOrder }) {
 
         <div className="flex items-baseline gap-2">
           <span className="text-ink-muted font-medium">{i18n.cart.total}:</span>
-          <span className="text-lg font-black text-brand tabular">
+          <span className="text-lg font-semibold text-brand tabular">
             {formatMoney(orderTotal(order))}
           </span>
         </div>

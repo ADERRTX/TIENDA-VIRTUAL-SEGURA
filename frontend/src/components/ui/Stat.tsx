@@ -33,7 +33,7 @@ export const Stat: React.FC<StatProps> = ({
       </div>
 
       <div className="flex items-baseline gap-2 mb-1">
-        <span className="text-2xl sm:text-3xl font-bold tracking-tight text-ink tabular">{value}</span>
+        <span className="text-2xl sm:text-3xl font-semibold tracking-tight text-ink tabular">{value}</span>
         {change && (
           <span
             className={`text-xs font-semibold px-2 py-0.5 rounded-full ${

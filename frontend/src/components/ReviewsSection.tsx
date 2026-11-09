@@ -30,11 +30,11 @@ export default function ReviewsSection({ productId }: { productId: string }) {
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <div className="flex items-center gap-2">
           <MessageSquare className="h-5 w-5 text-brand" />
-          <h2 className="text-xl font-bold text-ink">{i18n.reviews.title}</h2>
+          <h2 className="text-xl font-semibold text-ink">{i18n.reviews.title}</h2>
         </div>
         {data && data.count > 0 && data.average !== null && (
           <div className="flex items-center gap-2 text-sm text-ink-muted">
-            <span className="text-base font-bold text-brand tabular">
+            <span className="text-base font-semibold text-brand tabular">
               {Number(data.average).toFixed(1)}
             </span>
             <span>de 5</span>
@@ -71,7 +71,7 @@ export default function ReviewsSection({ productId }: { productId: string }) {
             <Card key={review.id} padding="md" className="flex flex-col gap-2.5">
               <div className="flex items-center justify-between gap-2">
                 <Stars value={review.stars} />
-                <span className="text-[11px] text-ink-muted">
+                <span className="text-xs text-ink-muted">
                   {formatDate(review.createdAt)}
                 </span>
               </div>

@@ -16,9 +16,11 @@ import { EmptyState } from '../components/ui/EmptyState';
 import { ErrorState } from '../components/ui/ErrorState';
 import { Pagination } from '../components/ui/Pagination';
 import { PageHeader } from '../components/ui/PageHeader';
+import { Input } from '../components/ui/Input';
+import { Select } from '../components/ui/Select';
 import { i18n } from '../i18n/es';
 import { formatMoney } from '../lib/formatters';
-import { Search, Store, Tag, X, Image as ImageIcon } from 'lucide-react';
+import { Store, Tag, X, Image as ImageIcon, ArrowRight } from 'lucide-react';
 
 const emptyFilters: ProductFilters = { q: '', categoryId: '', inStock: false };
 
@@ -42,9 +44,10 @@ function ProductCard({ product }: { product: Product }) {
         {image ? (
           <img
             src={imageUrl(image.fileName)}
-            alt={product.title}
+            alt={`Imagen del producto ${product.title}`}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
+            decoding="async"
           />
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-1.5 text-ink-muted">
@@ -55,7 +58,7 @@ function ProductCard({ product }: { product: Product }) {
 
         {/* Badge flotante de categoría */}
         <div className="absolute top-2.5 left-2.5">
-          <span className="rounded-md bg-surface/90 backdrop-blur-xs px-2 py-0.5 text-[11px] font-semibold text-ink border border-line/50">
+          <span className="rounded-md bg-surface/90 backdrop-blur-xs px-2 py-0.5 text-xs font-semibold text-ink border border-line/50">
             {product.category.name}
           </span>
         </div>
@@ -89,16 +92,17 @@ function ProductCard({ product }: { product: Product }) {
         {/* Precio y pie de tarjeta */}
         <div className="mt-auto pt-3 border-t border-line/40 flex items-center justify-between">
           <div className="flex flex-col">
-            <span className="text-[10px] uppercase font-semibold text-ink-muted tracking-wider">
+            <span className="text-xs uppercase font-semibold text-ink-muted tracking-wider">
               Precio desde
             </span>
-            <span className="text-base font-bold text-brand tabular">
+            <span className="text-base font-semibold text-brand tabular">
               {price === null ? 'Sin precio' : formatMoney(price)}
             </span>
           </div>
 
           <span className="text-xs font-semibold text-ink-muted group-hover:text-ink transition-colors flex items-center gap-1">
-            Ver detalle →
+            <span>Ver detalle</span>
+            <ArrowRight className="h-3.5 w-3.5" />
           </span>
         </div>
       </div>
@@ -142,31 +146,30 @@ export default function CatalogPage() {
             update({ q: search.trim() });
           }}
         >
-          {/* Campo de búsqueda con icono */}
-          <div className="relative flex-1 min-w-[240px]">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted pointer-events-none" />
-            <input
+          {/* Campo de búsqueda */}
+          <div className="flex-1 min-w-[240px]">
+            <Input
               type="text"
               placeholder={i18n.nav.searchPlaceholder}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-11 pl-10 pr-3 rounded-lg border border-line bg-surface-2 text-sm text-ink placeholder:text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
             />
           </div>
 
           {/* Selector de categoría */}
-          <select
-            value={filters.categoryId}
-            onChange={(e) => update({ categoryId: e.target.value })}
-            className="h-11 px-3.5 rounded-lg border border-line bg-surface-2 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all min-w-[180px]"
-          >
-            <option value="">Todas las categorías</option>
-            {categories.data?.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
+          <div className="min-w-[180px]">
+            <Select
+              value={filters.categoryId}
+              onChange={(e) => update({ categoryId: e.target.value })}
+            >
+              <option value="">Todas las categorías</option>
+              {categories.data?.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </Select>
+          </div>
 
           {/* Checkbox de stock */}
           <label className="flex items-center gap-2 text-xs font-medium text-ink px-3 py-2.5 rounded-lg border border-line/60 bg-surface-2/60 cursor-pointer hover:bg-surface-2 transition-colors select-none">

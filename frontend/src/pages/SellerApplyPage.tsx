@@ -6,6 +6,8 @@ import { Card } from '../components/ui/Card';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Skeleton } from '../components/ui/Skeleton';
+import { Input } from '../components/ui/Input';
+import { Textarea } from '../components/ui/Textarea';
 import { i18n } from '../i18n/es';
 import { ApiError } from '../lib/http';
 import {
@@ -59,7 +61,7 @@ export default function SellerApplyPage() {
                 <Store className="h-5 w-5" />
               </div>
               <div className="flex flex-col">
-                <h2 className="text-base font-bold text-ink">{seller.storeName}</h2>
+                <h2 className="text-base font-semibold text-ink">{seller.storeName}</h2>
                 <span className="text-xs text-ink-muted">Identificador comercial</span>
               </div>
             </div>
@@ -71,7 +73,7 @@ export default function SellerApplyPage() {
             <div className="flex items-start gap-3 p-4 rounded-xl border border-warning/30 bg-warning-soft">
               <Clock className="h-5 w-5 text-warning shrink-0 mt-0.5" />
               <div className="flex flex-col gap-1 text-xs">
-                <span className="font-bold text-warning uppercase tracking-wider">
+                <span className="font-semibold text-warning uppercase tracking-wider">
                   En Proceso de Revisión
                 </span>
                 <p className="text-ink-muted leading-relaxed">
@@ -86,7 +88,7 @@ export default function SellerApplyPage() {
               <div className="flex items-start gap-3 p-4 rounded-xl border border-success/30 bg-success-soft">
                 <CheckCircle2 className="h-5 w-5 text-success shrink-0 mt-0.5" />
                 <div className="flex flex-col gap-1 text-xs">
-                  <span className="font-bold text-success uppercase tracking-wider">
+                  <span className="font-semibold text-success uppercase tracking-wider">
                     Comercio Activo y Verificado
                   </span>
                   <p className="text-ink-muted leading-relaxed">
@@ -125,7 +127,7 @@ export default function SellerApplyPage() {
             <div className="flex items-start gap-3 p-4 rounded-xl border border-danger/30 bg-danger-soft">
               <AlertCircle className="h-5 w-5 text-danger shrink-0 mt-0.5" />
               <div className="flex flex-col gap-1 text-xs">
-                <span className="font-bold text-danger uppercase tracking-wider">
+                <span className="font-semibold text-danger uppercase tracking-wider">
                   Acceso Comercial Suspendido o Denegado
                 </span>
                 <p className="text-ink-muted leading-relaxed">
@@ -159,28 +161,22 @@ export default function SellerApplyPage() {
         </div>
 
         <form onSubmit={submit} className="flex flex-col gap-4">
-          <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-            <span>{i18n.seller.storeNamePrompt}</span>
-            <input
-              className="h-11 px-3.5 rounded-lg border border-line bg-surface-2 text-sm text-ink placeholder:text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-              required
-              minLength={3}
-              placeholder="Ej. ElectroHogar Perú, Modas Lima"
-              value={storeName}
-              onChange={(e) => setStoreName(e.target.value)}
-            />
-          </label>
+          <Input
+            label={i18n.seller.storeNamePrompt}
+            required
+            minLength={3}
+            placeholder="Ej. ElectroHogar Perú, Modas Lima"
+            value={storeName}
+            onChange={(e) => setStoreName(e.target.value)}
+          />
 
-          <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-            <span>{i18n.seller.descriptionPrompt}</span>
-            <textarea
-              className="w-full min-h-[90px] rounded-lg border border-line bg-surface-2 p-3 text-xs text-ink placeholder:text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-              rows={4}
-              placeholder="Describe el tipo de catálogo, productos y cobertura de tus envíos..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </label>
+          <Textarea
+            label={i18n.seller.descriptionPrompt}
+            rows={4}
+            placeholder="Describe el tipo de catálogo, productos y cobertura de tus envíos..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
 
           {apply.isError && (
             <div className="flex items-center gap-2 p-3 rounded-lg bg-danger-soft text-danger border border-danger/30 text-xs font-medium">
@@ -196,7 +192,7 @@ export default function SellerApplyPage() {
             size="lg"
             variant="primary"
             isLoading={apply.isPending}
-            className="w-full sm:w-auto self-start font-bold px-8 shadow-lg shadow-brand/10"
+            className="w-full sm:w-auto self-start font-medium px-8 "
           >
             {i18n.seller.submitApplication}
           </Button>

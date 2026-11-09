@@ -14,6 +14,8 @@ import { Badge } from '../components/ui/Badge';
 import { Modal } from '../components/ui/Modal';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Skeleton } from '../components/ui/Skeleton';
+import { Input } from '../components/ui/Input';
+import { Tabs } from '../components/ui/Tabs';
 import { i18n } from '../i18n/es';
 import { ApiError } from '../lib/http';
 import {
@@ -44,20 +46,17 @@ function ProfileForm({ initialName }: { initialName: string }) {
     <Card padding="lg" className="flex flex-col gap-4">
       <div className="flex items-center gap-2.5 pb-3 border-b border-line/60">
         <User className="h-5 w-5 text-brand" />
-        <h2 className="text-base font-bold text-ink">Datos Personales</h2>
+        <h2 className="text-base font-semibold text-ink">Datos Personales</h2>
       </div>
 
       <form onSubmit={submit} className="flex flex-col gap-4">
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-          <span>Nombre completo</span>
-          <input
-            className="h-11 px-3.5 rounded-lg border border-line bg-surface-2 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-            value={name}
-            required
-            minLength={2}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </label>
+        <Input
+          label="Nombre completo"
+          value={name}
+          required
+          minLength={2}
+          onChange={(e) => setName(e.target.value)}
+        />
 
         {update.isError && (
           <p className="text-xs text-danger flex items-center gap-1.5">
@@ -121,51 +120,46 @@ function ChangePasswordForm() {
       <div className="flex items-center gap-2.5 pb-3 border-b border-line/60">
         <KeyRound className="h-5 w-5 text-brand" />
         <div className="flex flex-col">
-          <h2 className="text-base font-bold text-ink">Seguridad y Contraseña</h2>
-          <span className="text-[11px] text-ink-muted">
+          <h2 className="text-base font-semibold text-ink">Seguridad y Contraseña</h2>
+          <span className="text-xs text-ink-muted">
             Al actualizar tu contraseña, se revocarán automáticamente todas las demás sesiones activas.
           </span>
         </div>
       </div>
 
       <form onSubmit={submit} className="flex flex-col gap-4">
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-          <span>Contraseña actual</span>
-          <input
-            type="password"
-            className="h-11 px-3.5 rounded-lg border border-line bg-surface-2 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-            value={currentPassword}
-            required
-            placeholder="••••••••••••"
-            onChange={(e) => setCurrentPassword(e.target.value)}
-          />
-        </label>
+        <Input
+          label="Contraseña actual"
+          type="password"
+          value={currentPassword}
+          required
+          autoComplete="current-password"
+          placeholder="••••••••••••"
+          onChange={(e) => setCurrentPassword(e.target.value)}
+        />
 
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-          <span>Nueva contraseña (mínimo 12 caracteres)</span>
-          <input
-            type="password"
-            className="h-11 px-3.5 rounded-lg border border-line bg-surface-2 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-            value={newPassword}
-            required
-            minLength={12}
-            placeholder="••••••••••••"
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
-        </label>
+        <Input
+          label="Nueva contraseña"
+          helperText="Mínimo 12 caracteres"
+          type="password"
+          value={newPassword}
+          required
+          minLength={12}
+          autoComplete="new-password"
+          placeholder="••••••••••••"
+          onChange={(e) => setNewPassword(e.target.value)}
+        />
 
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-          <span>Confirmar nueva contraseña</span>
-          <input
-            type="password"
-            className="h-11 px-3.5 rounded-lg border border-line bg-surface-2 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-            value={confirmPassword}
-            required
-            minLength={12}
-            placeholder="••••••••••••"
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-        </label>
+        <Input
+          label="Confirmar nueva contraseña"
+          type="password"
+          value={confirmPassword}
+          required
+          minLength={12}
+          autoComplete="new-password"
+          placeholder="••••••••••••"
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
 
         {validationError && (
           <p className="text-xs text-danger flex items-center gap-1.5">
@@ -223,26 +217,37 @@ function AddressForm({ address, onDone }: { address?: Address; onDone: () => voi
     }
   }
 
-  const field = (key: 'label' | 'line1' | 'city' | 'province', label: string, placeholder: string) => (
-    <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-      <span>{label}</span>
-      <input
-        className="h-10 px-3 rounded-lg border border-line bg-surface-2 text-xs text-ink placeholder:text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-        required
-        value={form[key]}
-        placeholder={placeholder}
-        onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-      />
-    </label>
-  );
-
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
       <div className="grid gap-3 sm:grid-cols-2">
-        {field('label', 'Etiqueta', 'Ej. Casa, Oficina')}
-        {field('line1', 'Dirección física', 'Ej. Calle 123 Dpto 4')}
-        {field('city', 'Ciudad / Distrito', 'Ej. Miraflores')}
-        {field('province', 'Provincia / Región', 'Ej. Lima')}
+        <Input
+          label="Etiqueta"
+          placeholder="Ej. Casa, Oficina"
+          required
+          value={form.label}
+          onChange={(e) => setForm({ ...form, label: e.target.value })}
+        />
+        <Input
+          label="Dirección física"
+          placeholder="Ej. Calle 123 Dpto 4"
+          required
+          value={form.line1}
+          onChange={(e) => setForm({ ...form, line1: e.target.value })}
+        />
+        <Input
+          label="Ciudad / Distrito"
+          placeholder="Ej. Miraflores"
+          required
+          value={form.city}
+          onChange={(e) => setForm({ ...form, city: e.target.value })}
+        />
+        <Input
+          label="Provincia / Región"
+          placeholder="Ej. Lima"
+          required
+          value={form.province}
+          onChange={(e) => setForm({ ...form, province: e.target.value })}
+        />
       </div>
 
       <label className="flex items-center gap-2 text-xs font-medium text-ink cursor-pointer select-none">
@@ -279,6 +284,14 @@ export default function AccountPage() {
   const { data: addresses, isLoading, isError } = useAddresses();
   const remove = useDeleteAddress();
   const [editing, setEditing] = useState<Address | 'new' | null>(null);
+  const [deletingAddress, setDeletingAddress] = useState<Address | null>(null);
+  const [activeTab, setActiveTab] = useState('perfil');
+
+  const tabs = [
+    { id: 'perfil', label: 'Datos Personales', icon: <User className="h-4 w-4" /> },
+    { id: 'seguridad', label: 'Seguridad y Acceso', icon: <KeyRound className="h-4 w-4" /> },
+    { id: 'direcciones', label: 'Direcciones de Entrega', count: addresses?.length, icon: <MapPin className="h-4 w-4" /> },
+  ];
 
   return (
     <div className="flex flex-col gap-8 max-w-3xl mx-auto">
@@ -294,11 +307,11 @@ export default function AccountPage() {
       {/* Tarjeta de Resumen de Usuario */}
       {user && (
         <div className="flex items-center gap-4 p-4 rounded-xl border border-line bg-surface">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand/15 text-brand font-extrabold text-base border border-brand/30">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand/15 text-brand font-semibold text-base border border-brand/30">
             {(user.fullName || user.email || 'U').slice(0, 2).toUpperCase()}
           </div>
           <div className="flex flex-col">
-            <span className="font-bold text-sm text-ink">{user.fullName || 'Usuario'}</span>
+            <span className="font-semibold text-sm text-ink">{user.fullName || 'Usuario'}</span>
             <span className="text-xs text-ink-muted">{user.email}</span>
           </div>
           <div className="ml-auto">
@@ -309,102 +322,113 @@ export default function AccountPage() {
         </div>
       )}
 
+      {/* Pestañas */}
+      <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+
       {/* Formulario de Perfil */}
-      {user && <ProfileForm key={user.id} initialName={user.fullName ?? ''} />}
+      {activeTab === 'perfil' && user && (
+        <div className="animate-fade-in">
+          <ProfileForm key={user.id} initialName={user.fullName ?? ''} />
+        </div>
+      )}
 
       {/* Formulario de Contraseña Segura */}
-      {user && <ChangePasswordForm />}
+      {activeTab === 'seguridad' && user && (
+        <div className="animate-fade-in">
+          <ChangePasswordForm />
+        </div>
+      )}
 
       {/* Libreta de Direcciones */}
-      <Card padding="lg" className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-line/60">
-          <div className="flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-brand" />
-            <h2 className="text-base font-bold text-ink">Mis Direcciones de Entrega</h2>
-          </div>
-          <Button
-            size="sm"
-            variant="secondary"
-            className="gap-1.5 text-xs font-semibold"
-            onClick={() => setEditing('new')}
-          >
-            <Plus className="h-3.5 w-3.5" />
-            <span>{i18n.checkout.addAddress}</span>
-          </Button>
-        </div>
-
-        {isLoading && (
-          <div className="flex flex-col gap-2">
-            <Skeleton variant="block" className="h-16 w-full" />
-            <Skeleton variant="block" className="h-16 w-full" />
-          </div>
-        )}
-
-        {isError && (
-          <p className="text-xs text-danger">{i18n.common.error}</p>
-        )}
-
-        {addresses && addresses.length === 0 && (
-          <p className="text-xs text-ink-muted py-4 text-center">
-            Aún no tienes direcciones registradas. Agrega una para agilizar tus compras.
-          </p>
-        )}
-
-        {addresses && addresses.length > 0 && (
-          <div className="flex flex-col gap-3">
-            {addresses.map((address) => (
-              <div
-                key={address.id}
-                className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl border border-line bg-surface-2/40 hover:border-line-soft transition-colors"
-              >
-                <div className="flex flex-col text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-ink">{address.label}</span>
-                    {address.isDefault && (
-                      <span className="rounded-md bg-brand-soft px-1.5 py-0.2 text-[10px] font-bold text-brand border border-brand/20">
-                        Predeterminada
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-ink-muted mt-0.5">
-                    {address.line1}, {address.city}, {address.province}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-1.5">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 text-xs px-2.5"
-                    onClick={() => setEditing(address)}
-                  >
-                    <Edit2 className="h-3.5 w-3.5 mr-1" />
-                    {i18n.common.edit}
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    className="h-8 text-xs px-2.5"
-                    isLoading={remove.isPending && remove.variables === address.id}
-                    onClick={() => {
-                      if (window.confirm(`¿Eliminar la dirección "${address.label}"?`)) {
-                        remove.mutate(address.id);
-                      }
-                    }}
-                  >
-                    <Trash2 className="h-3.5 w-3.5 mr-1" />
-                    {i18n.common.delete}
-                  </Button>
-                </div>
+      {activeTab === 'direcciones' && (
+        <div className="animate-fade-in">
+          <Card padding="lg" className="flex flex-col gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-line/60">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-brand" />
+                <h2 className="text-base font-semibold text-ink">Mis Direcciones de Entrega</h2>
               </div>
-            ))}
-          </div>
-        )}
+              <Button
+                size="sm"
+                variant="secondary"
+                className="gap-1.5 text-xs font-semibold"
+                onClick={() => setEditing('new')}
+              >
+                <Plus className="h-3.5 w-3.5" />
+                <span>{i18n.checkout.addAddress}</span>
+              </Button>
+            </div>
 
-        {remove.isError && (
-          <p className="text-xs text-danger mt-1">{errorMessage(remove.error)}</p>
-        )}
-      </Card>
+            {isLoading && (
+              <div className="flex flex-col gap-2">
+                <Skeleton variant="block" className="h-16 w-full" />
+                <Skeleton variant="block" className="h-16 w-full" />
+              </div>
+            )}
+
+            {isError && (
+              <p className="text-xs text-danger">{i18n.common.error}</p>
+            )}
+
+            {addresses && addresses.length === 0 && (
+              <p className="text-xs text-ink-muted py-4 text-center">
+                Aún no tienes direcciones registradas. Agrega una para agilizar tus compras.
+              </p>
+            )}
+
+            {addresses && addresses.length > 0 && (
+              <div className="flex flex-col gap-3">
+                {addresses.map((address) => (
+                  <div
+                    key={address.id}
+                    className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl border border-line bg-surface-2/40 hover:border-line-soft transition-colors"
+                  >
+                    <div className="flex flex-col text-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-ink">{address.label}</span>
+                        {address.isDefault && (
+                          <span className="rounded-md bg-brand-soft px-1.5 py-0.5 text-xs font-medium text-brand border border-brand/20">
+                            Predeterminada
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-ink-muted mt-0.5">
+                        {address.line1}, {address.city}, {address.province}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 text-xs px-2.5"
+                        onClick={() => setEditing(address)}
+                      >
+                        <Edit2 className="h-3.5 w-3.5 mr-1" />
+                        {i18n.common.edit}
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        className="h-8 text-xs px-2.5"
+                        isLoading={remove.isPending && remove.variables === address.id}
+                        onClick={() => setDeletingAddress(address)}
+                      >
+                        <Trash2 className="h-3.5 w-3.5 mr-1" />
+                        {i18n.common.delete}
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {remove.isError && (
+              <p className="text-xs text-danger mt-1">{errorMessage(remove.error)}</p>
+            )}
+          </Card>
+        </div>
+      )}
 
       {/* Modal para Crear o Editar Dirección */}
       <Modal
@@ -419,6 +443,44 @@ export default function AccountPage() {
             address={editing === 'new' ? undefined : editing}
             onDone={() => setEditing(null)}
           />
+        )}
+      </Modal>
+
+      {/* Modal de Confirmación para Eliminar Dirección */}
+      <Modal
+        isOpen={deletingAddress !== null}
+        onClose={() => setDeletingAddress(null)}
+        title="Eliminar Dirección de Entrega"
+        size="sm"
+      >
+        {deletingAddress && (
+          <div className="flex flex-col gap-4">
+            <p className="text-xs text-ink-muted leading-relaxed">
+              ¿Estás seguro de que deseas eliminar la dirección{' '}
+              <strong className="text-ink">"{deletingAddress.label}"</strong> ({deletingAddress.line1}, {deletingAddress.city})? Esta acción no se puede deshacer.
+            </p>
+            <div className="flex justify-end gap-2 pt-2 border-t border-line/50">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setDeletingAddress(null)}
+              >
+                {i18n.common.cancel}
+              </Button>
+              <Button
+                variant="danger"
+                size="sm"
+                isLoading={remove.isPending}
+                onClick={() => {
+                  remove.mutate(deletingAddress.id, {
+                    onSuccess: () => setDeletingAddress(null),
+                  });
+                }}
+              >
+                {i18n.common.delete}
+              </Button>
+            </div>
+          </div>
         )}
       </Modal>
     </div>

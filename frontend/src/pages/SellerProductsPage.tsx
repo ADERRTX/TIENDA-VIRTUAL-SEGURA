@@ -19,6 +19,9 @@ import { EmptyState } from '../components/ui/EmptyState';
 import { ErrorState } from '../components/ui/ErrorState';
 import { Pagination } from '../components/ui/Pagination';
 import { Skeleton } from '../components/ui/Skeleton';
+import { Input } from '../components/ui/Input';
+import { Select } from '../components/ui/Select';
+import { Textarea } from '../components/ui/Textarea';
 import { i18n } from '../i18n/es';
 import { formatMoney } from '../lib/formatters';
 import { ApiError } from '../lib/http';
@@ -64,85 +67,67 @@ function CreateProductForm({ onDone }: { onDone: () => void }) {
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
-      <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-        <span>Título del producto</span>
-        <input
-          className="h-10 px-3.5 rounded-lg border border-line bg-surface-2 text-xs text-ink placeholder:text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-          placeholder="Ej. Mochila Antirrobo Impermeable con Candado TSA"
-          value={title}
-          required
-          minLength={3}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </label>
+      <Input
+        label="Título del producto"
+        placeholder="Ej. Mochila Antirrobo Impermeable con Candado TSA"
+        value={title}
+        required
+        minLength={3}
+        onChange={(e) => setTitle(e.target.value)}
+      />
 
-      <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-        <span>Descripción completa (mínimo 10 caracteres)</span>
-        <textarea
-          className="w-full min-h-[80px] rounded-lg border border-line bg-surface-2 p-3 text-xs text-ink placeholder:text-ink-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-          rows={3}
-          placeholder="Describe materiales, especificaciones técnicas y características del artículo..."
-          value={description}
-          required
-          minLength={10}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-      </label>
+      <Textarea
+        label="Descripción completa (mínimo 10 caracteres)"
+        rows={3}
+        placeholder="Describe materiales, especificaciones técnicas y características del artículo..."
+        value={description}
+        required
+        minLength={10}
+        onChange={(e) => setDescription(e.target.value)}
+      />
 
-      <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-        <span>Categoría del producto</span>
-        <select
-          className="h-10 px-3 rounded-lg border border-line bg-surface-2 text-xs text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-          value={categoryId}
-          required
-          onChange={(e) => setCategoryId(e.target.value)}
-        >
-          <option value="">Selecciona una categoría</option>
-          {categories.data?.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-      </label>
+      <Select
+        label="Categoría del producto"
+        value={categoryId}
+        required
+        onChange={(e) => setCategoryId(e.target.value)}
+      >
+        <option value="">Selecciona una categoría</option>
+        {categories.data?.map((category) => (
+          <option key={category.id} value={category.id}>
+            {category.name}
+          </option>
+        ))}
+      </Select>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-          <span>Nombre de variante inicial</span>
-          <input
-            className="h-10 px-3 rounded-lg border border-line bg-surface-2 text-xs text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-            value={variantName}
-            required
-            onChange={(e) => setVariantName(e.target.value)}
-          />
-        </label>
+        <Input
+          label="Nombre de variante inicial"
+          value={variantName}
+          required
+          onChange={(e) => setVariantName(e.target.value)}
+        />
 
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-          <span>Precio (S/.)</span>
-          <input
-            type="number"
-            min="0.01"
-            step="0.01"
-            className="h-10 px-3 rounded-lg border border-line bg-surface-2 text-xs text-ink tabular focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-            value={price}
-            required
-            placeholder="0.00"
-            onChange={(e) => setPrice(e.target.value)}
-          />
-        </label>
+        <Input
+          label="Precio (S/.)"
+          type="number"
+          min="0.01"
+          step="0.01"
+          value={price}
+          required
+          placeholder="0.00"
+          onChange={(e) => setPrice(e.target.value)}
+        />
 
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink">
-          <span>Stock inicial</span>
-          <input
-            type="number"
-            min="0"
-            step="1"
-            className="h-10 px-3 rounded-lg border border-line bg-surface-2 text-xs text-ink tabular focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand transition-all"
-            value={stock}
-            required
-            onChange={(e) => setStock(e.target.value)}
-          />
-        </label>
+        <Input
+          label="Stock inicial"
+          type="number"
+          min="0"
+          step="1"
+          value={stock}
+          required
+          onChange={(e) => setStock(e.target.value)}
+        />
       </div>
 
       {create.isError && (
@@ -169,17 +154,12 @@ function ProductRow({ product }: { product: SellerProduct }) {
   const removeImage = useDeleteImage();
   const removeProduct = useDeleteProduct();
   const [editing, setEditing] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   function handleFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     event.target.value = '';
     if (file) upload.mutate({ productId: product.id, file });
-  }
-
-  function handleDelete() {
-    if (window.confirm(`¿Eliminar definitivamente el producto "${product.title}"?`)) {
-      removeProduct.mutate(product.id);
-    }
   }
 
   const error = upload.error ?? removeImage.error ?? removeProduct.error;
@@ -189,11 +169,11 @@ function ProductRow({ product }: { product: SellerProduct }) {
       <header className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-line/60">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-2 text-brand border border-line">
-            <Package className="h-4.5 w-4.5" />
+            <Package className="h-5 w-5" />
           </div>
           <div className="flex flex-col">
-            <h2 className="font-bold text-sm text-ink">{product.title}</h2>
-            <div className="flex items-center gap-2 text-[11px] text-ink-muted">
+            <h2 className="font-semibold text-sm text-ink">{product.title}</h2>
+            <div className="flex items-center gap-2 text-xs text-ink-muted">
               <span>{product.category?.name ?? 'Sin categoría'}</span>
               <span>·</span>
               <StatusBadge status={product.status} category="product" size="sm" />
@@ -211,7 +191,7 @@ function ProductRow({ product }: { product: SellerProduct }) {
             size="sm"
             className="h-8 text-xs px-2 text-danger hover:bg-danger-soft"
             isLoading={removeProduct.isPending}
-            onClick={handleDelete}
+            onClick={() => setConfirmingDelete(true)}
           >
             <Trash2 className="h-3.5 w-3.5 mr-1" />
             {i18n.common.delete}
@@ -221,7 +201,7 @@ function ProductRow({ product }: { product: SellerProduct }) {
 
       {/* Variantes y Precios */}
       <div className="flex flex-col gap-1.5 text-xs">
-        <span className="font-semibold text-ink-muted text-[11px] uppercase tracking-wider">
+        <span className="font-semibold text-ink-muted text-xs uppercase tracking-wider">
           Variantes registradas:
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
@@ -232,8 +212,8 @@ function ProductRow({ product }: { product: SellerProduct }) {
             >
               <span className="font-medium text-ink">{variant.name}</span>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-brand tabular">{formatMoney(variant.price)}</span>
-                <span className="text-[10px] text-ink-muted bg-surface px-1.5 py-0.5 rounded border border-line/40">
+                <span className="font-semibold text-brand tabular">{formatMoney(variant.price)}</span>
+                <span className="text-xs text-ink-muted bg-surface px-1.5 py-0.5 rounded border border-line/40">
                   Stock: {variant.stock}
                 </span>
               </div>
@@ -248,7 +228,9 @@ function ProductRow({ product }: { product: SellerProduct }) {
           <div key={image.id} className="relative group">
             <img
               src={imageUrl(image.fileName)}
-              alt={product.title}
+              alt={`Fotografía de ${product.title}`}
+              loading="lazy"
+              decoding="async"
               className={`h-16 w-16 rounded-lg object-cover border border-line bg-surface-2 ${
                 image.isMain ? 'ring-2 ring-brand' : ''
               }`}
@@ -265,7 +247,7 @@ function ProductRow({ product }: { product: SellerProduct }) {
           </div>
         ))}
 
-        <label className="flex h-16 w-16 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-line text-center text-[10px] text-ink-muted hover:border-brand hover:text-brand transition-colors bg-surface-2/30">
+        <label className="flex h-16 w-16 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-line text-center text-xs text-ink-muted hover:border-brand hover:text-brand transition-colors bg-surface-2/30">
           <Upload className="h-4 w-4 mb-0.5" />
           <span>{upload.isPending ? '...' : '+ Foto'}</span>
           <input
@@ -287,6 +269,41 @@ function ProductRow({ product }: { product: SellerProduct }) {
 
       <Modal isOpen={editing} onClose={() => setEditing(false)} title={`Editar: ${product.title}`} size="lg">
         <EditProductForm key={product.id} product={product} onDone={() => setEditing(false)} />
+      </Modal>
+
+      <Modal
+        isOpen={confirmingDelete}
+        onClose={() => setConfirmingDelete(false)}
+        title="Eliminar Producto"
+        size="sm"
+      >
+        <div className="flex flex-col gap-4">
+          <p className="text-xs text-ink-muted leading-relaxed">
+            ¿Estás seguro de que deseas eliminar definitivamente el producto{' '}
+            <strong className="text-ink">"{product.title}"</strong>? Esta acción no se puede deshacer y retirará el catálogo de la plataforma.
+          </p>
+          <div className="flex justify-end gap-2 pt-2 border-t border-line/50">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setConfirmingDelete(false)}
+            >
+              {i18n.common.cancel}
+            </Button>
+            <Button
+              variant="danger"
+              size="sm"
+              isLoading={removeProduct.isPending}
+              onClick={() => {
+                removeProduct.mutate(product.id, {
+                  onSuccess: () => setConfirmingDelete(false),
+                });
+              }}
+            >
+              {i18n.common.delete}
+            </Button>
+          </div>
+        </div>
       </Modal>
     </Card>
   );

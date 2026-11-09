@@ -5,6 +5,7 @@ import { Stat } from '../components/ui/Stat';
 import { PageHeader } from '../components/ui/PageHeader';
 import { ErrorState } from '../components/ui/ErrorState';
 import { Skeleton } from '../components/ui/Skeleton';
+import { Spinner } from '../components/ui/Spinner';
 import { i18n } from '../i18n/es';
 import { formatMoney } from '../lib/formatters';
 import { ApiError } from '../lib/http';
@@ -33,7 +34,7 @@ function ReportCard({ title, icon, children }: { title: string; icon: ReactNode;
     <Card padding="lg" className="flex flex-col gap-4 shadow-sm">
       <div className="flex items-center gap-2.5 pb-3 border-b border-line/60">
         <div className="text-brand">{icon}</div>
-        <h2 className="text-sm font-bold text-ink uppercase tracking-wider">{title}</h2>
+        <h2 className="text-sm font-semibold text-ink uppercase tracking-wider">{title}</h2>
       </div>
       {children}
     </Card>
@@ -45,9 +46,9 @@ function ReportRow({ label, value, sub }: { label: string; value: string; sub?: 
     <div className="flex items-center justify-between gap-4 py-2 border-b border-line/30 last:border-b-0 text-xs">
       <div className="flex flex-col">
         <span className="font-medium text-ink">{label}</span>
-        {sub && <span className="text-[10px] text-ink-muted">{sub}</span>}
+        {sub && <span className="text-xs text-ink-muted">{sub}</span>}
       </div>
-      <span className="font-bold text-ink tabular text-right">{value}</span>
+      <span className="font-semibold text-ink tabular text-right">{value}</span>
     </div>
   );
 }
@@ -57,7 +58,7 @@ function EmptyReport() {
 }
 
 export default function AdminReportsPage() {
-  const { data, isLoading, isError, error, refetch } = useReports();
+  const { data, isLoading, isError, error, refetch, isFetching } = useReports();
 
   return (
     <div className="flex flex-col gap-8 max-w-5xl mx-auto">
@@ -69,6 +70,14 @@ export default function AdminReportsPage() {
           { label: 'Panel Admin' },
           { label: 'Reportes y Métricas' },
         ]}
+        actions={
+          isFetching && !isLoading ? (
+            <div className="flex items-center gap-2 text-xs text-ink-muted bg-surface-2 px-3 py-1.5 rounded-lg border border-line">
+              <Spinner size="sm" />
+              <span>Sincronizando...</span>
+            </div>
+          ) : undefined
+        }
       />
 
       {isLoading && (
@@ -117,7 +126,7 @@ export default function AdminReportsPage() {
           {/* Bloques de Detalle en Cuadrícula 2 Columnas */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
             {/* Ventas por mes */}
-            <ReportCard title="Ventas por Mes" icon={<Calendar className="h-4.5 w-4.5" />}>
+            <ReportCard title="Ventas por Mes" icon={<Calendar className="h-5 w-5" />}>
               {data.sales.byMonth.length === 0 && <EmptyReport />}
               <div className="flex flex-col">
                 {data.sales.byMonth.map((m) => (
@@ -127,7 +136,7 @@ export default function AdminReportsPage() {
             </ReportCard>
 
             {/* Pedidos por estado */}
-            <ReportCard title="Pedidos por Estado" icon={<Package className="h-4.5 w-4.5" />}>
+            <ReportCard title="Pedidos por Estado" icon={<Package className="h-5 w-5" />}>
               {data.orders.length === 0 && <EmptyReport />}
               <div className="flex flex-col">
                 {data.orders.map((o) => (
@@ -137,7 +146,7 @@ export default function AdminReportsPage() {
             </ReportCard>
 
             {/* Reclamos por estado */}
-            <ReportCard title="Reclamos por Estado" icon={<Scale className="h-4.5 w-4.5" />}>
+            <ReportCard title="Reclamos por Estado" icon={<Scale className="h-5 w-5" />}>
               {data.claims.byStatus.length === 0 && <EmptyReport />}
               <div className="flex flex-col">
                 {data.claims.byStatus.map((c) => (
@@ -147,7 +156,7 @@ export default function AdminReportsPage() {
             </ReportCard>
 
             {/* Reclamos por resolución */}
-            <ReportCard title="Resoluciones Dictaminadas" icon={<Award className="h-4.5 w-4.5" />}>
+            <ReportCard title="Resoluciones Dictaminadas" icon={<Award className="h-5 w-5" />}>
               {data.claims.byResolution.length === 0 && <EmptyReport />}
               <div className="flex flex-col">
                 {data.claims.byResolution.map((r, index) => {
@@ -165,7 +174,7 @@ export default function AdminReportsPage() {
           </div>
 
           {/* Productos más vendidos */}
-          <ReportCard title="Productos Más Vendidos" icon={<TrendingUp className="h-4.5 w-4.5" />}>
+          <ReportCard title="Productos Más Vendidos" icon={<TrendingUp className="h-5 w-5" />}>
             {data.top.length === 0 && <EmptyReport />}
             <div className="flex flex-col divide-y divide-line/30">
               {data.top.map((p) => (

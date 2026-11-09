@@ -98,7 +98,7 @@ export default function CartPage() {
         <div className="rounded-xl border border-warning/40 bg-warning-soft p-4 flex items-start gap-3">
           <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
           <div className="flex flex-col gap-1">
-            <span className="text-xs font-bold text-warning uppercase tracking-wider">
+            <span className="text-xs font-semibold text-warning uppercase tracking-wider">
               {i18n.cart.warnings}
             </span>
             <ul className="text-xs text-ink-muted list-disc pl-4 space-y-0.5">
@@ -122,7 +122,7 @@ export default function CartPage() {
                   <div className="flex items-center gap-2">
                     <Store className="h-4 w-4 text-brand" />
                     <span className="text-xs text-ink-muted">{i18n.cart.sellerGroup}</span>
-                    <span className="text-sm font-bold text-ink">{group.storeName}</span>
+                    <span className="text-sm font-medium text-ink">{group.storeName}</span>
                   </div>
                   <span className="text-xs text-ink-muted font-medium">
                     Sub-pedido independiente
@@ -138,11 +138,13 @@ export default function CartPage() {
                         {item.image ? (
                           <img
                             src={imageUrl(item.image)}
-                            alt={item.title}
+                            alt={`Fotografía de ${item.title}`}
+                            loading="lazy"
+                            decoding="async"
                             className="h-full w-full object-cover"
                           />
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center text-[10px] text-ink-muted">
+                          <div className="flex h-full w-full items-center justify-center text-xs text-ink-muted">
                             Sin foto
                           </div>
                         )}
@@ -175,7 +177,7 @@ export default function CartPage() {
                         >
                           <Minus className="h-3 w-3" />
                         </button>
-                        <span className="w-7 text-center text-xs font-bold tabular text-ink">
+                        <span className="w-7 text-center text-xs font-medium tabular text-ink">
                           {item.quantity}
                         </span>
                         <button
@@ -192,7 +194,7 @@ export default function CartPage() {
                       </div>
 
                       {/* Total por línea */}
-                      <span className="text-sm font-bold text-ink tabular min-w-[80px] text-right">
+                      <span className="text-sm font-medium text-ink tabular min-w-[80px] text-right">
                         {formatMoney(item.total)}
                       </span>
 
@@ -213,7 +215,7 @@ export default function CartPage() {
                 {/* Subtotal del grupo */}
                 <div className="pt-3 border-t border-line/60 flex items-center justify-between text-xs">
                   <span className="text-ink-muted">{i18n.cart.subtotal} del comercio:</span>
-                  <span className="font-bold text-ink tabular text-sm">
+                  <span className="font-medium text-ink tabular text-sm">
                     {formatMoney(group.subtotal)}
                   </span>
                 </div>
@@ -223,8 +225,8 @@ export default function CartPage() {
 
           {/* Resumen de Compra (Columna lateral sticky) */}
           <div className="lg:sticky lg:top-24 flex flex-col gap-4">
-            <Card padding="lg" className="flex flex-col gap-4 shadow-xl">
-              <h2 className="text-base font-bold text-ink border-b border-line/60 pb-3">
+            <Card padding="lg" className="flex flex-col gap-4 ">
+              <h2 className="text-base font-semibold text-ink border-b border-line/60 pb-3">
                 Resumen de la Orden
               </h2>
 
@@ -244,8 +246,8 @@ export default function CartPage() {
               </div>
 
               <div className="pt-3 border-t border-line flex items-baseline justify-between">
-                <span className="text-sm font-bold text-ink">{i18n.cart.total}:</span>
-                <span className="text-2xl font-black text-brand tabular">
+                <span className="text-sm font-medium text-ink">{i18n.cart.total}:</span>
+                <span className="text-2xl font-semibold text-brand tabular">
                   {formatMoney(cart.total)}
                 </span>
               </div>
@@ -255,14 +257,14 @@ export default function CartPage() {
                 size="lg"
                 variant="primary"
                 onClick={() => navigate('/checkout')}
-                className="w-full font-bold gap-2 mt-2 shadow-lg shadow-brand/10"
+                className="w-full font-medium gap-2 mt-2 "
               >
                 <span>{i18n.cart.checkout}</span>
                 <ArrowRight className="h-4 w-4" />
               </Button>
 
               {/* Garantía de custodia */}
-              <div className="flex items-start gap-2 pt-2 text-[11px] text-ink-muted leading-relaxed">
+              <div className="flex items-start gap-2 pt-2 text-xs text-ink-muted leading-relaxed">
                 <ShieldCheck className="h-4 w-4 text-brand shrink-0 mt-0.5" />
                 <span>
                   Tu compra está protegida por custodia bancaria simulada. El vendedor solo cobra tras tu confirmación.

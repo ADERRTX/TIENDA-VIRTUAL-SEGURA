@@ -101,20 +101,21 @@ export const Modal: React.FC<ModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
-        className={`w-full ${sizeClass} bg-surface border border-line rounded-2xl shadow-xl overflow-hidden max-h-[90vh] flex flex-col animate-scale-in outline-none`}
+        className={`w-full ${sizeClass} bg-surface border border-line rounded-2xl shadow-lg overflow-hidden max-h-[90vh] flex flex-col animate-scale-in outline-none`}
       >
         <div className="flex items-start justify-between p-5 border-b border-line bg-surface-2/60">
           <div>
             {title && (
-              <h3 id="modal-title" className="text-base font-bold text-ink">
+              <h3 id="modal-title" className="text-base font-semibold text-ink">
                 {title}
               </h3>
             )}
             {description && <p className="text-xs text-ink-muted mt-0.5">{description}</p>}
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-1.5 -mr-1 -mt-1 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-3 transition-colors"
+            className="p-1.5 -mr-1 -mt-1 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
             aria-label="Cerrar modal"
           >
             <X size={18} />

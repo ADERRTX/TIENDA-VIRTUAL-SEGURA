@@ -38,10 +38,10 @@ function CheckoutStep({
   return (
     <Card padding="lg" className="flex flex-col gap-4">
       <div className="flex items-center gap-3 border-b border-line/60 pb-3">
-        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand/15 text-brand text-xs font-bold border border-brand/30">
+        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand/15 text-brand text-xs font-medium border border-brand/30">
           {stepNumber}
         </div>
-        <div className="flex items-center gap-2 text-ink font-bold text-base">
+        <div className="flex items-center gap-2 text-ink font-semibold text-base">
           {icon}
           <span>{title}</span>
         </div>
@@ -117,7 +117,7 @@ function AddressStep(props: {
     <CheckoutStep
       stepNumber={1}
       title={i18n.checkout.step1}
-      icon={<MapPin className="h-4.5 w-4.5 text-brand" />}
+      icon={<MapPin className="h-5 w-5 text-brand" />}
     >
       {props.addresses.length === 0 && !showForm && (
         <p className="text-xs text-ink-muted leading-relaxed">
@@ -145,10 +145,10 @@ function AddressStep(props: {
                 className="mt-1 h-4 w-4 border-line text-brand focus:ring-brand"
               />
               <div className="flex flex-col text-xs">
-                <span className="font-bold text-ink flex items-center gap-2">
+                <span className="font-medium text-ink flex items-center gap-2">
                   {address.label}
                   {address.isDefault && (
-                    <span className="rounded-md bg-surface-2 px-1.5 py-0.2 text-[10px] text-brand border border-brand/30">
+                    <span className="rounded-md bg-surface-2 px-1.5 py-0.5 text-xs text-brand border border-brand/30">
                       Predeterminada
                     </span>
                   )}
@@ -188,12 +188,12 @@ function AddressStep(props: {
 function Confirmation() {
   return (
     <section className="flex flex-col items-center justify-center gap-6 py-12 max-w-xl mx-auto text-center animate-scale-in">
-      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand/15 text-brand border border-brand/40 shadow-xl">
+      <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-brand/15 text-brand border border-brand/40 ">
         <CheckCircle2 className="h-8 w-8" />
       </div>
 
       <div className="flex flex-col gap-2">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-ink">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-ink">
           {i18n.checkout.successTitle}
         </h1>
         <p className="text-sm text-ink-muted leading-relaxed">
@@ -202,7 +202,7 @@ function Confirmation() {
       </div>
 
       <div className="rounded-xl border border-brand/30 bg-surface p-4 text-xs text-ink-muted leading-relaxed max-w-md">
-        <div className="flex items-center justify-center gap-1.5 text-brand font-bold mb-1">
+        <div className="flex items-center justify-center gap-1.5 text-brand font-medium mb-1">
           <ShieldCheck className="h-4 w-4" />
           <span>Fondos en Custodia Segura</span>
         </div>
@@ -211,7 +211,7 @@ function Confirmation() {
 
       <Link
         to="/pedidos"
-        className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-brand px-6 py-2.5 text-sm font-bold text-brand-ink shadow-lg shadow-brand/20 hover:bg-brand-hover transition-colors gap-2"
+        className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-brand px-6 py-2.5 text-sm font-semibold text-brand-ink  hover:bg-brand-hover transition-colors gap-2"
       >
         <span>{i18n.checkout.viewOrder}</span>
         <ArrowRight className="h-4 w-4" />
@@ -272,14 +272,14 @@ export default function CheckoutPage() {
         <CheckoutStep
           stepNumber={2}
           title={i18n.checkout.step2}
-          icon={<Truck className="h-4.5 w-4.5 text-info" />}
+          icon={<Truck className="h-5 w-5 text-info" />}
         >
           <div className="flex items-center justify-between p-3.5 rounded-xl border border-line bg-surface">
             <div className="flex flex-col text-xs">
               <span className="font-semibold text-ink">{i18n.checkout.shippingMethod}</span>
               <span className="text-ink-muted">Coordinado y despachado directamente por cada comercio verificado</span>
             </div>
-            <span className="text-xs font-bold text-success bg-success-soft px-2 py-0.5 rounded-full border border-success/30">
+            <span className="text-xs font-medium text-success bg-success-soft px-2 py-0.5 rounded-full border border-success/30">
               {i18n.checkout.shippingCost}
             </span>
           </div>
@@ -289,7 +289,7 @@ export default function CheckoutPage() {
         <CheckoutStep
           stepNumber={3}
           title={i18n.checkout.step3}
-          icon={<CreditCard className="h-4.5 w-4.5 text-brand" />}
+          icon={<CreditCard className="h-5 w-5 text-brand" />}
         >
           <p className="text-xs text-ink-muted leading-relaxed">
             {i18n.checkout.paymentPrompt}
@@ -326,7 +326,7 @@ export default function CheckoutPage() {
                     className="mt-1 h-4 w-4 border-line text-brand focus:ring-brand"
                   />
                   <div className="flex flex-col text-xs">
-                    <span className="font-bold text-ink">{option.label}</span>
+                    <span className="font-medium text-ink">{option.label}</span>
                     <span className="text-ink-muted mt-0.5">{option.desc}</span>
                   </div>
                 </label>
@@ -342,7 +342,7 @@ export default function CheckoutPage() {
           )}
 
           <div className="pt-2 border-t border-line/60 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-[11px] text-ink-muted">
+            <div className="flex items-center gap-2 text-xs text-ink-muted">
               <Lock className="h-3.5 w-3.5 text-brand" />
               <span>Cifrado TLS y tokenización segura de tarjetas</span>
             </div>
@@ -350,7 +350,7 @@ export default function CheckoutPage() {
             <Button
               size="lg"
               variant="primary"
-              className="w-full sm:w-auto font-bold px-8 shadow-lg shadow-brand/10"
+              className="w-full sm:w-auto font-medium px-8 "
               disabled={!addressId}
               isLoading={createOrder.isPending || pay.isPending}
               onClick={handlePay}
