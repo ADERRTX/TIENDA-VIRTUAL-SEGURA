@@ -10,6 +10,7 @@ export interface StatProps {
   };
   helperText?: string;
   icon?: React.ReactNode;
+  iconBg?: 'mint' | 'sun' | 'brand' | 'info';
   className?: string;
 }
 
@@ -19,14 +20,22 @@ export const Stat: React.FC<StatProps> = ({
   change,
   helperText,
   icon,
+  iconBg = 'mint',
   className = '',
 }) => {
+  const iconBgClasses = {
+    mint: 'bg-mint text-brand border border-mint-strong',
+    sun: 'bg-sun-soft text-sun border border-sun/30',
+    brand: 'bg-brand-soft text-brand border border-brand/25',
+    info: 'bg-info/10 text-info border border-info/30',
+  }[iconBg];
+
   return (
     <Card className={`flex flex-col justify-between ${className}`} padding="md">
       <div className="flex items-center justify-between gap-2 mb-2">
         <span className="text-xs font-semibold text-ink-muted uppercase tracking-wider">{label}</span>
         {icon && (
-          <div className="w-8 h-8 rounded-lg bg-surface-2 border border-line flex items-center justify-center text-ink-muted shrink-0">
+          <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${iconBgClasses}`}>
             {icon}
           </div>
         )}
@@ -38,8 +47,8 @@ export const Stat: React.FC<StatProps> = ({
           <span
             className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
               change.isPositive
-                ? 'bg-success/15 text-success border border-success/30'
-                : 'bg-danger/15 text-danger border border-danger/30'
+                ? 'bg-success/8 text-success border border-success/30'
+                : 'bg-danger/8 text-danger border border-danger/30'
             }`}
           >
             {change.isPositive ? '+' : ''}
@@ -48,7 +57,7 @@ export const Stat: React.FC<StatProps> = ({
         )}
       </div>
 
-      {helperText && <p className="text-xs text-ink-faint mt-1">{helperText}</p>}
+      {helperText && <p className="text-xs text-ink-muted mt-1">{helperText}</p>}
     </Card>
   );
 };

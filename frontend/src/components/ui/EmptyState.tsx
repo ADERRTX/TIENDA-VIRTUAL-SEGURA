@@ -23,10 +23,10 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   return (
     <div
-      className={`flex flex-col items-center justify-center text-center p-8 sm:p-12 rounded-xl border border-line/60 bg-surface/60 ${className}`}
+      className={`flex flex-col items-center justify-center text-center p-8 sm:p-12 rounded-xl border border-line bg-surface ${className}`}
     >
-      <div className="w-16 h-16 rounded-full bg-surface-2 border border-line flex items-center justify-center text-ink-muted mb-4 shadow-sm">
-        {icon || <PackageOpen size={32} strokeWidth={1.5} />}
+      <div className="w-16 h-16 rounded-full bg-mint text-brand border border-mint-strong flex items-center justify-center mb-4 shadow-sm">
+        {icon || <PackageOpen size={30} strokeWidth={1.5} />}
       </div>
       <h3 className="text-base font-semibold text-ink mb-1">{title}</h3>
       {description && <p className="text-sm text-ink-muted max-w-sm mb-5">{description}</p>}

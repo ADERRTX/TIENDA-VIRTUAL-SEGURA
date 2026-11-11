@@ -19,6 +19,7 @@ import {
   AlertTriangle,
   Minus,
   Plus,
+  Package,
 } from 'lucide-react';
 
 export default function CartPage() {
@@ -31,7 +32,7 @@ export default function CartPage() {
 
   if (loadingUser) {
     return (
-      <div className="flex flex-col gap-4 max-w-4xl">
+      <div className="flex flex-col gap-4 max-w-5xl mx-auto">
         <Skeleton variant="block" className="h-10 w-48" />
         <Skeleton variant="block" className="h-40 w-full" />
       </div>
@@ -41,7 +42,7 @@ export default function CartPage() {
   if (!user) {
     return (
       <EmptyState
-        icon={<ShoppingCart className="h-8 w-8" />}
+        icon={<ShoppingCart className="h-8 w-8 text-brand" aria-hidden="true" />}
         title="Inicia sesión para gestionar tu carrito"
         description="Para guardar artículos y disfrutar de compras con custodia segura, inicia sesión con tu cuenta."
         actionLabel={i18n.nav.login}
@@ -53,10 +54,11 @@ export default function CartPage() {
   const hasItems = cart && cart.groups.length > 0;
 
   return (
-    <div className="flex flex-col gap-8 max-w-5xl">
+    <div className="flex flex-col gap-6 sm:gap-8 max-w-6xl mx-auto">
       {/* Encabezado */}
       <PageHeader
         title={i18n.cart.title}
+        titleClassName="font-display"
         description="Revisa los productos seleccionados antes de proceder a la custodia y pago."
         breadcrumbs={[
           { label: 'Inicio', to: '/' },
@@ -67,9 +69,12 @@ export default function CartPage() {
 
       {/* Estados de Carga */}
       {isLoading && (
-        <div className="flex flex-col gap-4">
-          <Skeleton variant="block" className="h-32 w-full" />
-          <Skeleton variant="block" className="h-32 w-full" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 flex flex-col gap-4">
+            <Skeleton variant="block" className="h-40 w-full" />
+            <Skeleton variant="block" className="h-40 w-full" />
+          </div>
+          <Skeleton variant="block" className="h-64 w-full" />
         </div>
       )}
 
@@ -85,7 +90,7 @@ export default function CartPage() {
       {/* Carrito Vacío */}
       {!isLoading && !isError && !hasItems && (
         <EmptyState
-          icon={<ShoppingCart className="h-8 w-8" />}
+          icon={<ShoppingCart className="h-8 w-8 text-brand" aria-hidden="true" />}
           title={i18n.cart.empty}
           description="No tienes productos en tu carrito de compras actualmente."
           actionLabel={i18n.cart.startShopping}
@@ -93,10 +98,13 @@ export default function CartPage() {
         />
       )}
 
-      {/* Advertencias de stock o precio */}
+      {/* Avisos de precio o stock cambiado en aviso warning-soft */}
       {cart && cart.warnings.length > 0 && (
-        <div className="rounded-xl border border-warning/40 bg-warning-soft p-4 flex items-start gap-3">
-          <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
+        <div
+          role="status"
+          className="rounded-xl border border-warning/30 bg-warning/8 p-4 flex items-start gap-3 shadow-sm"
+        >
+          <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" aria-hidden="true" />
           <div className="flex flex-col gap-1">
             <span className="text-xs font-semibold text-warning uppercase tracking-wider">
               {i18n.cart.warnings}
@@ -110,31 +118,38 @@ export default function CartPage() {
         </div>
       )}
 
-      {/* Contenido del Carrito (Layout 2 columnas en desktop) */}
+      {/* Contenido del Carrito: Dos columnas en escritorio */}
       {!isLoading && !isError && hasItems && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          {/* Lista de Grupos por Vendedor (2 columnas) */}
-          <div className="lg:col-span-2 flex flex-col gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Izquierda: Un grupo por vendedor dentro de una tarjeta blanca */}
+          <div className="lg:col-span-8 flex flex-col gap-6">
             {cart.groups.map((group) => (
-              <Card key={group.sellerId} padding="md" className="flex flex-col gap-4">
+              <Card key={group.sellerId} padding="md" className="flex flex-col gap-4 shadow-sm">
                 {/* Cabecera del vendedor */}
-                <div className="flex items-center justify-between pb-3 border-b border-line/60">
+                <div className="flex items-center justify-between pb-3 border-b border-line">
                   <div className="flex items-center gap-2">
-                    <Store className="h-4 w-4 text-brand" />
-                    <span className="text-xs text-ink-muted">{i18n.cart.sellerGroup}</span>
-                    <span className="text-sm font-medium text-ink">{group.storeName}</span>
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-mint text-brand shrink-0">
+                      <Store className="h-4 w-4" aria-hidden="true" />
+                    </div>
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-xs text-ink-muted">{i18n.cart.sellerGroup}:</span>
+                      <span className="text-sm font-semibold text-ink">{group.storeName}</span>
+                    </div>
                   </div>
-                  <span className="text-xs text-ink-muted font-medium">
-                    Sub-pedido independiente
+                  <span className="text-xs text-ink-muted font-medium bg-surface-2 px-2 py-0.5 rounded-full border border-line">
+                    Sub-pedido
                   </span>
                 </div>
 
                 {/* Items del vendedor */}
-                <div className="flex flex-col divide-y divide-line/40">
+                <div className="flex flex-col divide-y divide-line">
                   {group.items.map((item) => (
-                    <div key={item.id} className="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                      {/* Imagen */}
-                      <div className="h-16 w-16 shrink-0 rounded-lg overflow-hidden border border-line bg-surface-2">
+                    <div
+                      key={item.id}
+                      className="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row items-start sm:items-center gap-4"
+                    >
+                      {/* Miniatura del producto */}
+                      <div className="h-16 w-16 shrink-0 rounded-xl overflow-hidden border border-line bg-surface-2 flex items-center justify-center">
                         {item.image ? (
                           <img
                             src={imageUrl(item.image)}
@@ -144,9 +159,7 @@ export default function CartPage() {
                             className="h-full w-full object-cover"
                           />
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center text-xs text-ink-muted">
-                            Sin foto
-                          </div>
+                          <Package className="h-6 w-6 text-ink-muted/50" aria-hidden="true" />
                         )}
                       </div>
 
@@ -165,19 +178,22 @@ export default function CartPage() {
                       </div>
 
                       {/* Selector de cantidad */}
-                      <div className="flex items-center gap-1.5 border border-line rounded-lg p-0.5 bg-surface-2">
+                      <div className="flex items-center gap-1 border border-line rounded-lg p-0.5 bg-surface-2 shadow-sm">
                         <button
                           type="button"
                           aria-label="Disminuir cantidad"
                           disabled={busy || item.quantity <= 1}
                           onClick={() =>
-                            updateItem.mutate({ variantId: item.variantId, quantity: item.quantity - 1 })
+                            updateItem.mutate({
+                              variantId: item.variantId,
+                              quantity: item.quantity - 1,
+                            })
                           }
-                          className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-surface text-ink-muted hover:text-ink disabled:opacity-30 transition-colors"
+                          className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-surface text-ink-muted hover:text-ink disabled:opacity-30 transition-colors"
                         >
-                          <Minus className="h-3 w-3" />
+                          <Minus className="h-3.5 w-3.5" aria-hidden="true" />
                         </button>
-                        <span className="w-7 text-center text-xs font-medium tabular text-ink">
+                        <span className="w-8 text-center text-xs font-semibold tabular text-ink">
                           {item.quantity}
                         </span>
                         <button
@@ -185,16 +201,19 @@ export default function CartPage() {
                           aria-label="Aumentar cantidad"
                           disabled={busy || item.quantity >= item.stock}
                           onClick={() =>
-                            updateItem.mutate({ variantId: item.variantId, quantity: item.quantity + 1 })
+                            updateItem.mutate({
+                              variantId: item.variantId,
+                              quantity: item.quantity + 1,
+                            })
                           }
-                          className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-surface text-ink-muted hover:text-ink disabled:opacity-30 transition-colors"
+                          className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-surface text-ink-muted hover:text-ink disabled:opacity-30 transition-colors"
                         >
-                          <Plus className="h-3 w-3" />
+                          <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                         </button>
                       </div>
 
                       {/* Total por línea */}
-                      <span className="text-sm font-medium text-ink tabular min-w-[80px] text-right">
+                      <span className="text-sm font-semibold text-ink tabular min-w-[80px] text-right">
                         {formatMoney(item.total)}
                       </span>
 
@@ -204,18 +223,18 @@ export default function CartPage() {
                         aria-label="Eliminar producto"
                         disabled={busy}
                         onClick={() => removeItem.mutate(item.variantId)}
-                        className="p-1.5 rounded-lg text-ink-muted hover:text-danger hover:bg-danger-soft transition-colors"
+                        className="p-2 rounded-lg text-ink-muted hover:text-danger hover:bg-danger/8 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4" aria-hidden="true" />
                       </button>
                     </div>
                   ))}
                 </div>
 
                 {/* Subtotal del grupo */}
-                <div className="pt-3 border-t border-line/60 flex items-center justify-between text-xs">
-                  <span className="text-ink-muted">{i18n.cart.subtotal} del comercio:</span>
-                  <span className="font-medium text-ink tabular text-sm">
+                <div className="pt-3 border-t border-line flex items-center justify-between text-xs">
+                  <span className="text-ink-muted font-medium">Subtotal de {group.storeName}:</span>
+                  <span className="font-semibold text-ink tabular text-sm">
                     {formatMoney(group.subtotal)}
                   </span>
                 </div>
@@ -223,51 +242,68 @@ export default function CartPage() {
             ))}
           </div>
 
-          {/* Resumen de Compra (Columna lateral sticky) */}
-          <div className="lg:sticky lg:top-24 flex flex-col gap-4">
-            <Card padding="lg" className="flex flex-col gap-4 ">
-              <h2 className="text-base font-semibold text-ink border-b border-line/60 pb-3">
-                Resumen de la Orden
+          {/* Derecha: Tarjeta de resumen pegajosa (sticky) con subtotal por vendedor, total y botón primario */}
+          <div className="lg:col-span-4 lg:sticky lg:top-24 flex flex-col gap-4">
+            <Card padding="lg" className="flex flex-col gap-5 shadow-sm">
+              <h2 className="text-base font-semibold text-ink border-b border-line pb-3">
+                Resumen del Pedido
               </h2>
 
-              <div className="flex flex-col gap-2.5 text-xs">
-                <div className="flex justify-between text-ink-muted">
-                  <span>Comercios participantes:</span>
-                  <span className="font-semibold text-ink">{cart.groups.length}</span>
-                </div>
+              {/* Subtotal por cada vendedor */}
+              <div className="flex flex-col gap-2.5 border-b border-line pb-3">
+                <span className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
+                  Subtotales por comercio
+                </span>
+                {cart.groups.map((group) => (
+                  <div key={group.sellerId} className="flex justify-between items-center text-xs">
+                    <span className="text-ink truncate max-w-[160px]">{group.storeName}</span>
+                    <span className="font-semibold text-ink tabular">
+                      {formatMoney(group.subtotal)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Métricas y envío */}
+              <div className="flex flex-col gap-2 text-xs">
                 <div className="flex justify-between text-ink-muted">
                   <span>Total de artículos:</span>
-                  <span className="font-semibold text-ink">{cart.totalItems}</span>
+                  <span className="font-semibold text-ink tabular">{cart.totalItems}</span>
                 </div>
                 <div className="flex justify-between text-ink-muted">
-                  <span>Costo de custodia (Escrow):</span>
+                  <span>Custodia de pago (Escrow):</span>
+                  <span className="text-brand font-semibold">Gratis</span>
+                </div>
+                <div className="flex justify-between text-ink-muted">
+                  <span>Costos de envío:</span>
                   <span className="text-brand font-semibold">Gratis</span>
                 </div>
               </div>
 
+              {/* Total definitivo */}
               <div className="pt-3 border-t border-line flex items-baseline justify-between">
-                <span className="text-sm font-medium text-ink">{i18n.cart.total}:</span>
+                <span className="text-base font-semibold text-ink">{i18n.cart.total}:</span>
                 <span className="text-2xl font-semibold text-brand tabular">
                   {formatMoney(cart.total)}
                 </span>
               </div>
 
-              {/* Botón de Checkout */}
+              {/* Botón primario: Continuar con el pedido */}
               <Button
                 size="lg"
                 variant="primary"
                 onClick={() => navigate('/checkout')}
-                className="w-full font-medium gap-2 mt-2 "
+                className="w-full font-semibold gap-2 shadow-sm text-sm"
               >
                 <span>{i18n.cart.checkout}</span>
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Button>
 
-              {/* Garantía de custodia */}
-              <div className="flex items-start gap-2 pt-2 text-xs text-ink-muted leading-relaxed">
-                <ShieldCheck className="h-4 w-4 text-brand shrink-0 mt-0.5" />
+              {/* Explicación de custodia */}
+              <div className="flex items-start gap-2.5 pt-2 text-xs text-ink-muted leading-relaxed">
+                <ShieldCheck className="h-4 w-4 text-brand shrink-0 mt-0.5" aria-hidden="true" />
                 <span>
-                  Tu compra está protegida por custodia bancaria simulada. El vendedor solo cobra tras tu confirmación.
+                  Tus fondos quedan retenidos bajo custodia TVS. El comercio solo cobra tras tu confirmación de entrega conforme.
                 </span>
               </div>
             </Card>

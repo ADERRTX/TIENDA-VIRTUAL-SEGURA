@@ -28,11 +28,11 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             disabled={disabled}
             aria-invalid={Boolean(error)}
             aria-describedby={error ? errorId : helperText ? helperId : undefined}
-            className={`w-full min-h-[44px] h-11 bg-surface-2 border ${
+            className={`w-full min-h-[44px] h-11 bg-surface border ${
               error
                 ? 'border-danger focus:border-danger focus:ring-1 focus:ring-danger text-ink'
                 : 'border-line focus:border-brand focus:ring-1 focus:ring-brand text-ink'
-            } rounded-lg px-3.5 text-sm placeholder-ink-faint outline-none transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+            } rounded-lg px-3.5 text-sm placeholder-ink-muted/50 outline-none transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
             {...props}
           />
         </div>
@@ -42,7 +42,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <span>{error}</span>
           </div>
         ) : helperText ? (
-          <p id={helperId} className="text-xs text-ink-faint">
+          <p id={helperId} className="text-xs text-ink-muted">
             {helperText}
           </p>
         ) : null}

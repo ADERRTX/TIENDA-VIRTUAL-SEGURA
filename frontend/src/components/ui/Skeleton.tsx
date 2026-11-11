@@ -17,10 +17,10 @@ export const Skeleton: React.FC<SkeletonProps> = ({
 
   return (
     <div
-      className={`relative overflow-hidden bg-surface-2/80 ${variantClass} ${className}`}
+      className={`relative overflow-hidden bg-surface-2 ${variantClass} ${className}`}
       aria-hidden="true"
     >
-      <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-line/40 to-transparent" />
+      <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-surface-3/60 to-transparent" />
     </div>
   );
 };

@@ -3,48 +3,70 @@
 @tailwind utilities;
 
 /* ==============================================================================
-   TIENDA VIRTUAL SEGURA (TVS) — SISTEMA DE DISEÑO PREMIUM (TEMA OSCURO)
+   TIENDA VIRTUAL SEGURA (TVS) — SISTEMA DE DISEÑO CLARO Y PROFESIONAL
    ==============================================================================
    Paleta cromática:
-   - Base background (60%):    #0A1020  (--bg)
-   - Surface cards (30%):      #0F1A2E  (--surface)
-   - Elevated elements:        #14233B  (--surface-2)
-   - Interactive hover:        #1B2D4A  (--surface-3)
-   - 1px Borders / Dividers:   #24385A  (--line)
-   - Primary text (Ink):       #E8EEF7  (--ink)         [Contraste > 14:1]
-   - Secondary text (Muted):   #9FB0C8  (--ink-muted)   [Contraste > 7:1]
-   - Decorative text (Faint):  #6F819C  (--ink-faint)   [Contraste > 4.3:1]
-   - Brand Accent (10%):       #2DD4BF  (--brand)       [Turquesa seguridad]
-   - Text on Brand:            #04121F  (--brand-ink)   [Contraste > 10:1]
-   - Semantic Status:
-     * Success:                #4ADE80
-     * Warning:                #FBBF24
-     * Danger:                 #F87171
-     * Info:                   #60A5FA
+   - Fondo crema base:         #FAF8F3  (--bg)
+   - Tarjetas / Paneles:       #FFFFFF  (--surface)
+   - Superficie elevada:       #F1EEE6  (--surface-2)
+   - Hover / Activo:           #E7E3D8  (--surface-3)
+   - Líneas y bordes:          #E3DED1  (--line)
+   - Borde suave:              #EEEADF  (--line-soft)
+   - Panel menta suave:        #DDF3EE  (--mint)
+   - Menta acentuada:          #C4E9E0  (--mint-strong)
+   - Ancla verde petróleo:     #0B3B3A  (--deep)
+   - Deep elevado:             #0F4F4B  (--deep-2)
+   - Deep texto secundario:    #B9D4CF  (--deep-muted)
+   - Texto principal (Ink):    #12211F  (--ink)
+   - Texto secundario (Muted): #4B5E5A  (--ink-muted)
+   - Texto decorativo (Faint): #8A9B97  (--ink-faint)
+   - Marca (Brand):            #0B7A5E  (--brand)
+   - Marca hover:              #085F4A  (--brand-hover)
+   - Texto sobre marca:        #FFFFFF  (--brand-ink)
+   - Marca suave (fondo):      rgba(11, 122, 94, 0.08) (--brand-soft)
+   - Sol (calidez):            #F6A623  (--sun)
+   - Texto sobre sol:          #2A1700  (--sun-ink)
+   - Sol suave:                rgba(246, 166, 35, 0.16) (--sun-soft)
+   - Estados semánticos:
+     * Success:                #166534
+     * Warning:                #92400E
+     * Danger:                 #B91C1C
+     * Info:                   #1D4ED8
    ============================================================================== */
 
 :root {
-  --bg: #0A1020;
-  --surface: #0F1A2E;
-  --surface-2: #14233B;
-  --surface-3: #1B2D4A;
-  --line: #24385A;
-  --line-soft: #182842;
-  --ink: #E8EEF7;
-  --ink-muted: #9FB0C8;
-  --ink-faint: #6F819C;
-  --brand: #2DD4BF;
-  --brand-hover: #5EEAD4;
-  --brand-ink: #04121F;
-  --success: #4ADE80;
-  --warning: #FBBF24;
-  --danger: #F87171;
-  --info: #60A5FA;
+  --bg: #FAF8F3;
+  --surface: #FFFFFF;
+  --surface-2: #F1EEE6;
+  --surface-3: #E7E3D8;
+  --line: #E3DED1;
+  --line-soft: #EEEADF;
+  --mint: #DDF3EE;
+  --mint-strong: #C4E9E0;
+  --deep: #0B3B3A;
+  --deep-2: #0F4F4B;
+  --deep-muted: #B9D4CF;
+  --ink: #12211F;
+  --ink-muted: #4B5E5A;
+  --ink-faint: #8A9B97;
+  --brand: #0B7A5E;
+  --brand-hover: #085F4A;
+  --brand-dark: #0A6B52;
+  --brand-ink: #FFFFFF;
+  --brand-soft: rgba(11, 122, 94, 0.08);
+  --sun: #F6A623;
+  --sun-ink: #2A1700;
+  --sun-soft: rgba(246, 166, 35, 0.16);
+  --accent: #B45309;
+  --success: #166534;
+  --warning: #92400E;
+  --danger: #B91C1C;
+  --info: #1D4ED8;
 }
 
 @layer base {
   html {
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   body {
@@ -59,8 +81,8 @@
 
   /* Headings scale */
   h1, h2, h3, h4, h5, h6 {
-    line-height: 1.2;
-    letter-spacing: -0.02em;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
     font-weight: 600;
   }
 }
@@ -81,25 +103,54 @@
   background: transparent;
 }
 
-/* Glassmorphism utility */
-.glass {
-  background-color: rgba(10, 16, 32, 0.78);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line);
-}
-
-/* Radial subtle mesh for marketing/hero */
-.bg-mesh {
-  background-color: var(--bg);
-  background-image:
-    radial-gradient(circle at 12% 15%, rgba(45, 212, 191, 0.06) 0%, transparent 45%),
-    radial-gradient(circle at 88% 25%, rgba(96, 165, 250, 0.05) 0%, transparent 45%);
-}
-
 /* Tabular figures for prices, dates and numbers */
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+/* Secciones y contenedores del nuevo sistema de diseño */
+.section-mint {
+  background-color: var(--mint);
+  border-radius: 16px;
+  padding: 2rem 1.25rem;
+}
+@media (min-width: 640px) {
+  .section-mint {
+    padding: 3rem 2rem;
+  }
+}
+
+.section-deep {
+  background-color: var(--deep);
+  color: var(--brand-ink);
+  border-radius: 16px;
+  padding: 2rem 1.25rem;
+}
+@media (min-width: 640px) {
+  .section-deep {
+    padding: 3rem 2rem;
+  }
+}
+
+.container-page {
+  width: 100%;
+  max-width: 80rem; /* max-w-7xl */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+@media (min-width: 640px) {
+  .container-page {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .container-page {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
 }
 
 /* Accessible focus outline */

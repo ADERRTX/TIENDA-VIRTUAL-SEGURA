@@ -156,7 +156,7 @@ export function UserMenu({ user }: UserMenuProps) {
               setOpen(false);
               logout.mutate(undefined, { onSuccess: () => navigate('/') });
             }}
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-danger hover:bg-danger-soft transition-colors font-medium"
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-danger hover:bg-danger/8 transition-colors font-medium"
           >
             <LogOut className="h-4 w-4" />
             <span>{i18n.nav.logout}</span>

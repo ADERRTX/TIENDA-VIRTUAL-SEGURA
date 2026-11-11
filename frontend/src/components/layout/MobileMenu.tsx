@@ -71,7 +71,7 @@ export function MobileMenu({
     <div className="fixed inset-0 z-50 md:hidden animate-fade-in" role="dialog" aria-modal="true">
       {/* Backdrop con blur */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-ink/40 backdrop-blur-xs transition-opacity"
         onClick={onClose}
         aria-hidden="true"
       />

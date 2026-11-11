@@ -15,7 +15,6 @@ import { Modal } from '../components/ui/Modal';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Skeleton } from '../components/ui/Skeleton';
 import { Input } from '../components/ui/Input';
-import { Tabs } from '../components/ui/Tabs';
 import { i18n } from '../i18n/es';
 import { ApiError } from '../lib/http';
 import {
@@ -43,45 +42,38 @@ function ProfileForm({ initialName }: { initialName: string }) {
   }
 
   return (
-    <Card padding="lg" className="flex flex-col gap-4">
-      <div className="flex items-center gap-2.5 pb-3 border-b border-line/60">
-        <User className="h-5 w-5 text-brand" />
-        <h2 className="text-base font-semibold text-ink">Datos Personales</h2>
-      </div>
+    <form onSubmit={submit} className="flex flex-col gap-4">
+      <Input
+        label="Nombre completo"
+        value={name}
+        required
+        minLength={2}
+        onChange={(e) => setName(e.target.value)}
+      />
 
-      <form onSubmit={submit} className="flex flex-col gap-4">
-        <Input
-          label="Nombre completo"
-          value={name}
-          required
-          minLength={2}
-          onChange={(e) => setName(e.target.value)}
-        />
+      {update.isError && (
+        <p className="text-xs text-danger flex items-center gap-1.5" role="alert">
+          <AlertCircle className="h-3.5 w-3.5" aria-hidden="true" />
+          <span>{errorMessage(update.error)}</span>
+        </p>
+      )}
 
-        {update.isError && (
-          <p className="text-xs text-danger flex items-center gap-1.5">
-            <AlertCircle className="h-3.5 w-3.5" />
-            <span>{errorMessage(update.error)}</span>
-          </p>
-        )}
+      {update.isSuccess && (
+        <p className="text-xs text-brand flex items-center gap-1.5" role="status">
+          <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
+          <span>{i18n.common.success}</span>
+        </p>
+      )}
 
-        {update.isSuccess && (
-          <p className="text-xs text-brand flex items-center gap-1.5">
-            <CheckCircle2 className="h-3.5 w-3.5" />
-            <span>{i18n.common.success}</span>
-          </p>
-        )}
-
-        <Button
-          type="submit"
-          size="sm"
-          className="self-start font-semibold px-5"
-          isLoading={update.isPending}
-        >
-          {i18n.common.save}
-        </Button>
-      </form>
-    </Card>
+      <Button
+        type="submit"
+        size="sm"
+        className="self-start font-semibold px-5 min-h-[44px]"
+        isLoading={update.isPending}
+      >
+        {i18n.common.save}
+      </Button>
+    </form>
   );
 }
 
@@ -116,13 +108,13 @@ function ChangePasswordForm() {
   }
 
   return (
-    <Card padding="lg" className="flex flex-col gap-4">
-      <div className="flex items-center gap-2.5 pb-3 border-b border-line/60">
-        <KeyRound className="h-5 w-5 text-brand" />
+    <div className="flex flex-col gap-4 pt-4 border-t border-line/60">
+      <div className="flex items-center gap-2">
+        <KeyRound className="h-4 w-4 text-brand" aria-hidden="true" />
         <div className="flex flex-col">
-          <h2 className="text-base font-semibold text-ink">Seguridad y Contraseña</h2>
+          <h3 className="text-sm font-semibold text-ink">Seguridad y Contraseña</h3>
           <span className="text-xs text-ink-muted">
-            Al actualizar tu contraseña, se revocarán automáticamente todas las demás sesiones activas.
+            Al actualizarla, se revocarán las demás sesiones activas.
           </span>
         </div>
       </div>
@@ -162,36 +154,37 @@ function ChangePasswordForm() {
         />
 
         {validationError && (
-          <p className="text-xs text-danger flex items-center gap-1.5">
-            <AlertCircle className="h-3.5 w-3.5" />
+          <p className="text-xs text-danger flex items-center gap-1.5" role="alert">
+            <AlertCircle className="h-3.5 w-3.5" aria-hidden="true" />
             <span>{validationError}</span>
           </p>
         )}
 
         {changePassword.isError && (
-          <p className="text-xs text-danger flex items-center gap-1.5">
-            <AlertCircle className="h-3.5 w-3.5" />
+          <p className="text-xs text-danger flex items-center gap-1.5" role="alert">
+            <AlertCircle className="h-3.5 w-3.5" aria-hidden="true" />
             <span>{errorMessage(changePassword.error)}</span>
           </p>
         )}
 
         {changePassword.isSuccess && (
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-brand-soft text-brand border border-brand/30 text-xs font-medium">
-            <CheckCircle2 className="h-4 w-4 shrink-0" />
-            <span>Contraseña actualizada correctamente. Las demás sesiones activas han sido invalidadas.</span>
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-brand-soft text-brand border border-brand/30 text-xs font-medium" role="status">
+            <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <span>Contraseña actualizada correctamente.</span>
           </div>
         )}
 
         <Button
           type="submit"
           size="sm"
-          className="self-start font-semibold px-5"
+          variant="secondary"
+          className="self-start font-semibold px-5 min-h-[44px]"
           isLoading={changePassword.isPending}
         >
           Actualizar contraseña
         </Button>
       </form>
-    </Card>
+    </div>
   );
 }
 
@@ -261,8 +254,8 @@ function AddressForm({ address, onDone }: { address?: Address; onDone: () => voi
       </label>
 
       {error && (
-        <p className="text-xs text-danger flex items-center gap-1.5">
-          <AlertCircle className="h-3.5 w-3.5" />
+        <p className="text-xs text-danger flex items-center gap-1.5" role="alert">
+          <AlertCircle className="h-3.5 w-3.5" aria-hidden="true" />
           <span>{errorMessage(error)}</span>
         </p>
       )}
@@ -285,16 +278,9 @@ export default function AccountPage() {
   const remove = useDeleteAddress();
   const [editing, setEditing] = useState<Address | 'new' | null>(null);
   const [deletingAddress, setDeletingAddress] = useState<Address | null>(null);
-  const [activeTab, setActiveTab] = useState('perfil');
-
-  const tabs = [
-    { id: 'perfil', label: 'Datos Personales', icon: <User className="h-4 w-4" /> },
-    { id: 'seguridad', label: 'Seguridad y Acceso', icon: <KeyRound className="h-4 w-4" /> },
-    { id: 'direcciones', label: 'Direcciones de Entrega', count: addresses?.length, icon: <MapPin className="h-4 w-4" /> },
-  ];
 
   return (
-    <div className="flex flex-col gap-8 max-w-3xl mx-auto">
+    <div className="flex flex-col gap-8 max-w-5xl mx-auto">
       <PageHeader
         title="Mi Cuenta"
         description="Gestiona tu información personal, seguridad de acceso y libreta de direcciones de entrega."
@@ -304,131 +290,140 @@ export default function AccountPage() {
         ]}
       />
 
-      {/* Tarjeta de Resumen de Usuario */}
-      {user && (
-        <div className="flex items-center gap-4 p-4 rounded-xl border border-line bg-surface">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand/15 text-brand font-semibold text-base border border-brand/30">
-            {(user.fullName || user.email || 'U').slice(0, 2).toUpperCase()}
-          </div>
-          <div className="flex flex-col">
-            <span className="font-semibold text-sm text-ink">{user.fullName || 'Usuario'}</span>
-            <span className="text-xs text-ink-muted">{user.email}</span>
-          </div>
-          <div className="ml-auto">
-            <Badge variant="brand" size="md">
-              {i18n.roles[user.role]}
-            </Badge>
-          </div>
-        </div>
-      )}
-
-      {/* Pestañas */}
-      <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
-
-      {/* Formulario de Perfil */}
-      {activeTab === 'perfil' && user && (
-        <div className="animate-fade-in">
-          <ProfileForm key={user.id} initialName={user.fullName ?? ''} />
-        </div>
-      )}
-
-      {/* Formulario de Contraseña Segura */}
-      {activeTab === 'seguridad' && user && (
-        <div className="animate-fade-in">
-          <ChangePasswordForm />
-        </div>
-      )}
-
-      {/* Libreta de Direcciones */}
-      {activeTab === 'direcciones' && (
-        <div className="animate-fade-in">
-          <Card padding="lg" className="flex flex-col gap-4">
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-line/60">
-              <div className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-brand" />
-                <h2 className="text-base font-semibold text-ink">Mis Direcciones de Entrega</h2>
-              </div>
-              <Button
-                size="sm"
-                variant="secondary"
-                className="gap-1.5 text-xs font-semibold"
-                onClick={() => setEditing('new')}
-              >
-                <Plus className="h-3.5 w-3.5" />
-                <span>{i18n.checkout.addAddress}</span>
-              </Button>
+      {/* Cuadrícula de 2 Tarjetas Principales */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        {/* TARJETA 1: DATOS PERSONALES Y SEGURIDAD */}
+        <Card padding="lg" className="flex flex-col gap-5 shadow-sm">
+          <div className="flex items-center gap-3 pb-3 border-b border-line/60">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand/10 border border-brand/25 text-brand">
+              <User className="h-5 w-5" aria-hidden="true" />
             </div>
+            <div className="flex flex-col">
+              <h2 className="text-base font-semibold text-ink">Datos Personales</h2>
+              <span className="text-xs text-ink-muted">Identidad y credenciales de acceso</span>
+            </div>
+          </div>
 
-            {isLoading && (
-              <div className="flex flex-col gap-2">
-                <Skeleton variant="block" className="h-16 w-full" />
-                <Skeleton variant="block" className="h-16 w-full" />
+          {/* Resumen del Usuario */}
+          {user && (
+            <div className="flex items-center gap-3 p-3 rounded-xl border border-line bg-surface-2/60">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand/15 text-brand font-semibold text-sm border border-brand/30">
+                {(user.fullName || user.email || 'U').slice(0, 2).toUpperCase()}
               </div>
-            )}
+              <div className="flex flex-col min-w-0 flex-1">
+                <span className="font-semibold text-sm text-ink truncate">{user.fullName || 'Usuario'}</span>
+                <span className="text-xs text-ink-muted truncate">{user.email}</span>
+              </div>
+              <Badge variant="brand" size="sm">
+                {i18n.roles[user.role]}
+              </Badge>
+            </div>
+          )}
 
-            {isError && (
-              <p className="text-xs text-danger">{i18n.common.error}</p>
-            )}
+          {/* Edición de Perfil */}
+          {user && <ProfileForm key={user.id} initialName={user.fullName ?? ''} />}
 
-            {addresses && addresses.length === 0 && (
-              <p className="text-xs text-ink-muted py-4 text-center">
-                Aún no tienes direcciones registradas. Agrega una para agilizar tus compras.
+          {/* Seguridad y Cambio de Contraseña */}
+          {user && <ChangePasswordForm />}
+        </Card>
+
+        {/* TARJETA 2: DIRECCIONES DE ENTREGA */}
+        <Card padding="lg" className="flex flex-col gap-5 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-line/60">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-mint text-brand border border-mint-strong">
+                <MapPin className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <div className="flex flex-col">
+                <h2 className="text-base font-semibold text-ink">Direcciones de Entrega</h2>
+                <span className="text-xs text-ink-muted">Libreta para envíos seguros</span>
+              </div>
+            </div>
+            <Button
+              size="sm"
+              variant="primary"
+              className="gap-1.5 text-xs font-semibold min-h-[38px]"
+              onClick={() => setEditing('new')}
+            >
+              <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>{i18n.checkout.addAddress}</span>
+            </Button>
+          </div>
+
+          {isLoading && (
+            <div className="flex flex-col gap-3">
+              <Skeleton variant="block" className="h-20 w-full" />
+              <Skeleton variant="block" className="h-20 w-full" />
+            </div>
+          )}
+
+          {isError && (
+            <p className="text-xs text-danger" role="alert">{i18n.common.error}</p>
+          )}
+
+          {addresses && addresses.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-8 text-center px-4 rounded-xl border border-dashed border-line bg-surface-2/30">
+              <MapPin className="h-8 w-8 text-ink-faint mb-2" aria-hidden="true" />
+              <p className="text-xs font-medium text-ink">No tienes direcciones registradas</p>
+              <p className="text-xs text-ink-muted mt-1 max-w-xs">
+                Agrega una dirección física para agilizar la entrega de tus pedidos.
               </p>
-            )}
+            </div>
+          )}
 
-            {addresses && addresses.length > 0 && (
-              <div className="flex flex-col gap-3">
-                {addresses.map((address) => (
-                  <div
-                    key={address.id}
-                    className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl border border-line bg-surface-2/40 hover:border-line-soft transition-colors"
-                  >
-                    <div className="flex flex-col text-xs">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-ink">{address.label}</span>
-                        {address.isDefault && (
-                          <span className="rounded-md bg-brand-soft px-1.5 py-0.5 text-xs font-medium text-brand border border-brand/20">
-                            Predeterminada
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-ink-muted mt-0.5">
-                        {address.line1}, {address.city}, {address.province}
-                      </span>
+          {addresses && addresses.length > 0 && (
+            <div className="flex flex-col gap-3">
+              {addresses.map((address) => (
+                <div
+                  key={address.id}
+                  className="flex flex-col gap-2 p-3.5 rounded-xl border border-line bg-surface shadow-sm hover:border-brand/40 transition-colors"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-sm text-ink">{address.label}</span>
+                      {address.isDefault && (
+                        <span className="rounded-full bg-mint px-2 py-0.5 text-xs font-semibold text-brand border border-mint-strong">
+                          Predeterminada
+                        </span>
+                      )}
                     </div>
-
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1">
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-8 text-xs px-2.5"
+                        className="h-7 text-xs px-2 text-ink-muted hover:text-ink"
                         onClick={() => setEditing(address)}
+                        aria-label={`Editar dirección ${address.label}`}
                       >
-                        <Edit2 className="h-3.5 w-3.5 mr-1" />
+                        <Edit2 className="h-3 w-3 mr-1" aria-hidden="true" />
                         {i18n.common.edit}
                       </Button>
                       <Button
                         variant="danger"
                         size="sm"
-                        className="h-8 text-xs px-2.5"
+                        className="h-7 text-xs px-2"
                         isLoading={remove.isPending && remove.variables === address.id}
                         onClick={() => setDeletingAddress(address)}
+                        aria-label={`Eliminar dirección ${address.label}`}
                       >
-                        <Trash2 className="h-3.5 w-3.5 mr-1" />
+                        <Trash2 className="h-3 w-3 mr-1" aria-hidden="true" />
                         {i18n.common.delete}
                       </Button>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
+                  <p className="text-xs text-ink-muted leading-relaxed">
+                    {address.line1}, {address.city}, {address.province}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
 
-            {remove.isError && (
-              <p className="text-xs text-danger mt-1">{errorMessage(remove.error)}</p>
-            )}
-          </Card>
-        </div>
-      )}
+          {remove.isError && (
+            <p className="text-xs text-danger mt-1" role="alert">{errorMessage(remove.error)}</p>
+          )}
+        </Card>
+      </div>
 
       {/* Modal para Crear o Editar Dirección */}
       <Modal

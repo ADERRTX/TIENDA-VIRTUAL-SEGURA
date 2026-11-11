@@ -21,13 +21,13 @@ export const Badge: React.FC<BadgeProps> = ({
   }[size];
 
   const variantClasses = {
-    brand: 'bg-brand/12 text-brand border border-brand/25',
-    success: 'bg-success/12 text-success border border-success/25',
-    ok: 'bg-success/12 text-success border border-success/25',
-    warning: 'bg-warning/12 text-warning border border-warning/25',
-    danger: 'bg-danger/12 text-danger border border-danger/25',
-    info: 'bg-info/12 text-info border border-info/25',
-    accent: 'bg-warning/12 text-warning border border-warning/25',
+    brand: 'bg-brand/10 text-brand border border-brand/25',
+    success: 'bg-success/8 text-success border border-success/30',
+    ok: 'bg-success/8 text-success border border-success/30',
+    warning: 'bg-warning/8 text-warning border border-warning/30',
+    danger: 'bg-danger/8 text-danger border border-danger/30',
+    info: 'bg-info/8 text-info border border-info/30',
+    accent: 'bg-accent/10 text-accent border border-accent/25',
     neutral: 'bg-surface-2 text-ink-muted border border-line',
   }[variant];
 
@@ -38,8 +38,8 @@ export const Badge: React.FC<BadgeProps> = ({
     warning: 'bg-warning',
     danger: 'bg-danger',
     info: 'bg-info',
-    accent: 'bg-warning',
-    neutral: 'bg-ink-faint',
+    accent: 'bg-accent',
+    neutral: 'bg-ink-muted',
   }[variant];
 
   return (

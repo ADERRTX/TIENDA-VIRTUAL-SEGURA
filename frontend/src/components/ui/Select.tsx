@@ -28,7 +28,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             disabled={disabled}
             aria-invalid={Boolean(error)}
             aria-describedby={error ? errorId : helperText ? helperId : undefined}
-            className={`w-full min-h-[44px] h-11 bg-surface-2 border ${
+            className={`w-full min-h-[44px] h-11 bg-surface border ${
               error
                 ? 'border-danger focus:border-danger focus:ring-1 focus:ring-danger text-ink'
                 : 'border-line focus:border-brand focus:ring-1 focus:ring-brand text-ink'
@@ -47,7 +47,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             <span>{error}</span>
           </div>
         ) : helperText ? (
-          <p id={helperId} className="text-xs text-ink-faint">
+          <p id={helperId} className="text-xs text-ink-muted">
             {helperText}
           </p>
         ) : null}

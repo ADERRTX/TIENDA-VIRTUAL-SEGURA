@@ -107,18 +107,21 @@ export default function AdminReportsPage() {
               label="Ventas Totales Facturadas"
               value={formatMoney(data.sales.totalSales)}
               icon={<DollarSign className="h-5 w-5" />}
+              iconBg="brand"
               helperText="Custodiadas"
             />
             <Stat
               label="Transacciones Aprobadas"
               value={String(data.sales.approvedTransactions)}
               icon={<CheckCircle2 className="h-5 w-5" />}
+              iconBg="mint"
               helperText="Pagos verificados"
             />
             <Stat
               label="Reclamos Formales"
               value={String(data.claims.total)}
               icon={<Scale className="h-5 w-5" />}
+              iconBg="sun"
               helperText="En mediación"
             />
           </div>

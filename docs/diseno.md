@@ -1,203 +1,167 @@
 # Sistema de Diseño — Tienda Virtual Segura (TVS)
 
-Este documento describe la arquitectura visual, componentes de interfaz y directrices de diseño implementadas y verificadas para **Tienda Virtual Segura (TVS)**, un marketplace con custodia de pagos simulada (escrow) donde la seguridad informática, la transparencia y la confianza son los ejes fundamentales del producto.
+Este documento describe la arquitectura visual, componentes de interfaz y directrices de diseño implementadas y verificadas para **Tienda Virtual Segura (TVS)**, un marketplace con custodia de fondos (escrow) donde la seguridad informática, la calidez comercial y la confianza profesional son los ejes fundamentales de la experiencia de usuario.
 
 ---
 
 ## 1. Filosofía de Diseño y Justificación Visual
 
-La interfaz de TVS sigue los principios de aplicaciones SaaS de alta seguridad, terminales financieras y plataformas bancarias modernas. Su propósito es transmitir solidez, transparencia operativa y control absoluto al usuario, eliminando saturación visual o artificios decorativos innecesarios.
+La interfaz de TVS adopta una estética clara, amigable y profesional inspirada en el comercio electrónico moderno y en plataformas de confianza institucional. El objetivo es brindar una navegación nítida y transparente que disipe cualquier incertidumbre en el proceso de compra protegida.
 
-- **Tema Oscuro Marino Profundo (`#0A1020` / `#0F1A2E`)**:
-  - Evoca rigor técnico, blindaje institucional y confidencialidad.
-  - Minimiza la fatiga visual en sesiones prolongadas de auditoría, gestión comercial y compras.
-- **Acento Único Turquesa (`#2DD4BF` - Brand)**:
-  - Comunica verificación criptográfica, modernidad y fluidez operativa.
-  - Se utiliza de manera disciplinada: **un único acento visual dominante por pantalla**, guiando al usuario hacia la acción principal (CTA primario, enlace activo o confirmación).
-- **Semántica Estricta y Discreta**:
-  - Los colores de estado (`success`, `warning`, `danger`, `info`) se reservan exclusivamente para comunicar el estado real de transacciones, cuentas, productos o disputas.
-  - Se presentan en variantes *soft* (fondo con opacidad al 12%, texto legible y borde sutil) para no competir con el acento turquesa institucional.
+* **Fondo Cálido y Amigable (`bg: #FAF8F3` / `surface: #FFFFFF`):**
+  * Fondo crema suave combinado con tarjetas blancas limpias, generando descansos visuales amplios y eliminando el aspecto frío o austero.
+* **Bloques de Color Pastel (`mint: #DDF3EE` / `.section-mint`):**
+  * Paneles menta luminosos para el hero principal, la franja de compra protegida y bloques de confianza.
+* **Verde Petróleo de Ancla (`deep: #0B3B3A` / `.section-deep`):**
+  * Bloques oscuros contrastantes para el pie de página institucional (`AppFooter`) y la banda de llamada a la acción para comercios aliados, anclando visualmente el recorrido.
+* **Acento Único Institucional (`brand: #0B7A5E`):**
+  * Verde esmeralda que comunica respaldo y solidez. Se utiliza con disciplina: **un solo botón con color de marca por zona visual**, guiando la acción principal del usuario.
+* **Acento Cálido de Sol (`sun: #F6A623`):**
+  * Tono dorado cálido reservado exclusivamente para estrellas de reseñas y calificaciones de productos, avisos suaves y destacados decorativos. Nunca se emplea como botón primario.
+* **Tipografía Editorial Combinada:**
+  * Mezcla armoniosa de una fuente serif del sistema (`font-display: Georgia, Times New Roman, serif`) para títulos editoriales y el sans-serif moderno del sistema para todo el cuerpo interactivo.
 
 ---
 
 ## 2. Tokens de Color y Tabla de Contraste Real (WCAG 2.1 AA)
 
-Todos los pares de color han sido calculados matemáticamente mediante algoritmo de luminancia relativa estándar WCAG 2.1 contra el nivel AA (mínimo 4.5:1 para texto normal, 3.0:1 para elementos de interfaz o texto mayor a 18pt):
+Todos los pares de color han sido auditados matemáticamente mediante el algoritmo estándar de luminancia relativa WCAG 2.1 contra el nivel AA (mínimo 4.5:1 para texto normal, 3.0:1 para elementos de interfaz o texto mayor a 18pt):
 
-| Par (Primer Plano / Fondo) | Valores HEX | Ratio Calculado | Requisito WCAG AA | Evaluación |
+| Par de Contraste | Colores HEX | Ratio Calculado | Requisito WCAG | Estado |
 | :--- | :--- | :---: | :---: | :---: |
-| **`ink` sobre `bg`** | `#E8EEF7` / `#0A1020` | **16.25 : 1** | $\ge 4.5:1$ (Texto base) | **CUMPLE (AAA)** |
-| **`ink` sobre `surface`** | `#E8EEF7` / `#0F1A2E` | **14.91 : 1** | $\ge 4.5:1$ (Texto en tarjetas) | **CUMPLE (AAA)** |
-| **`ink` sobre `surface-2`** | `#E8EEF7` / `#14233B` | **13.50 : 1** | $\ge 4.5:1$ (Texto en inputs y cabeceras) | **CUMPLE (AAA)** |
-| **`ink-muted` sobre `bg`** | `#9FB0C8` / `#0A1020` | **8.59 : 1** | $\ge 4.5:1$ (Texto secundario en base) | **CUMPLE (AA)** |
-| **`ink-muted` sobre `surface`** | `#9FB0C8` / `#0F1A2E` | **7.88 : 1** | $\ge 4.5:1$ (Texto secundario en tarjetas) | **CUMPLE (AA)** |
-| **`ink-muted` sobre `surface-2`** | `#9FB0C8` / `#14233B` | **7.14 : 1** | $\ge 4.5:1$ (Etiquetas en campos elevados) | **CUMPLE (AA)** |
-| **`brand-ink` sobre `brand`** | `#04121F` / `#2DD4BF` | **10.15 : 1** | $\ge 4.5:1$ (Texto sobre botón primario) | **CUMPLE (AAA)** |
-| **`brand` sobre `bg`** | `#2DD4BF` / `#0A1020` | **10.18 : 1** | $\ge 4.5:1$ (Acento sobre fondo base) | **CUMPLE (AAA)** |
-| **`brand` sobre `surface`** | `#2DD4BF` / `#0F1A2E` | **9.34 : 1** | $\ge 4.5:1$ (Acento sobre tarjeta) | **CUMPLE (AAA)** |
-| **`brand` sobre `surface-2`** | `#2DD4BF` / `#14233B` | **8.46 : 1** | $\ge 4.5:1$ (Acento en inputs/hover) | **CUMPLE (AAA)** |
-| **`success` sobre `surface`** | `#4ADE80` / `#0F1A2E` | **9.98 : 1** | $\ge 3.0:1$ (Indicador de éxito) | **CUMPLE (AA)** |
-| **`warning` sobre `surface`** | `#FBBF24` / `#0F1A2E` | **10.42 : 1** | $\ge 3.0:1$ (Indicador de custodia/espera) | **CUMPLE (AA)** |
-| **`danger` sobre `surface`** | `#F87171` / `#0F1A2E` | **6.29 : 1** | $\ge 4.5:1$ (Texto/icono de peligro/error) | **CUMPLE (AA)** |
-| **`info` sobre `surface`** | `#60A5FA` / `#0F1A2E` | **6.84 : 1** | $\ge 3.0:1$ (Indicador de tránsito/soporte) | **CUMPLE (AA)** |
+| **`ink` sobre `bg`** | `#12211F` / `#FAF8F3` | **15.67 : 1** | $\ge 4.5:1$ (Texto base sobre crema) | CUMPLE (AAA) |
+| **`ink` sobre `surface`** | `#12211F` / `#FFFFFF` | **16.63 : 1** | $\ge 4.5:1$ (Texto sobre tarjetas) | CUMPLE (AAA) |
+| **`ink` sobre `mint`** | `#12211F` / `#DDF3EE` | **14.35 : 1** | $\ge 4.5:1$ (Texto sobre paneles menta) | CUMPLE (AAA) |
+| **`ink-muted` sobre `bg`** | `#4B5E5A` / `#FAF8F3` | **6.49 : 1** | $\ge 4.5:1$ (Secundario en fondo) | CUMPLE (AA) |
+| **`ink-muted` sobre `surface`** | `#4B5E5A` / `#FFFFFF` | **6.89 : 1** | $\ge 4.5:1$ (Secundario en tarjetas) | CUMPLE (AA) |
+| **`ink-muted` sobre `surface-2`** | `#4B5E5A` / `#F1EEE6` | **5.94 : 1** | $\ge 4.5:1$ (Etiquetas en campos) | CUMPLE (AA) |
+| **`ink-muted` sobre `mint`** | `#4B5E5A` / `#DDF3EE` | **5.95 : 1** | $\ge 4.5:1$ (Metadatos en menta) | CUMPLE (AA) |
+| **`brand` sobre `bg`** | `#0B7A5E` / `#FAF8F3` | **5.00 : 1** | $\ge 4.5:1$ (Acento sobre crema) | CUMPLE (AA) |
+| **`brand` sobre `surface`** | `#0B7A5E` / `#FFFFFF` | **5.30 : 1** | $\ge 4.5:1$ (Acento sobre tarjeta) | CUMPLE (AA) |
+| **`blanco` sobre `brand`** | `#FFFFFF` / `#0B7A5E` | **5.30 : 1** | $\ge 4.5:1$ (Texto en botón primario) | CUMPLE (AA) |
+| **`blanco` sobre `deep`** | `#FFFFFF` / `#0B3B3A` | **12.35 : 1** | $\ge 4.5:1$ (Texto en footer y deep) | CUMPLE (AAA) |
+| **`deep-muted` sobre `deep`** | `#B9D4CF` / `#0B3B3A` | **7.87 : 1** | $\ge 4.5:1$ (Secundario en footer) | CUMPLE (AA) |
+| **`sun-ink` sobre `sun`** | `#2A1700` / `#F6A623` | **8.52 : 1** | $\ge 4.5:1$ (Texto sobre dorado) | CUMPLE (AAA) |
 
 > [!NOTE]
-> El token `ink-faint` (`#6F819C`) tiene un ratio de 4.39:1 sobre `surface` y está clasificado **exclusivamente como decorativo** (separadores, bordes tenues, marcas de agua); queda estrictamente prohibido su uso para texto legible o etiquetas esenciales.
+> El token `ink-faint` (`#8A9B97`) se clasifica exclusivamente como decorativo (separadores y líneas tenues); nunca se utiliza para texto legible o etiquetas esenciales.
 
 ---
 
 ## 3. Tipografía
 
-La aplicación utiliza la tipografía sans-serif nativa del sistema operativo optimizada para legibilidad, nitidez y cero retardo de carga de red (`ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`).
+### Familias Tipográficas
+* **Sans-serif Principal:** `ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`. Usado en el 95% de la interfaz para máxima nitidez y rendimiento nativo sin descargas externas.
+* **Serif Display (`font-display`):** `Georgia, 'Times New Roman', serif`. Usada exclusivamente con peso 600 (`font-semibold`) en:
+  1. El titular H1 del hero principal (`HomePage.tsx`).
+  2. Los títulos de sección destacados de Inicio y Catálogo (`HomePage.tsx`, `CatalogPage.tsx`).
+  3. El título del producto en la vista de detalle (`ProductDetailPage.tsx`).
+  4. El titular de confirmación de compra exitosa (`CheckoutPage.tsx`).
 
-### Pesos Permitidos
-Solo se permiten **tres pesos tipográficos** en toda la interfaz:
-1. `font-normal` (400): Texto de párrafo, descripciones y cuerpo general.
-2. `font-medium` (500): Elementos interactivos secundarios, etiquetas de tabla, migas de pan y metadatos.
-3. `font-semibold` (600): Encabezados, títulos de página, títulos de sección, llamadas a la acción y cifras destacadas.
-*(Quedan completamente excluidos `font-bold` [700], `font-extrabold` [800] y `font-black` [900]).*
+### Pesos Tipográficos Permitidos
+Estrictamente limitados a tres valores:
+1. `font-normal` (400): Texto corrido, párrafos descriptivos y especificaciones.
+2. `font-medium` (500): Elementos interactivos secundarios, opciones de filtro, migas de pan y metadatos.
+3. `font-semibold` (600): Encabezados, títulos de sección, llamadas a la acción primarias y precios destacados.
+*(Prohibidos: `font-bold` [700], `font-extrabold` [800] y `font-black` [900]).*
 
-### Escala de Tamaños (12px - 40px)
-- **Display / Hero**: `text-4xl sm:text-5xl` (36px a 48px, `font-semibold`, tracking ajustado). Exclusivo del hero principal de la página de inicio.
-- **Título de Página / H1**: `text-2xl sm:text-3xl` (24px a 30px, `font-semibold`). Implementado vía `PageHeader`.
-- **Subtítulo / H2**: `text-xl` (20px, `font-semibold`).
-- **Encabezados de Tarjetas / H3**: `text-base` (16px, `font-semibold`).
-- **Cuerpo de Texto / Body**: `text-sm` (14px, `font-normal`, interlineado 1.5).
-- **Metadatos y Etiquetas / Caption**: `text-xs` (12px, `font-medium` o `font-normal`).
-*(Quedan prohibidos tamaños arbitrarios como `text-[10px]` o `text-[11px]`).*
+### Escala de Tamaños
+* **Hero Display:** `text-4xl sm:text-5xl` (36px a 48px, `font-semibold font-display`).
+* **Título de Página / H1:** `text-2xl sm:text-3xl` (24px a 30px, `font-semibold`).
+* **Subtítulo / H2:** `text-xl` (20px, `font-semibold`).
+* **Encabezados de Tarjetas / H3:** `text-base` (16px, `font-semibold`).
+* **Cuerpo de Texto / Body:** `text-sm` (14px, `font-normal`).
+* **Metadatos y Etiquetas / Caption:** `text-xs` (12px, `font-medium` o `font-normal`).
+*(Prohibidos: `text-[10px]` y `text-[11px]`).*
 
 ### Formato Numérico
-- Todos los precios, saldos de cuenta, identificadores UUID abreviados y contadores numéricos utilizan la clase utilitaria `tabular-nums` (`.tabular`) para alinear uniformemente las columnas en tablas y resúmenes.
+Todos los precios, saldos de cuenta, identificadores de orden abreviados y contadores numéricos utilizan la clase utilitaria `.tabular` (`font-variant-numeric: tabular-nums`) para garantizar alineación exacta de columnas.
 
 ---
 
-## 4. Espaciado, Forma y Elevación
-
-### Sistema de Espaciado (múltiplos de 4px)
-- `gap-1` (4px), `gap-2` (8px), `gap-3` (12px), `gap-4` (16px), `gap-6` (24px), `gap-8` (32px), `gap-12` (48px).
-- Contenedores de vista principales: ancho máximo `max-w-6xl` centrado horizontalmente con `px-4 sm:px-6`.
+## 4. Forma, Elevación y Espaciado
 
 ### Radios de Borde (Border Radius)
-La asignación de radios es semántica y jerárquica:
-- **`rounded-lg` (8px)**: Inputs, selectores, botones y cajas de formulario.
-- **`rounded-xl` (12px)**: Tarjetas (`Card`), paneles de contenido, tablas y contenedores de sección.
-- **`rounded-2xl` (16px)**: Exclusivo de modales centrados (`Modal`).
-- **`rounded-full` (9999px)**: Badges (`Badge`, `StatusBadge`), avatares e indicadores de estado circular.
+* **`rounded-lg` (8px):** Controles interactivos (inputs, selectores, botones y áreas de texto).
+* **`rounded-xl` (12px):** Tarjetas (`Card`), tablas (`DataTable`), rejillas de producto (`ProductCard`) y menús flotantes.
+* **`rounded-2xl` (16px):** Reservado estrictamente para diálogos modales (`Modal`) y los paneles grandes de fondo (`.section-mint`, `.section-deep`). *(Prohibido: `rounded-3xl`).*
+* **`rounded-full` (9999px):** Insignias (`Badge`, `StatusBadge`), buscador en forma de píldora y avatares.
 
 ### Sombras y Elevación
-En un tema oscuro profundo, la jerarquía espacial se consigue mediante capas de color (`surface`, `surface-2`, `surface-3`) y bordes nítidos de 1px en `line` (`#24385A`), evitando sombras negras difusas:
-- **`shadow-sm`**: Sutil elevación al hacer hover sobre tarjetas clickeables (`hover:shadow-sm`).
-- **`shadow-lg`**: Exclusivo para capas flotantes que se superponen a la interfaz: menús desplegables (`NavDropdown`, `UserMenu`), cajón móvil (`MobileMenu`) y diálogos (`Modal`).
-*(Las sombras `shadow-md`, `shadow-xl` y `shadow-2xl` han sido eliminadas).*
+* **`shadow-sm`:** Elevación leve al interactuar con tarjetas clickeables (`hover:shadow-sm`).
+* **`shadow-lg`:** Elevación para capas superpuestas: menús desplegables (`NavDropdown`, `UserMenu`), menú móvil (`MobileMenu`) y diálogos (`Modal`).
+*(Prohibidos: `shadow-md`, `shadow-xl` y `shadow-2xl`).*
+
+### Utilidades de Fondo
+* `.container-page`: `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8`.
+* `.section-mint`: Fondo menta pastel (`bg-mint`), bordes redondeados `rounded-2xl` y padding generoso.
+* `.section-deep`: Bloque verde petróleo oscuro (`bg-deep text-brand-ink`), bordes redondeados `rounded-2xl`.
 
 ---
 
-## 5. Movimiento y Animaciones
+## 5. Catálogo de Componentes Centralizados (`src/components/ui/`)
 
-- **Duraciones**:
-  - `150ms`: Microinteracciones inmediatas (hover de enlaces, foco de botón, cambio de color).
-  - `200ms`: Transiciones de componentes flotantes (apertura de dropdowns, colapso de acordeón).
-  - `250ms`: Entradas de diálogos y drawer móvil (`fade-in`, escala o desplazamiento).
-- **Curva Temporal**: `ease-out` en todas las transiciones.
-- **Animaciones Infinitas**:
-  - Estrictamente restringidas al efecto *shimmer* de carga en `Skeleton` y al giro de `Spinner`.
-  - Queda prohibido el uso de `animate-pulse` arbitrario en iconos, footer o textos de advertencia.
-- **Accesibilidad Motriz**:
-  - Regla `@media (prefers-reduced-motion: reduce)` activa para deshabilitar animaciones complejas en usuarios con sensibilidad vestibular.
-
----
-
-## 6. Catálogo de Componentes UI Base
-
-| Componente | Cuándo Usarlo | Cuándo NO Usarlo |
-| :--- | :--- | :--- |
-| **`Button`** | Acciones principales (`primary`), secundarias (`secondary`), de contorno (`outline`), destructivas (`danger`) o fantasma (`ghost`). | Enlaces de navegación entre pantallas (usar `<Link>` o `<NavLink>`). |
-| **`Badge`** | Etiquetas semánticas compactas de información, roles o atributos complementarios. | Estados dinámicos de entidades de base de datos (usar `StatusBadge`). |
-| **`StatusBadge`** | Mapeo canónico y centralizado de estados del modelo de datos (`order`, `claim`, `seller`, `user`, `product`). | Texto arbitrario o descripciones largas. |
-| **`Card`** | Agrupación visual y contenedores de artículos, paneles de configuración y secciones. | Envoltorios redundantes dentro de otro contenedor idéntico. |
-| **`PageHeader`** | Encabezado principal superior de todas las vistas con título, descripción opcional, acciones y migas de pan. | Subencabezados internos dentro de tarjetas o modales. |
-| **`Input`** | Campos de texto de una sola línea, correos, contraseñas y búsquedas con label accesible o aria-label. | Entradas multilínea (usar `Textarea`) o selección de opciones fijas. |
-| **`Select`** | Selección de opciones dentro de un conjunto cerrado (ordenamientos, filtros, categorías). | Formularios donde haya menos de 3 opciones simples (usar radio buttons o Tabs). |
-| **`Textarea`** | Entradas de texto extensas, justificaciones de reclamo, motivos de devolución o descripciones de producto. | Campos de entrada simples de una línea. |
-| **`Tabs`** | Filtros de navegación por vista o conmutación de paneles de estado en la misma página. | Paginación secuencial de colecciones de datos. |
-| **`DataTable`** | Presentación tabular de colecciones en vistas administrativas (usuarios, auditoría, comercios, envíos). | Tarjetas de presentación en catálogos de comercio electrónico. |
-| **`Stat`** | Tarjetas KPI de métricas en paneles de administración e informes financieros. | Párrafos descriptivos o bloques de texto no cuantitativo. |
-| **`Pagination`** | Navegación paginada accesible con controles de página anterior, siguiente y conteo visual. | Listas infinitas o colecciones con menos de 10 elementos. |
-| **`Modal`** | Confirmaciones críticas destructivas (eliminar producto, dictamen arbitral, anular dirección). | Navegación primaria que requiere URL propia indexable. |
-| **`EmptyState`** | Pantallas o listados vacíos (sin pedidos, carrito vacío, sin reclamos registrados). | Errores de conexión o caídas del servidor. |
-| **`ErrorState`** | Fallos de red o errores de API con botón de reintento conectado a `onRetry`. | Estados normales vacíos o advertencias de validación de campos. |
-| **`Skeleton`** | Pantallas de carga previa respetando el espacio del contenido definitivo. | Spinners de botón o peticiones instantáneas (< 100ms). |
-| **`Spinner`** | Indicadores de procesamiento dentro de botones activos o carga perezosa de rutas. | Carga de listas completas (usar `Skeleton`). |
+1. **`Button`:**
+   * `primary`: Fondo verde `brand`, texto blanco, hover `brand-hover`. Único CTA principal por zona.
+   * `secondary`: Borde `line` sobre fondo `surface` con hover `surface-2`.
+   * `ghost`: Sin borde ni fondo base, con hover `surface-2` o `brand-soft`.
+   * `danger`: Fondo suave de peligro `danger-soft` con hover `bg-danger text-white`.
+   * Altura ergonómica mínima de 44 px en acciones operativas.
+2. **`Badge` y `StatusBadge`:**
+   * Formato de píldora `rounded-full` con texto semántico y contraste verificado.
+3. **`Card`:**
+   * Superficie blanca `bg-surface`, borde perimetral `border border-line`, esquinas `rounded-xl`.
+4. **`DataTable`:**
+   * Contenedor `rounded-xl border border-line`, cabecera `bg-surface-2`, filas con hover interactivo `hover:bg-surface-2`.
+5. **`EmptyState` y `ErrorState`:**
+   * Contenedores informativos con icono semántico, mensaje claro en español y acción de reintento.
+6. **`Input`, `Select`, `Textarea`:**
+   * Altura base de 44 px (`min-h-[44px]`), fondo `surface`, borde `line`, anillo de foco turquesa `focus:ring-2 focus:ring-brand`.
+7. **`Modal`:**
+   * Contenedor con radio `rounded-2xl`, sombra `shadow-lg`, trampa completa de foco por teclado (Tab/Shift+Tab), listener de cierre con `Escape` y retorno de foco al elemento previo.
+8. **`PageHeader`:**
+   * Título, descripción y migas de pan con soporte para tipografía editorial.
+9. **`Pagination`:**
+   * Navegación numérica con botones táctiles de 44 px y estado activo resaltado.
+10. **`Skeleton` y `Spinner`:**
+    * Animaciones suaves con shimmer de onda limpia para retroalimentación durante la carga.
+11. **`Stat`:**
+    * Tarjeta de indicador clave (KPI) con cifras tabulares y recuadro de icono en color suave (`mint`, `sun-soft`, `brand-soft`, `info-soft`).
+12. **`ProductCard` (`src/components/ProductCard.tsx`):**
+    * Tarjeta de producto estandarizada y reutilizable: imagen con relación de aspecto 4:3 sobre marco limpio, categoría en texto pequeño, título truncado a 2 líneas, nombre de la tienda vendedora, precio tabular de 20 px y botón primario de acción directa.
 
 ---
 
-## 7. Mapeo Canónico de Estados del Negocio (`schema.prisma`)
+## 6. Patrones de Pantalla Implementados
 
-El componente `StatusBadge` mapea exclusivamente los enums definidos en la base de datos real:
-
-### 1. Estados de Comercios (`SellerStatus`)
-- `PENDING` $\rightarrow$ Variante `warning` ("En revisión"). Solicitud de afiliación pendiente de verificación administrativa.
-- `ACTIVE` $\rightarrow$ Variante `success` ("Activo"). Comercio acreditado y habilitado para publicar y vender.
-- `SUSPENDED` $\rightarrow$ Variante `danger` ("Suspendido"). Acceso comercial revocado temporal o definitivamente por incumplimiento.
-
-### 2. Estados de Usuarios (`UserStatus`)
-- `ACTIVE` $\rightarrow$ Variante `success` ("Activo"). Cuenta de usuario habilitada para operar.
-- `BLOCKED` $\rightarrow$ Variante `danger` ("Bloqueado"). Cuenta inhabilitada administrativamente con tokens revocados.
-
-### 3. Estados de Pedidos (`OrderStatus` y `SubOrderStatus`)
-- `PENDIENTE_PAGO` $\rightarrow$ Variante `warning` ("Pendiente de pago"). Esperando transferencia o pasarela.
-- `PAGADO` $\rightarrow$ Variante `info` ("Pagado"). Fondos retenidos bajo custodia TVS.
-- `CONFIRMADO` $\rightarrow$ Variante `info` ("Confirmado"). Aceptado por el comercio.
-- `EN_PREPARACION` $\rightarrow$ Variante `info` ("En preparación"). Embalaje de mercadería en bodega.
-- `DESPACHADO` / `EN_TRANSITO` / `EN_REPARTO` $\rightarrow$ Variante `info` ("En tránsito"). En curso con transportista.
-- `ENTREGADO` $\rightarrow$ Variante `success` ("Entregado"). Recibido físicamente por el comprador.
-- `FINALIZADO` $\rightarrow$ Variante `success` ("Finalizado"). Custodia liberada al comercio tras conformidad.
-- `CANCELADO` / `DEVUELTO` / `REEMBOLSADO` $\rightarrow$ Variante `neutral` ("Cancelado"). Ciclo comercial cerrado.
-- `CON_RECLAMO` $\rightarrow$ Variante `warning` ("Con reclamo"). En disputa abierta.
-
-### 4. Estados de Reclamos (`ClaimStatus`)
-- `ABIERTO` $\rightarrow$ Variante `warning` ("Abierto"). Disputa iniciada, fondos en custodia congelados.
-- `EN_RESPUESTA` $\rightarrow$ Variante `info` ("En respuesta"). Plazo abierto para descargos y pruebas.
-- `RESUELTO` $\rightarrow$ Variante `success` ("Resuelto"). Dictamen emitido por soporte arbitral.
-- `APELADO` $\rightarrow$ Variante `warning` ("Apelado"). En segunda instancia de revisión.
-- `CERRADO` $\rightarrow$ Variante `neutral` ("Cerrado"). Expediente concluido.
-
-### 5. Estados de Productos (`ProductStatus`)
-- `DRAFT` $\rightarrow$ Variante `neutral` ("Borrador"). Edición preliminar no publicada.
-- `ACTIVE` $\rightarrow$ Variante `success` ("Publicado"). Visible en el catálogo y listo para la compra.
-- `PAUSED` $\rightarrow$ Variante `warning` ("Pausado"). Sin stock temporal o pausado por el comercio.
-- `REMOVED` $\rightarrow$ Variante `danger` ("Eliminado"). Dado de baja del catálogo.
+1. **Hero Dividido (`HomePage.tsx`):**
+   * Panel grande en `.section-mint`: columna izquierda con titular editorial en `font-display`, subtítulo explicativo y llamada a la acción; columna derecha con mosaico visual de 4 productos reales en tarjetas blancas `rounded-xl`.
+2. **Franja de Confianza:**
+   * Tres tarjetas de respaldo bajo el hero ("Compra protegida", "Seguimiento del envío", "Reclamos y mediación") con iconos enmarcados en cajas menta.
+3. **Buscador en Forma de Píldora (`AppHeader.tsx`):**
+   * Barra de búsqueda con radio completo `rounded-full` en la cabecera fija, con acceso directo a `/catalogo`.
+4. **Catálogo con Filtros Laterales y Chips (`CatalogPage.tsx`):**
+   * En escritorio: barra lateral de 240 px con selector de categorías y switch de disponibilidad; en móvil: chips de desplazamiento horizontal continuo. Rejilla responsiva adaptable (2, 3 o 4 columnas).
+5. **Detalle de Producto (`ProductDetailPage.tsx`):**
+   * Vista en dos columnas: galería de miniaturas a la izquierda con visor ampliado, y a la derecha título editorial, precio destacado, selector de variantes, control de cantidad y botón principal de compra. Pestañas inferiores de descripción y opiniones con estrellas doradas (`sun`). Barra de compra pegajosa en móvil.
+6. **Proceso de Compra en Pasos Numerados (`CheckoutPage.tsx`):**
+   * Indicador superior de 3 pasos conectados por línea continua, panel de resumen de orden siempre visible y pantalla de confirmación exitosa con círculo menta e icono de verificación de 64 px.
+7. **Navegación Móvil Fija (`MobileBottomNav.tsx`):**
+   * Barra inferior fijada a la base de la pantalla en dispositivos móviles (`md:hidden`) con objetivos táctiles ergonómicos $\ge 44$ px y contador reactivo de carrito.
 
 ---
 
-## 8. Reglas de Accesibilidad Implementadas
+## 7. Lista de Comprobación para Pantallas Nuevas
 
-1. **Enlace de Salto al Contenido ("Skip Link")**:
-   - Implementado en [PublicLayout.tsx](file:///C:/Users/USER/Desktop/TVS/TIENDA-VIRTUAL-SEGURA/frontend/src/layouts/PublicLayout.tsx) mediante un enlace accesible posicionado fuera de pantalla que aparece al recibir foco (`sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50`), dirigiendo al usuario a `<main id="main-content" tabIndex={-1}>`.
-2. **Anillo Global de Foco**:
-   - Todo elemento interactivo (`<a>`, `<button>`, `<input>`, `<select>`, `<textarea>`) posee un contorno de foco de 2px turquesa (`focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-bg focus-visible:outline-none`) configurable globalmente en [index.css](file:///C:/Users/USER/Desktop/TVS/TIENDA-VIRTUAL-SEGURA/frontend/src/index.css).
-3. **Cierre por Teclado (`Escape`) y Clic Exterior**:
-   - Implementado en modales (`Modal.tsx`), menús desplegables (`NavDropdown.tsx`, `UserMenu.tsx`), campana de notificaciones (`NotificationBell.tsx`) y cajón móvil (`MobileMenu.tsx`).
-4. **Atrapado y Restauración de Foco**:
-   - En modales y menú móvil el foco queda confinado al diálogo mientras está visible y retorna automáticamente al elemento disparador cuando se cierra.
-5. **Bloqueo del Desplazamiento del Cuerpo**:
-   - Al desplegar modales o el menú móvil se aplica `document.body.style.overflow = 'hidden'` para prevenir scroll de fondo no deseado.
-6. **Objetivos Táctiles**:
-   - Todos los botones, enlaces de navegación e inputs cumplen con el estándar de accesibilidad para objetivos táctiles con un mínimo de **44px de altura** (`min-h-[44px]` o `h-11`).
-7. **Semántica de Color**:
-   - Ningún estado se comunica únicamente mediante color; todos los indicadores incluyen icono distintivo y texto descriptivo explícito.
+Al desarrollar o incorporar una nueva vista en el frontend de TVS, verificar estrictamente los siguientes puntos:
 
----
-
-## 9. Lista de Comprobación para Nuevas Pantallas
-
-Antes de considerar una nueva vista o módulo completado:
-- [ ] ¿El encabezado principal utiliza el componente `PageHeader` con título, descripción y migas de pan?
-- [ ] ¿Existe únicamente **un botón con acento turquesa primario (`brand`)** por vista?
-- [ ] ¿Los precios o cifras numéricas implementan la clase utilitaria `tabular-nums`?
-- [ ] ¿Están contemplados los tres estados asíncronos: carga (`Skeleton`), error con reintento (`ErrorState`) y lista vacía (`EmptyState`)?
-- [ ] ¿Los campos de formulario usan `Input`, `Select` y `Textarea` con su respectiva etiqueta visible o `aria-label`?
-- [ ] ¿Los diálogos críticos de confirmación usan `Modal` con botón de peligro y foco inicial en "Cancelar"?
-- [ ] ¿Las imágenes incluyen `loading="lazy"`, `decoding="async"` y dimensiones proporcionales para evitar CLS?
-- [ ] ¿Todos los textos están en español correcto con tildes y sin términos en inglés?
-- [ ] ¿La compilación TypeScript pasa limpia ejecutando `pnpm exec tsc --noEmit` con 0 errores?
+- [ ] **Paleta:** Utiliza únicamente tokens semánticos de Tailwind (`bg-bg`, `bg-surface`, `text-ink`, `text-ink-muted`, `border-line`, `text-brand`, etc.). Cero colores hexadecimales directos en componentes.
+- [ ] **Tipografía:** Pesos limitados exclusivamente a `font-normal` (400), `font-medium` (500) y `font-semibold` (600). La fuente `font-display` se reserva únicamente para títulos principales.
+- [ ] **Acciones Primarias:** Solo existe **un único botón primario** (`variant="primary"`) por zona visual de la pantalla.
+- [ ] **Radios:** `rounded-lg` para controles, `rounded-xl` para tarjetas y tablas, `rounded-2xl` solo para modales y paneles de sección, `rounded-full` para badges.
+- [ ] **Sombras:** Solo `shadow-sm` para interacción en tarjetas y `shadow-lg` para modales y menús flotantes.
+- [ ] **Precios y Números:** Toda cifra monetaria, cantidad o identificador numérico utiliza la clase `.tabular`.
+- [ ] **Iconografía:** Todos los iconos provienen exclusivamente de `lucide-react`, con `aria-hidden="true"` si son decorativos o `aria-label` descriptivo si son el único contenido de un botón interactivo.
+- [ ] **Accesibilidad:** Todos los elementos interactivos cuentan con objetivo táctil $\ge 44$ px y anillo de foco visible (`focus-visible:ring-2 focus-visible:ring-brand`).
+- [ ] **Tres Estados Obligatorios:** La pantalla gestiona formalmente: carga con `Skeleton`, fallo con `ErrorState` y ausencia de datos con `EmptyState`.
+- [ ] **Verificación de Compilación:** Ejecutar `pnpm exec tsc --noEmit` sin errores y verificar que el chunk resultante en `vite build` sea óptimo.

@@ -24,7 +24,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   return (
     <nav
       aria-label="Paginación"
-      className={`flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-line/60 ${className}`}
+      className={`flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-line ${className}`}
     >
       <div className="text-xs text-ink-muted">
         {typeof totalItems === 'number' && (

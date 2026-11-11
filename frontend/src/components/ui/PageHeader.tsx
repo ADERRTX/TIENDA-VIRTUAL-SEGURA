@@ -13,6 +13,7 @@ export interface PageHeaderProps {
   breadcrumbs?: BreadcrumbItem[];
   actions?: React.ReactNode;
   className?: string;
+  titleClassName?: string;
 }
 
 export const PageHeader: React.FC<PageHeaderProps> = ({
@@ -21,9 +22,10 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   breadcrumbs,
   actions,
   className = '',
+  titleClassName = '',
 }) => {
   return (
-    <div className={`flex flex-col gap-3 pb-4 border-b border-line/60 mb-6 ${className}`}>
+    <div className={`flex flex-col gap-3 pb-4 border-b border-line mb-6 ${className}`}>
       {breadcrumbs && breadcrumbs.length > 0 && (
         <nav aria-label="Migas de pan" className="flex items-center gap-1.5 text-xs text-ink-muted">
           {breadcrumbs.map((item, idx) => {
@@ -37,7 +39,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                 ) : (
                   <span className={isLast ? 'text-ink font-medium' : ''}>{item.label}</span>
                 )}
-                {!isLast && <ChevronRight size={12} className="text-ink-faint shrink-0" />}
+                {!isLast && <ChevronRight size={12} className="text-ink-muted/50 shrink-0" />}
               </React.Fragment>
             );
           })}
@@ -46,7 +48,9 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-ink">{title}</h1>
+          <h1 className={`text-2xl sm:text-3xl font-semibold tracking-tight text-ink ${titleClassName}`}>
+            {title}
+          </h1>
           {description && <p className="text-sm text-ink-muted mt-1">{description}</p>}
         </div>
         {actions && <div className="flex items-center gap-2.5 shrink-0">{actions}</div>}

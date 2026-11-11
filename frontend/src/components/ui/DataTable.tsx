@@ -31,15 +31,15 @@ export function DataTable<T>({
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-line bg-surface-2/80 text-xs font-semibold uppercase tracking-wider text-ink-muted sticky top-0 z-10 backdrop-blur-sm">
+            <tr className="border-b border-line bg-surface-2 text-xs font-semibold uppercase tracking-wider text-ink-muted sticky top-0 z-10">
               {columns.map((col) => (
-                <th key={col.key} scope="col" className={`px-4 py-3 ${col.headerClassName || ''}`}>
+                <th key={col.key} scope="col" className={`px-4 py-3.5 ${col.headerClassName || ''}`}>
                   {col.header}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-line/60 text-sm">
+          <tbody className="divide-y divide-line text-sm">
             {isLoading ? (
               Array.from({ length: 4 }).map((_, rIdx) => (
                 <tr key={rIdx}>
@@ -60,7 +60,7 @@ export function DataTable<T>({
               data.map((row) => (
                 <tr
                   key={keyExtractor(row)}
-                  className="transition-colors hover:bg-surface-3/40 h-12"
+                  className="transition-colors hover:bg-surface-2 h-12"
                 >
                   {columns.map((col) => (
                     <td key={col.key} className={`px-4 py-3 text-ink ${col.className || ''}`}>

@@ -23,20 +23,20 @@ export const Button: React.FC<ButtonProps> = ({
     'disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98]';
 
   const sizeClasses = {
-    sm: 'min-h-[36px] h-9 px-3 text-xs gap-1.5',
+    sm: 'min-h-[38px] h-9 px-3 text-xs gap-1.5',
     md: 'min-h-[44px] h-11 px-4 text-sm gap-2',
     lg: 'min-h-[48px] h-12 px-6 text-base gap-2.5',
   }[size];
 
   const variantClasses = {
     primary:
-      'bg-brand text-brand-ink font-semibold hover:bg-brand-hover shadow-sm border border-brand/60',
+      'bg-brand text-brand-ink font-semibold hover:bg-brand-hover shadow-sm border border-brand/80',
     secondary:
-      'bg-surface-2 text-ink border border-line hover:bg-surface-3 hover:border-brand/40 shadow-sm',
+      'bg-surface text-ink border border-line hover:bg-surface-2 hover:border-ink-muted/30 shadow-sm',
     danger:
-      'bg-danger/12 text-danger border border-danger/30 hover:bg-danger/20',
+      'bg-danger text-brand-ink font-medium hover:bg-danger/90 shadow-sm border border-danger',
     amber:
-      'bg-warning/15 text-warning border border-warning/30 hover:bg-warning/25',
+      'bg-sun-soft text-sun-ink font-medium border border-sun/40 hover:bg-sun/25',
     ghost:
       'bg-transparent text-ink-muted hover:text-ink hover:bg-surface-2',
   }[variant];

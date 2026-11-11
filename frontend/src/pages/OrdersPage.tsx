@@ -235,7 +235,7 @@ function ReviewButton({ item }: { item: OrderItem }) {
         className="h-7 text-xs text-brand hover:text-brand-hover px-2"
         onClick={() => setOpen(true)}
       >
-        <Star className="h-3 w-3 mr-1 fill-brand" />
+        <Star className="h-3.5 w-3.5 mr-1 text-sun fill-current" />
         {i18n.orders.reviewProduct}
       </Button>
 
@@ -254,7 +254,7 @@ function ReviewButton({ item }: { item: OrderItem }) {
                 >
                   <Star
                     className={`h-6 w-6 transition-colors ${
-                      n <= stars ? 'text-brand fill-brand' : 'text-ink-muted/30 fill-transparent'
+                      n <= stars ? 'text-sun fill-current' : 'text-line fill-transparent'
                     }`}
                   />
                 </button>
@@ -343,10 +343,15 @@ function OrderCard({ order }: { order: MyOrder }) {
             {/* Lista de productos del sub-pedido */}
             <ul className="flex flex-col divide-y divide-line/30 text-xs">
               {sub.items.map((item) => (
-                <li key={item.id} className="py-2.5 first:pt-1 last:pb-1 flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-ink font-medium">{item.name}</span>
-                    <span className="text-ink-muted">× {item.quantity}</span>
+                <li key={item.id} className="py-2.5 first:pt-1 last:pb-1 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface border border-line text-ink-muted">
+                      <Package className="h-5 w-5 text-brand" aria-hidden="true" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-ink font-semibold">{item.name}</span>
+                      <span className="text-ink-muted">Cantidad: {item.quantity}</span>
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-3">

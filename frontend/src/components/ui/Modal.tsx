@@ -90,7 +90,7 @@ export const Modal: React.FC<ModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-bg/80 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/40 backdrop-blur-sm animate-fade-in"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -103,7 +103,7 @@ export const Modal: React.FC<ModalProps> = ({
         aria-labelledby={title ? 'modal-title' : undefined}
         className={`w-full ${sizeClass} bg-surface border border-line rounded-2xl shadow-lg overflow-hidden max-h-[90vh] flex flex-col animate-scale-in outline-none`}
       >
-        <div className="flex items-start justify-between p-5 border-b border-line bg-surface-2/60">
+        <div className="flex items-start justify-between p-5 border-b border-line bg-surface-2">
           <div>
             {title && (
               <h3 id="modal-title" className="text-base font-semibold text-ink">
@@ -115,7 +115,7 @@ export const Modal: React.FC<ModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 -mr-1 -mt-1 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+            className="p-1.5 -mr-1 -mt-1 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand min-w-[36px] min-h-[36px] flex items-center justify-center"
             aria-label="Cerrar modal"
           >
             <X size={18} />

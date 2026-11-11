@@ -5,66 +5,86 @@ export default {
     extend: {
       colors: {
         // Base surfaces
-        bg: '#0A1020',
-        surface: '#0F1A2E',
-        'surface-2': '#14233B',
-        'surface-3': '#1B2D4A',
+        bg: '#FAF8F3',
+        surface: '#FFFFFF',
+        'surface-2': '#F1EEE6',
+        'surface-3': '#E7E3D8',
 
         // Lines and dividers
-        line: '#24385A',
-        'line-soft': '#182842',
+        line: '#E3DED1',
+        'line-soft': '#EEEADF',
 
-        // Brand colors (Teal accent 10%)
+        // Mint panels
+        mint: {
+          DEFAULT: '#DDF3EE',
+          strong: '#C4E9E0',
+        },
+
+        // Petrol green anchor
+        deep: {
+          DEFAULT: '#0B3B3A',
+          2: '#0F4F4B',
+          muted: '#B9D4CF',
+        },
+
+        // Brand colors
         brand: {
-          DEFAULT: '#2DD4BF',
-          hover: '#5EEAD4',
-          dark: '#14B8A6',
-          ink: '#04121F',
-          soft: 'rgba(45, 212, 191, 0.12)',
+          DEFAULT: '#0B7A5E',
+          hover: '#085F4A',
+          dark: '#0A6B52',
+          ink: '#FFFFFF',
+          soft: 'rgba(11, 122, 94, 0.08)',
+        },
+
+        // Sun / Warmth
+        sun: {
+          DEFAULT: '#F6A623',
+          ink: '#2A1700',
+          soft: 'rgba(246, 166, 35, 0.16)',
         },
 
         // Legacy accent & amber
         accent: {
-          DEFAULT: '#FBBF24',
-          dark: '#D97706',
-          soft: 'rgba(251, 191, 36, 0.12)',
+          DEFAULT: '#B45309',
+          dark: '#92400E',
+          soft: 'rgba(180, 83, 9, 0.08)',
         },
 
         // Typography inks
         ink: {
-          DEFAULT: '#E8EEF7',
-          muted: '#9FB0C8',
-          faint: '#6F819C',
+          DEFAULT: '#12211F',
+          muted: '#4B5E5A',
+          faint: '#8A9B97',
         },
 
         // Semantics (only for states and alerts)
         success: {
-          DEFAULT: '#4ADE80',
-          soft: 'rgba(74, 222, 128, 0.12)',
-          border: 'rgba(74, 222, 128, 0.25)',
+          DEFAULT: '#166534',
+          soft: 'rgba(22, 101, 52, 0.08)',
+          border: 'rgba(22, 101, 52, 0.3)',
         },
         warning: {
-          DEFAULT: '#FBBF24',
-          soft: 'rgba(251, 191, 36, 0.12)',
-          border: 'rgba(251, 191, 36, 0.25)',
+          DEFAULT: '#92400E',
+          soft: 'rgba(146, 64, 14, 0.08)',
+          border: 'rgba(146, 64, 14, 0.3)',
         },
         danger: {
-          DEFAULT: '#F87171',
-          soft: 'rgba(248, 113, 113, 0.12)',
-          border: 'rgba(248, 113, 113, 0.25)',
+          DEFAULT: '#B91C1C',
+          soft: 'rgba(185, 28, 28, 0.08)',
+          border: 'rgba(185, 28, 28, 0.3)',
         },
         info: {
-          DEFAULT: '#60A5FA',
-          soft: 'rgba(96, 165, 250, 0.12)',
-          border: 'rgba(96, 165, 250, 0.25)',
+          DEFAULT: '#1D4ED8',
+          soft: 'rgba(29, 78, 216, 0.08)',
+          border: 'rgba(29, 78, 216, 0.3)',
         },
 
         // Legacy status mapping
         status: {
-          ok: '#4ADE80',
-          danger: '#F87171',
-          warning: '#FBBF24',
-          info: '#60A5FA',
+          ok: '#166534',
+          danger: '#B91C1C',
+          warning: '#92400E',
+          info: '#1D4ED8',
         },
       },
       fontFamily: {
@@ -77,6 +97,7 @@ export default {
           'Roboto',
           'sans-serif',
         ],
+        display: ['Georgia', '"Times New Roman"', 'serif'],
       },
       borderRadius: {
         sm: '6px',
@@ -88,9 +109,9 @@ export default {
         full: '9999px',
       },
       boxShadow: {
-        sm: '0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2)',
-        DEFAULT: '0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3)',
-        lg: '0 10px 25px -3px rgba(0, 0, 0, 0.5), 0 4px 10px -4px rgba(0, 0, 0, 0.4)',
+        sm: '0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.04)',
+        DEFAULT: '0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgba(0, 0, 0, 0.04)',
+        lg: '0 10px 25px -3px rgba(11, 33, 31, 0.08), 0 4px 10px -4px rgba(11, 33, 31, 0.04)',
       },
       keyframes: {
         'fade-in': {

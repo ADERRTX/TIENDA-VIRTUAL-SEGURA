@@ -19,7 +19,7 @@ export const Card: React.FC<CardProps> = ({
   const bgClass = variant === 'surface' ? 'bg-surface' : 'bg-surface-2';
 
   const borderClass = highlight
-    ? 'border-brand/50 shadow-[0_0_15px_rgba(45,212,191,0.12)]'
+    ? 'border-brand/60 shadow-sm ring-1 ring-brand/30'
     : 'border-line';
 
   const paddingClass = {
@@ -30,7 +30,7 @@ export const Card: React.FC<CardProps> = ({
   }[padding];
 
   const interactiveClass = interactive
-    ? 'transition-all duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:bg-surface-2/80 hover:shadow-sm cursor-pointer'
+    ? 'transition-all duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-sm cursor-pointer'
     : 'transition-colors duration-150';
 
   return (
