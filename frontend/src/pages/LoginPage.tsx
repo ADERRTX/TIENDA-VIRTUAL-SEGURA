@@ -41,9 +41,11 @@ export default function LoginPage() {
         ? login.error.message || 'Tu cuenta ha sido bloqueada por la administración.'
         : login.error instanceof ApiError && login.error.status === 401
           ? 'Correo o contraseña incorrectos.'
-          : login.error
-            ? i18n.common.error
-            : null;
+          : login.error instanceof ApiError && login.error.status === 429
+            ? 'Demasiados intentos de acceso desde esta red. Por seguridad, espera 1 minuto antes de volver a intentar.'
+            : login.error
+              ? i18n.common.error
+              : null;
 
   return (
     <div className="flex min-h-[calc(100vh-16rem)] items-center justify-center py-8">

@@ -30,7 +30,7 @@ import {
 import { JWT_COOKIE_NAME } from '../../common/constants';
 
 const ONE_MINUTE_MS = 60_000;
-const AUTH_ATTEMPTS_PER_MINUTE = process.env['NODE_ENV'] === 'test' ? 1000 : 5;
+const AUTH_ATTEMPTS_PER_MINUTE = process.env['NODE_ENV'] === 'production' ? 5 : 60;
 const authLimit = { default: { limit: AUTH_ATTEMPTS_PER_MINUTE, ttl: ONE_MINUTE_MS } };
 const IS_PRODUCTION = process.env['NODE_ENV'] === 'production';
 @Controller('auth')
