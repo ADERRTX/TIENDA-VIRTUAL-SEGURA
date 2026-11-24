@@ -1,3 +1,4 @@
+// [PARTE VISUAL / TEXTOS: Diccionario de Textos en Español] Centraliza todas las cadenas de texto, mensajes de validación y etiquetas visuales mostradas al usuario en la plataforma.
 export const i18n = {
   app: {
     name: 'Tienda Virtual Segura',

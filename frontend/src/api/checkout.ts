@@ -1,3 +1,4 @@
+// [CONEXIÓN VISUAL: Módulo API de Checkout y Pago] Envía los datos del formulario de compra y procesa el pago simulado en custodia que confirma la orden en pantalla.
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { http } from '../lib/http';
 

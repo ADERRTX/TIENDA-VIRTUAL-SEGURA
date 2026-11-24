@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Campana de Notificaciones Interactiva] Botón con ícono de campana, badge numérico de alertas no leídas y panel desplegable con lista de notificaciones recientes.
 import { useState, useRef, useEffect } from 'react';
 import { useMarkAllRead, useMarkRead, useNotifications } from '../api/notifications';
 import { formatDate } from '../lib/formatters';

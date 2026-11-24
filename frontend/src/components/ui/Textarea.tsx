@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Área de Texto Multilínea (Textarea)] Campo de texto amplio con bordes estilizados para redactar reclamos, descripciones de productos o mensajes extensos.
 import React from 'react';
 import { AlertCircle } from 'lucide-react';
 

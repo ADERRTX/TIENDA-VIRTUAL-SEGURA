@@ -1,3 +1,4 @@
+// [PARTE VISUAL / SERVICIO: Cliente de Peticiones HTTP] Configuración de fetch/axios con manejo de cookies seguras y respuestas para actualizar visualmente la interfaz ante errores.
 export class ApiError extends Error {
   constructor(
     public readonly code: string,

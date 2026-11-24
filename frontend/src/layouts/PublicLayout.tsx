@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Estructura de Maquetación Base (Layout)] Envoltorio visual que fija la cabecera (AppHeader) en la parte superior, el área de contenido dinámico al centro y el pie de página (AppFooter) abajo.
 import { useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useLogout, useMe } from '../api/auth';

@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Auditoría del Sistema (Admin)] Panel con tabla de registros inmutables de auditoría, filtros por fecha/evento y visor de detalles técnicos JSON.
 import { useState, type FormEvent } from 'react';
 import { useAuditLog, type AuditEntry, type AuditFilters } from '../api/admin';
 import { Button } from '../components/ui/Button';

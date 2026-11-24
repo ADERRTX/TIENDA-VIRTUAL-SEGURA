@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Tarjeta de Producto en Cuadrícula] Ficha con fotografía, etiqueta de stock, título, nombre del vendedor con enlace, precio formateado en S/ y botón de Agregar al Carrito.
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { Product } from '../api/products';

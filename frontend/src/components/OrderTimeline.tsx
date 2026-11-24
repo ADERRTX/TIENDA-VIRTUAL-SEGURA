@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Línea de Tiempo del Estado de Orden] Barra de progreso visual paso a paso que muestra el ciclo de custodia: Pago en custodia -> En preparación -> Enviado -> Entregado -> Liberado.
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { i18n } from '../i18n/es';

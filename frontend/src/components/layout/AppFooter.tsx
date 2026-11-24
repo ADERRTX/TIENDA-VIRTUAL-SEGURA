@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Pie de Página / Footer] Sección inferior con insignias de custodia segura, enlaces rápidos de navegación, medios de pago aceptados y avisos legales.
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { http } from '../../lib/http';

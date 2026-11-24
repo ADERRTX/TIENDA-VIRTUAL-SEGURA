@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Barra de Navegación Inferior Móvil] Menú inferior fijo táctil para dispositivos móviles con accesos directos a Inicio, Catálogo, Carrito y Mi Cuenta.
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import type { User as AuthUser } from '../../api/auth';

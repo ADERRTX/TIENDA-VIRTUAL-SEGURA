@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Insignia de Estados de Negocio] Etiqueta con colores específicos para representar estados de órdenes (Pendiente, Pagado, Enviado, Entregado, Disputa, Cancelado).
 import React from 'react';
 import { Badge } from './Badge';
 import { i18n } from '../../i18n/es';

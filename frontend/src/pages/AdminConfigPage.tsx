@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Configuración de Plataforma (Admin)] Formulario de ajustes del sistema: días de custodia de dinero (escrow), tasas de comisión y límites de operación.
 import { useState, type FormEvent } from 'react';
 import { useAdminConfig, useUpdateConfig, type ConfigEntry } from '../api/admin';
 import { Button } from '../components/ui/Button';

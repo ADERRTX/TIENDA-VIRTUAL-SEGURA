@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Vista de Estado de Error] Banner o caja de alerta con ícono de advertencia, mensaje explicativo del fallo y botón para reintentar la acción.
 import React from 'react';
 import { AlertCircle, RotateCcw } from 'lucide-react';
 import { Button } from './Button';

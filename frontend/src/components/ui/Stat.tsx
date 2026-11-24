@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Tarjeta de Estadística / Indicador KPI] Tarjeta compacta para dashboards con cifra numérica destacada, descripción corta e ícono temático ilustrativo.
 import React from 'react';
 import { Card } from './Card';
 

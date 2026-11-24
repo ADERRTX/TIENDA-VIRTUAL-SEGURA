@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Esqueleto de Carga (Skeleton Loader)] Bloque rectangular o circular con animación pulsante que simula la forma del contenido mientras se cargan los datos del servidor.
 import React from 'react';
 
 export interface SkeletonProps {

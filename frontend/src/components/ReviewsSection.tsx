@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Sección de Reseñas y Calificaciones] Lista de opiniones de compradores con estrellas visuales (1-5), fecha, comentarios y formulario para publicar una nueva reseña.
 import { useProductReviews } from '../api/products';
 import { i18n } from '../i18n/es';
 import { formatDate } from '../lib/formatters';

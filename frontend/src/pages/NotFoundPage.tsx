@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Error 404 (No Encontrado)] Pantalla amigable cuando la ruta no existe, con ilustración, mensaje de aviso y botón de retorno al inicio.
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';

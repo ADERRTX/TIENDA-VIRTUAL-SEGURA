@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página Principal de Inicio (Home)] Portada con banner Hero publicitario, buscador destacado, accesos directos por categoría, vitrina de productos y pilares de seguridad TVS.
 import { useNavigate, Link } from 'react-router-dom';
 import { useProducts, imageUrl, mainImage } from '../api/products';
 import { useCategories } from '../api/sellerProducts';

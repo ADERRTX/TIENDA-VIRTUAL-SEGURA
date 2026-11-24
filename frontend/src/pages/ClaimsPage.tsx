@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Mis Reclamos y Disputas] Bandeja que lista todos los reclamos abiertos y resueltos, con estado visual, motivo del conflicto y botón para iniciar nuevo reclamo.
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useClaims } from '../api/claims';

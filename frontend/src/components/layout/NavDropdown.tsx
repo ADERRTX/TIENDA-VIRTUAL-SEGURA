@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Menú Desplegable de Navegación] Dropdown interactivo con microanimaciones para seleccionar subcategorías y opciones de menú en la cabecera.
 import { useState, useRef, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';

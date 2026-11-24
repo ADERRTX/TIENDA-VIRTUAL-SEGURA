@@ -1,3 +1,4 @@
+// [CONEXIÓN VISUAL: Módulo API de Administración] Conecta los paneles visuales de administración con el servidor para gestionar usuarios, auditorías, configuraciones y jobs.
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { http } from '../lib/http';
 import type { PageMeta } from './seller';

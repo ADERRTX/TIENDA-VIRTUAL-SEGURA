@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Encabezado de Página] Bloque superior de página con título principal en tipografía serif display, subtítulo descriptivo y área para botones de acción rápida.
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';

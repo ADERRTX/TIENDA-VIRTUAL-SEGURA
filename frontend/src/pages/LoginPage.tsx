@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Inicio de Sesión (Login)] Tarjeta central con formulario de credenciales (email y contraseña), selector de accesos rápidos de prueba por rol y enlace a registro.
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLogin } from '../api/auth';

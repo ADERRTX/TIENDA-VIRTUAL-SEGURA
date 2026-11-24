@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Registro de Nuevos Usuarios] Formulario de creación de cuenta con campos de nombre, email, contraseña segura con validación en tiempo real y términos legales.
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLogin, useRegister } from '../api/auth';

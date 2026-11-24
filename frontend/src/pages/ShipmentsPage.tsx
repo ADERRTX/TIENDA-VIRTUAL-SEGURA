@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Seguimiento de Envíos] Pantalla con estado en vivo del despacho, transportista asignado, número de seguimiento (tracking) y fecha estimada de recepción.
 import { useState } from 'react';
 import {
   useAddShipmentEvent,

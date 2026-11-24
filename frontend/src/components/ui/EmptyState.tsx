@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Vista de Estado Vacío] Ilustración e ícono centrado con mensaje descriptivo y botón de acción cuando una lista, carrito o búsqueda no tiene elementos.
 import React from 'react';
 import { PackageOpen } from 'lucide-react';
 import { Button } from './Button';

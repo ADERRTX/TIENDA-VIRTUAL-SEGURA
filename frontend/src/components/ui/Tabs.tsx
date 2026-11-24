@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Pestañas de Navegación por Secciones (Tabs)] Barra de pestañas horizontales con indicador activo para alternar vistas sin recargar la página.
 import React from 'react';
 
 export interface TabItem {

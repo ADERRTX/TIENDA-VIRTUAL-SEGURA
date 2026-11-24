@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Menú Lateral Desplegable Móvil (Drawer)] Panel lateral deslizable para móviles con lista de categorías, enlaces de navegación y botón de inicio/cierre de sesión.
 import { useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import type { User as AuthUser } from '../../api/auth';

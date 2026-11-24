@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Gestión de Inventario (Vendedor)] Catálogo del vendedor con tabla de productos propios, botones para crear nuevo producto, editar precio/stock y pausar ventas.
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { imageUrl } from '../api/products';
 import {

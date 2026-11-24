@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Insignia Pequeña / Badge] Etiqueta redondeada para destacar estados, roles o categorías con variantes visuales de color (verde, ámbar, rojo, gris).
 import React from 'react';
 
 export interface BadgeProps {

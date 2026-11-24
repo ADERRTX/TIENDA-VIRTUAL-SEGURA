@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Cabecera Principal / Barra de Navegación Superior] Barra fija con logotipo TVS, barra de búsqueda global, selector de categorías, campana de notificaciones, contador del carrito y menú de usuario.
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import type { User as AuthUser } from '../../api/auth';
 import NotificationBell from '../NotificationBell';

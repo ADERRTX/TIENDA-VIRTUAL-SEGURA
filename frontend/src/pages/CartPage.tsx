@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página del Carrito de Compras] Lista detallada de productos seleccionados, controles para modificar cantidades, cálculo de subtotales, costo de envío y botón de proceder al pago.
 import { Link, useNavigate } from 'react-router-dom';
 import { useMe } from '../api/auth';
 import { useCart, useRemoveCartItem, useUpdateCartItem } from '../api/cart';

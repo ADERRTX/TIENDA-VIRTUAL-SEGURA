@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Indicador Giratorio de Carga (Spinner)] Ícono circular animado que indica que una operación asíncrona o guardado está en progreso.
 import React from 'react';
 
 export interface SpinnerProps {

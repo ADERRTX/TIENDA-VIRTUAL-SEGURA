@@ -1,3 +1,4 @@
+// [CONEXIÓN VISUAL: Módulo API de Perfiles Públicos de Tiendas] Provee la información pública de la tienda y sus calificaciones que se muestran a los compradores.
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApiError, http } from '../lib/http';
 import type { PageMeta } from './seller';

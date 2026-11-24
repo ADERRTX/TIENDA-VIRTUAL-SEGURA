@@ -1,3 +1,4 @@
+// [CONEXIÓN VISUAL: Módulo API de Autenticación] Provee llamadas de login, registro y sesión que actualizan el estado visual de la cabecera y habilitan el acceso a vistas privadas.
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApiError, http } from '../lib/http';
 

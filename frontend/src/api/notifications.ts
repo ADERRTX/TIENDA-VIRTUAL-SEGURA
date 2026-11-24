@@ -1,3 +1,4 @@
+// [CONEXIÓN VISUAL: Módulo API de Notificaciones] Consulta y actualiza el estado de lectura de notificaciones que se muestran en el menú desplegable de la campana.
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { http } from '../lib/http';
 

@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Pasarela de Pago y Finalización de Compra] Proceso de pago con formulario de dirección de entrega, resumen de costos, aviso de protección de custodia y botón de confirmar compra.
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {

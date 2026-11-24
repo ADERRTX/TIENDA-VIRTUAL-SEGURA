@@ -1,1 +1,2 @@
+// [PARTE VISUAL / CONFIGURACIÓN: Definición de Tipos de Entorno] Declara los tipos de variables de Vite (como VITE_API_URL) que configuran las conexiones visuales de la interfaz.
 /// <reference types="vite/client" />

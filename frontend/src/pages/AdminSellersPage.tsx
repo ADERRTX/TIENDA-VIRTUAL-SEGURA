@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Gestión de Vendedores (Admin)] Tabla para examinar solicitudes de apertura de tiendas, verificar documentos/RUC y aprobar o suspender cuentas comerciales.
 import { useState, type FormEvent } from 'react';
 import {
   useAdminSellerAction,

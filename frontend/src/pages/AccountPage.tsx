@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Mi Cuenta / Perfil] Pantalla de configuración del usuario donde visualiza su información personal, correo, rol activo, historial y cambio de clave.
 import { useState, type FormEvent } from 'react';
 import { useMe, useUpdateProfile, useChangePassword } from '../api/auth';
 import {

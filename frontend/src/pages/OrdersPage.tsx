@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Mis Pedidos (Comprador)] Lista cronológica de órdenes de compra con estado de entrega, detalles de productos, botones para confirmar entrega y solicitar reclamos.
 import { useState, type FormEvent } from 'react';
 import {
   useCancelOrder,

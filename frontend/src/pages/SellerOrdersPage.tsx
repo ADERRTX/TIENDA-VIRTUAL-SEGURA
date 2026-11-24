@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Pedidos Recibidos (Vendedor)] Panel de ventas con tabla de pedidos entrantes, opciones para ingresar número de guía de envío y seguimiento del dinero en custodia.
 import { useState, type FormEvent } from 'react';
 import {
   useDispatchOrder,

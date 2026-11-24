@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página Pública de Perfil de Tienda] Perfil público del vendedor visible para compradores con banner, insignia de verificación, puntuación de estrellas y catálogo de productos.
 import { useState, type FormEvent } from 'react';
 import { useMySeller, useUpdateMySeller, type SellerProfile } from '../api/sellers';
 import { Button } from '../components/ui/Button';

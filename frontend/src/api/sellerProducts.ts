@@ -1,3 +1,4 @@
+// [CONEXIÓN VISUAL: Módulo API de Inventario del Vendedor] Realiza las operaciones CRUD que alimentan la tabla de inventario y el formulario de edición de productos del vendedor.
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { http } from '../lib/http';
 import type { PageMeta } from './seller';

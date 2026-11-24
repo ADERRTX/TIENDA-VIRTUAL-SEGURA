@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Controles de Paginación] Barra con botones numéricos, botón 'Anterior' y 'Siguiente' para navegar entre páginas de productos, pedidos o tablas.
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from './Button';

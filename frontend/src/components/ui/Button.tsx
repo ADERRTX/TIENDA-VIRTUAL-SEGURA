@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Botón Interactivo Reutilizable] Botón base de la interfaz con variantes (primary, secondary, outline, ghost, danger), tamaños y estado visual de carga con spinner.
 import React from 'react';
 import { Spinner } from './Spinner';
 

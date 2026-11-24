@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Guardián de Rutas / Vista de Acceso Restringido] Bloquea visualmente rutas protegidas; redirige al inicio de sesión o muestra pantalla de acceso no autorizado si falta el rol requerido.
 import { Link, Outlet } from 'react-router-dom';
 import { useMe, type UserRole } from '../api/auth';
 import { Skeleton } from './ui/Skeleton';

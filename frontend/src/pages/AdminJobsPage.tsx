@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Tareas Programadas / Cron Jobs (Admin)] Panel de supervisión de tareas automáticas en segundo plano (liberación de fondos, alertas) con botones de ejecución manual.
 import { useRunJob } from '../api/admin';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';

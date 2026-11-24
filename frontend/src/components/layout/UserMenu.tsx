@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Menú Desplegable de Perfil de Usuario] Menú emergente de cabecera con avatar, nombre, rol activo (Comprador/Vendedor/Soporte/Admin), accesos directos y botón de Cerrar Sesión.
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLogout, type User as AuthUser } from '../../api/auth';

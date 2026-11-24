@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Punto de Entrada de Renderizado DOM] Inicializa el árbol visual de React 19 y lo monta en el elemento raíz (#root) del documento HTML con React.StrictMode.
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

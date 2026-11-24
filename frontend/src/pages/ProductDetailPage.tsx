@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Detalle de Producto] Ficha individual con galería de fotos, selector de cantidad, descripción completa, datos del vendedor, garantía de custodia y sección de opiniones.
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMe } from '../api/auth';

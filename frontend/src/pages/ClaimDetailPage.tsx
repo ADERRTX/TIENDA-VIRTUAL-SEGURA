@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Detalle y Chat de Reclamo / Disputa] Vista de resolución de conflictos con chat bidireccional entre comprador, vendedor y soporte, visor de pruebas y panel de resolución.
 import { useState, type FormEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useMe } from '../api/auth';

@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Solicitud para ser Vendedor] Formulario de postulación comercial donde el usuario ingresa el nombre de su tienda, descripción, RUC y teléfono de contacto.
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useApplySeller, useMySeller } from '../api/sellers';

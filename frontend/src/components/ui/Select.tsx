@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Selector Desplegable (Select)] Menú desplegable estilizado para elegir una opción entre varias (categorías, transportistas, estados o filtros).
 import React from 'react';
 import { AlertCircle, ChevronDown } from 'lucide-react';
 

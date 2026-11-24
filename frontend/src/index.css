@@ -1,3 +1,4 @@
+/* [PARTE VISUAL: Estilos Globales y Sistema de Diseño CSS] Define variables de colores semánticos (#FAF8F3, #0B7A5E, etc.), tipografía serif Georgia y sans-serif, directivas Tailwind y estilos base del cuerpo. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

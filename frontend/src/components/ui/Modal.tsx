@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Ventana Modal Emergente (Diálogo)] Ventana emergente con fondo oscurecido (backdrop), título, botón de cierre y cuerpo para formularios o confirmaciones.
 import React, { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 

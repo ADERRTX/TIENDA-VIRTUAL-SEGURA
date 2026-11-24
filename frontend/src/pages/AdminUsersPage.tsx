@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Gestión de Usuarios (Admin)] Panel administrativo para buscar, filtrar, cambiar roles y suspender cuentas de compradores, vendedores y soporte.
 import { useState, type FormEvent } from 'react';
 import { useAdminUsers, useBlockUser, useUnblockUser, type AdminUser, type UserFilters } from '../api/admin';
 import { useMe } from '../api/auth';

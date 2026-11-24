@@ -1,3 +1,4 @@
+// [CONEXIÓN VISUAL: Módulo API de Órdenes y Compras] Suministra los datos de pedidos para las pantallas de 'Mis Pedidos' y permite la confirmación visual de entrega de paquetes.
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { http } from '../lib/http';
 

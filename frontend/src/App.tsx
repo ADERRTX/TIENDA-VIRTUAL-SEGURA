@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Enrutador Principal de la Aplicación] Define todas las rutas visuales (/ , /login, /catalogo, /checkout, etc.), layouts compartidos, control de acceso por roles y proveedores globales de estado.
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import RequireRole from './components/RequireRole';

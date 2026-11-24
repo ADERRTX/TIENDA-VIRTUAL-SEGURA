@@ -1,3 +1,4 @@
+// [PARTE VISUAL / UTILIDADES: Formateadores de Texto y Moneda] Funciones de transformación visual para mostrar precios en Soles (PEN S/), fechas amigables y estados legibles en la interfaz.
 export function formatMoney(cents: number): string {
   if (isNaN(cents)) return 'S/ 0.00';
   return `S/ ${(cents / 100).toFixed(2)}`;

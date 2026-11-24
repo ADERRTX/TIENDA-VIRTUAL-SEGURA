@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página del Catálogo de Productos] Cuadrícula completa de productos con barra lateral de filtros (categoría, rango de precio, stock), selector de ordenamiento y paginador.
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {

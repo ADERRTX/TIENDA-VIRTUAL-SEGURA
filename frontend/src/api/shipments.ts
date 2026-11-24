@@ -1,3 +1,4 @@
+// [CONEXIÓN VISUAL: Módulo API de Seguimiento de Envíos] Consulta el estado de despachos, transportistas y números de guía para la pantalla de rastreo de envíos.
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { http } from '../lib/http';
 import type { PageMeta } from './seller';

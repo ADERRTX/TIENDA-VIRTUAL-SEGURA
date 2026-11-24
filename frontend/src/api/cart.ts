@@ -1,3 +1,4 @@
+// [CONEXIÓN VISUAL: Módulo API del Carrito de Compras] Gestiona la obtención, adición y remoción de ítems que alimentan el contador visual de la cabecera y la tabla del carrito.
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { http } from '../lib/http';
 

@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Campo de Texto / Entrada de Formulario] Caja de texto interactiva con soporte para etiquetas (labels), textos de ayuda, estados de error en rojo e íconos laterales.
 import React from 'react';
 import { AlertCircle } from 'lucide-react';
 

@@ -1,3 +1,4 @@
+// [CONEXIÓN VISUAL: Módulo API de Productos Públicos] Recupera el catálogo, realiza búsquedas con filtros de categoría y obtiene la ficha técnica para la página de detalle.
 import { useQuery } from '@tanstack/react-query';
 import { http } from '../lib/http';
 import type { PageMeta } from './seller';

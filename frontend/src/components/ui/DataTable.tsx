@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Tabla de Datos Tabular] Tabla estructurada con encabezados de columna ordenables, filas alternadas, paginación integrada y mensaje de estado vacío.
 import React from 'react';
 import { Skeleton } from './Skeleton';
 

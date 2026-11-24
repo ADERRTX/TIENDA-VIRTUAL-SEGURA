@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Página de Reportes y Analíticas (Admin)] Tablero de métricas con gráficos y estadísticas de volumen transaccional, disputas atendidas y ventas globales.
 import type { ReactNode } from 'react';
 import { useReports } from '../api/admin';
 import { Card } from '../components/ui/Card';

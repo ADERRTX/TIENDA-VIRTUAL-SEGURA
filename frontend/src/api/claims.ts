@@ -1,3 +1,4 @@
+// [CONEXIÓN VISUAL: Módulo API de Reclamos y Disputas] Alimenta la lista visual de reclamos, creación de disputas y envío de mensajes en el chat de resolución de soporte.
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { http } from '../lib/http';
 import type { PageMeta } from './seller';

@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Formulario Modal de Edición de Producto] Formulario emergente para crear o modificar productos con campos de título, descripción, precio en Soles, stock, categoría e imagen.
 import { useState, type FormEvent } from 'react';
 import {
   useCreateVariant,

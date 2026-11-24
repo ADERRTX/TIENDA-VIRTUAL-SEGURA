@@ -1,3 +1,4 @@
+// [PARTE VISUAL: Contenedor Tipo Tarjeta (Card)] Marco blanco elevado con bordes redondeados, borde sutil y acolchado interno para agrupar bloques de contenido e información.
 import React from 'react';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
