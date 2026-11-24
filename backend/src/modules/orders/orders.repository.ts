@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Consultas de Órdenes en Base de Datos] Transacciones Prisma atómicas ($transaction) para guardar orden, subórdenes, ítems y retención de fondos.
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import {

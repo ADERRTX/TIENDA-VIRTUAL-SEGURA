@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Decorador @CurrentUser] Extrae los datos del usuario autenticado (id, email, role) desde el objeto de petición Express.
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { UserRole, UserStatus } from '../constants';
 

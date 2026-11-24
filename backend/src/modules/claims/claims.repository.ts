@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Consultas de Reclamos en Base de Datos] Consultas Prisma a 'claims', 'claim_messages' y congelamiento de custodia.
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Claim, ClaimMessage, Prisma } from '../../generated/prisma/client';

@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoints Públicos de Productos] Rutas GET /products y GET /products/:id. Filtros por categoría, búsqueda por término, ordenamiento y paginación.
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { CatalogService } from './catalog.service';
 import { Public } from '../../common/decorators/public.decorator';

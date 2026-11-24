@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Decorador @Roles] Asigna los roles autorizados (BUYER, SELLER, SUPPORT, ADMIN) a un controlador o método de endpoint.
 import { SetMetadata } from '@nestjs/common';
 import { UserRole } from '../constants';
 

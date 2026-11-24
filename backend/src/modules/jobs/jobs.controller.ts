@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoints de Ejecución Manual de Jobs] Rutas POST /jobs/release-funds y POST /jobs/check-timeouts para forzar ejecución manual desde panel Admin.
 import { Controller, Post, Body } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { Roles } from '../../common/decorators/roles.decorator';

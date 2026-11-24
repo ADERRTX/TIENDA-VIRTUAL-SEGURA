@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Esquemas DTO de Vendedores] Validaciones Zod de RUC (11 dígitos), nombre de tienda, teléfono y resolución de estado por el admin.
 import { z } from 'zod';
 
 export const applySellerSchema = z.object({

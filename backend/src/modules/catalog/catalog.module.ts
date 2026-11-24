@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Configuración del Módulo de Catálogo] Agrupa controladores público y vendedor, servicio de productos y validadores de archivos.
 import { Module } from '@nestjs/common';
 import { PublicCatalogController } from './public-catalog.controller';
 import { SellerCatalogController } from './seller-catalog.controller';

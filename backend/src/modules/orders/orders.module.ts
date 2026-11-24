@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Configuración del Módulo de Órdenes] Integra servicios de pedidos, máquina de estados, envíos y pagos en custodia.
 import { Module } from '@nestjs/common';
 import { OrdersController } from './orders.controller';
 import { SellerOrdersController } from './seller-orders.controller';

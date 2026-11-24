@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoint de Chequeo de Salud (Health Check)] Ruta pública GET /health para monitoreo del estado de la base de datos y uptime de la API.
 import { Controller, Get, Res, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import { Public } from '../../common/decorators/public.decorator';

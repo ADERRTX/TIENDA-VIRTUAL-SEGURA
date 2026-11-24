@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Validación de Archivos e Imágenes] Reglas de tamaño máximo de archivo (e.g. 5MB) y tipos MIME permitidos (image/jpeg, image/png, image/webp).
 import { BadRequestException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';

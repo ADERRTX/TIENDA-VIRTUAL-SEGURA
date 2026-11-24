@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Lógica de Resolución de Disputas] REGLA CRÍTICA: Solo el comprador puede abrir reclamo antes de expirar la custodia. Soporte decide si reembolsa al comprador o libera al vendedor.
 import {
   Injectable,
   NotFoundException,

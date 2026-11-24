@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoints de Autenticación] Rutas POST /auth/login, POST /auth/register, POST /auth/logout y GET /auth/me. Modificar aquí límites de tasa (rate limit).
 import {
   Controller,
   Get,

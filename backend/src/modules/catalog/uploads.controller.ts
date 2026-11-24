@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoints de Carga de Imágenes] Ruta POST /uploads/products para recibir fotografías con middleware Multer.
 import { Controller, Get, Param, Res, NotFoundException } from '@nestjs/common';
 import { Response } from 'express';
 import * as path from 'path';

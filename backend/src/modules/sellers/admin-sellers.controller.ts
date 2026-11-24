@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoints de Aprobación de Vendedores (Admin)] Rutas GET /admin/sellers y PATCH /admin/sellers/:id/status (aprobar o suspender tienda).
 import {
   Controller,
   Get,

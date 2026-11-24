@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Constantes Globales y Límites] Modificar aquí orígenes CORS permitidos, nombres de cookies ('jwt'), tiempos de expiración y roles del sistema.
 export {
   UserRole,
   UserStatus,

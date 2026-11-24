@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoints de Reclamos y Disputas] Rutas POST /claims, GET /claims, GET /claims/:id, POST /claims/:id/messages y POST /claims/:id/resolve.
 import {
   Controller,
   Post,

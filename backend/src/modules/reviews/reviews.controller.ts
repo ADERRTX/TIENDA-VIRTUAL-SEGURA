@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoints de Reseñas] Rutas POST /products/:id/reviews y GET /products/:id/reviews.
 import {
   Controller,
   Post,

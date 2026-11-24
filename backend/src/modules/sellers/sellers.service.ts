@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Lógica de Vendedores y Tiendas] Reglas de validación de RUC peruano (11 dígitos numéricos), verificación de nombre comercial único y cambio a rol SELLER.
 import {
   Injectable,
   ConflictException,

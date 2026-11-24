@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Lógica de Pagos y Retención de Fondos] Regla de idempotencia mediante IdempotencyKey, verificación de montos y cambio de estado a PAID.
 import {
   Injectable,
   NotFoundException,

@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Consultas SQL de Autenticación] Métodos Prisma para buscar usuarios por email, crear nuevos usuarios y actualizar contadores de bloqueo/último login.
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { User, Prisma } from '../../generated/prisma/client';

@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Configuración del Módulo de Pagos] Registra controlador y repositorio de pagos en custodia.
 import { Module } from '@nestjs/common';
 import { PaymentsController } from './payments.controller';
 import { PaymentsService } from './payments.service';

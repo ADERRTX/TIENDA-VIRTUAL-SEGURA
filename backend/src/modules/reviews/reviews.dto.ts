@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Esquemas DTO de Reseñas] Validaciones Zod: rating (entero entre 1 y 5) y comentario textual opcional.
 import { z } from 'zod';
 
 export const createReviewSchema = z.object({

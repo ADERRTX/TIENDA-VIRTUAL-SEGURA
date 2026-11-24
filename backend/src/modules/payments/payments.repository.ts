@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Consultas de Pagos en Base de Datos] Registra transacciones en 'payments' y crea el registro de fondos retenidos en 'custodies'.
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Payment, PaymentStatus, Prisma } from '../../generated/prisma/client';

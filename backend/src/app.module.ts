@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Módulo Raíz de NestJS] Orquesta la inyección de dependencias de todos los módulos del sistema (Auth, Users, Catalog, Orders, Claims, Jobs, etc.) y tareas cron.
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';

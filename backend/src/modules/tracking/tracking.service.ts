@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Lógica de Eventos de Despacho] Registra hitos de logística (En almacén, En tránsito, En reparto, Entregado) con fecha y ubicación.
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 

@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Servicio de Auditoría Inmutable] Inserta registros en la tabla de auditoría con actorId, acción, entidad y metadata JSON inmutable.
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '../generated/prisma/client';

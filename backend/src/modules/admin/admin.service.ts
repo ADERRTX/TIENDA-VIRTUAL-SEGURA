@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Lógica de Negocio Administrativa] Reglas para modificar parámetros del sistema (días de retención de custodia, comisión porcentual) y reportes de volumen.
 import { Injectable, BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuditService } from '../../audit/audit.service';

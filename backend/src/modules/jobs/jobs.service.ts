@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Tareas Cron y Liberación Automática de Fondos] REGLA CRÍTICA: Cron job que busca pedidos entregados cuyo plazo de reclamo expiró y libera automáticamente los fondos al vendedor.
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../../prisma/prisma.service';

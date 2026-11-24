@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Validador de Esquemas Zod] Pipe global que intercepta payloads de entrada y arroja errores HTTP 400 formateados ante esquemas inválidos.
 import { ArgumentMetadata, BadRequestException, PipeTransform } from '@nestjs/common';
 import { ZodType, ZodError } from 'zod';
 

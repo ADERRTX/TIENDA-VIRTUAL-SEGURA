@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoints de Gestión de Usuarios] Rutas para consultar perfil propio, listar usuarios y actualizar contraseñas o datos de cuenta.
 import {
   Controller,
   Get,

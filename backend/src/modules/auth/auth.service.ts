@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Lógica de Autenticación y Criptografía] Reglas de hashing Argon2id, verificación de credenciales, bloqueo de cuenta por intentos fallidos y firma de JWT.
 import { Injectable, UnauthorizedException, ConflictException, HttpException, HttpStatus, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { hash, verify } from '@node-rs/argon2';

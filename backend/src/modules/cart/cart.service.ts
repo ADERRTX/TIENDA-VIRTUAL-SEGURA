@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Lógica de Carrito de Compras] Reglas: verificar que el producto esté activo, que haya stock disponible y no permitir que un vendedor compre sus propios productos.
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CartRepository } from './cart.repository';
 import { PrismaService } from '../../prisma/prisma.service';

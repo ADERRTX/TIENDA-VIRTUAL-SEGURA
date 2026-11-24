@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoints de Órdenes del Comprador] Rutas POST /orders (crear orden), GET /orders (mis compras), GET /orders/:id y POST /orders/:id/confirm-delivery.
 import {
   Controller,
   Get,

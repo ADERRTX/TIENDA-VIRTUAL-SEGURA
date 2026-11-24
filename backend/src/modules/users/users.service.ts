@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Lógica de Negocio de Usuarios] Reglas para cambio seguro de contraseña (validando clave actual), verificación de cuentas y perfiles.
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { AuditService } from '../../audit/audit.service';

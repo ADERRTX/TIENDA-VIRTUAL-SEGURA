@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Esquemas DTO del Carrito] Validaciones Zod para productId (UUID) y cantidad positiva (entero >= 1).
 import { z } from 'zod';
 
 export const addToCartSchema = z.object({

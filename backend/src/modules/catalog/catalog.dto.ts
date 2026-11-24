@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Esquemas DTO de Productos] Validaciones Zod de longitud de título, precio mínimo (>= 1 céntimo), stock no negativo y formato de URLs.
 import { z } from 'zod';
 import { ProductStatus } from '../../common/constants';
 

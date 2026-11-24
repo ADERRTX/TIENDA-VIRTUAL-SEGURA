@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Máquina de Estados de Custodia / Escrow] REGLA CRÍTICA: Define transiciones válidas de órdenes (PENDING->PAID->PREPARING->SHIPPED->DELIVERED->COMPLETED/DISPUTED). Bloquea cambios ilegales.
 import { ConflictException } from '@nestjs/common';
 import { SubOrderStatus, OrderStatus } from '../../common/constants';
 

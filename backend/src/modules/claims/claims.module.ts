@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Configuración del Módulo de Disputas] Enlaza el servicio de resolución de conflictos, repositorio y notificaciones.
 import { Module } from '@nestjs/common';
 import { ClaimsController } from './claims.controller';
 import { ClaimsService } from './claims.service';

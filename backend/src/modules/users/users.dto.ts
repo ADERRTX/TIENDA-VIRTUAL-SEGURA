@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Esquemas DTO de Usuarios] Validaciones Zod para actualización de nombres, contraseñas y direcciones de envío.
 import { z } from 'zod';
 
 export const updateProfileSchema = z.object({

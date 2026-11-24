@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Acceso a Datos de Usuarios] Consultas Prisma a la tabla 'users' para lectura, actualización de campos y búsqueda con filtros.
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Address, User, Prisma } from '../../generated/prisma/client';

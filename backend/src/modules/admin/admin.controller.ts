@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoints de Administración] Rutas GET /admin/audit-logs, GET/PUT /admin/config y GET /admin/reports. Exclusivas para rol ADMIN.
 import {
   Controller,
   Get,

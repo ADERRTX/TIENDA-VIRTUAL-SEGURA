@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Esquemas y Validaciones de Auth] Reglas de complejidad de contraseñas (mínimo 8 caracteres, mayúscula, minúscula, número), regex y formato de email.
 import { z } from 'zod';
 
 export const registerSchema = z.object({

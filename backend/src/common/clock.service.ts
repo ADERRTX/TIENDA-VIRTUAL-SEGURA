@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Servicio de Reloj del Sistema] Abstrae la obtención de la fecha/hora actual (now) para permitir simulación temporal en pruebas de custodia y cron jobs.
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoints de Notificaciones] Rutas GET /notifications (alertas del usuario) y PATCH /notifications/:id/read (marcar leída).
 import { Controller, Get, Patch, Param, Query } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CurrentUser, RequestUser } from '../../common/decorators/current-user.decorator';

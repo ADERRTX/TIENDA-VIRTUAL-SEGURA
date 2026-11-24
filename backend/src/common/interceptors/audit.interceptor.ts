@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Interceptor de Auditoría Automática] Registra automáticamente en la tabla audit_logs cualquier acción mutante (POST, PUT, PATCH, DELETE) con el usuario e IP.
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { requestAsyncStorage } from '../async-context';

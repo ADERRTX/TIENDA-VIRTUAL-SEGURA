@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoints de Pasarela de Pagos] Ruta POST /payments/checkout para procesar el pago de una orden y retener el dinero en custodia.
 import {
   Controller,
   Post,

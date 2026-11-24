@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Lógica de Negocio de Órdenes y Custodia] Crea subórdenes por cada vendedor, reserva stock atómicamente, calcula comisiones y programa fecha límite de custodia.
 import {
   Injectable,
   NotFoundException,

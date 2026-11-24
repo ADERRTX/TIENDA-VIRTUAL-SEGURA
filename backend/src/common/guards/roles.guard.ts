@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Guardia de Autorización RBAC] Comprueba si el rol del usuario autenticado coincide con los roles permitidos por el decorador @Roles(). Rechaza con 403.
 import { CanActivate, ExecutionContext, Injectable, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator';

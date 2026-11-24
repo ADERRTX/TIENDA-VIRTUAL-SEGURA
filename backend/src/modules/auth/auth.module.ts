@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Configuración del Módulo de Autenticación] Registra JwtModule con claves secretas, Throttler para control anti-fuerza bruta y controladores de acceso.
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';

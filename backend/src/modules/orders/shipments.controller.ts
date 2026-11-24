@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoints de Gestión de Envíos] Rutas POST /orders/:id/shipment para ingresar transportista, número de guía de remisión y tracking.
 import { Controller, Get, Post, Param, Query, Body, UsePipes } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { Roles } from '../../common/decorators/roles.decorator';

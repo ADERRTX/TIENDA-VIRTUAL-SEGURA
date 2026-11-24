@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Consultas SQL de Carrito] Consultas Prisma a 'carts' y 'cart_items' para agregar, actualizar cantidades o vaciar carritos.
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Cart, CartItem, Prisma } from '../../generated/prisma/client';

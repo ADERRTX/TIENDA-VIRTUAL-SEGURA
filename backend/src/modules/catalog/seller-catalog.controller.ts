@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoints de Inventario del Vendedor] Rutas POST /seller/products, PUT /seller/products/:id y DELETE. Gestión de stock y precios propios.
 import {
   Controller,
   Get,

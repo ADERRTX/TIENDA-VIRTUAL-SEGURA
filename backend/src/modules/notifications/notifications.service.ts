@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Lógica de Notificaciones al Usuario] Emite notificaciones ante cambios de estado de compras, envíos en camino, reclamos abiertos y liberación de fondos.
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ClockService } from '../../common/clock.service';

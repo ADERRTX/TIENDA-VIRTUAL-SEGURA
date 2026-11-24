@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoints de Ventas del Vendedor] Rutas GET /seller/orders para ver pedidos asignados a su tienda y actualizar estado a PREPARING/SHIPPED.
 import {
   Controller,
   Get,

@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Filtro Global de Excepciones] Captura errores HTTP y fallos no controlados para responder con formato JSON estandarizado sin filtrar trazas internas sensibles.
 import {
   ExceptionFilter,
   Catch,

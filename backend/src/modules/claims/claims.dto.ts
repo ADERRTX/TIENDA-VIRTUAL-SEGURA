@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Esquemas DTO de Reclamos] Validaciones Zod de motivo del reclamo, descripción (mínimo 10 caracteres), resolución (REFUND o RELEASE) y mensajes.
 import { z } from 'zod';
 import { ClaimResolution } from '../../common/constants';
 

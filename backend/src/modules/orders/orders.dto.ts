@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Esquemas DTO de Órdenes] Validaciones Zod de dirección de entrega, transportista, número de tracking y confirmación de recepción.
 import { z } from 'zod';
 import { TrackingEventType } from '../../common/constants';
 

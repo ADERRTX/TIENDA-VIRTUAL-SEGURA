@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Consultas de Productos en Base de Datos] Consultas Prisma a tablas 'products', 'categories', 'variants' e imágenes con paginación.
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import {

@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Consultas de Tiendas en Base de Datos] Consultas Prisma a la tabla 'sellers' para postulaciones, estados (PENDING, APPROVED, REJECTED) y perfiles.
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Seller, SellerStatus, UserRole, Prisma } from '../../generated/prisma/client';

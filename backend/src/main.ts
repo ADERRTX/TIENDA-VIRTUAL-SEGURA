@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Arranque del Servidor HTTP] Punto de entrada del backend. Configura prefijo global /api/v1, Swagger, CORS, Helmet, CookieParser, ZodPipe y puerto de escucha (3000).
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';

@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoints del Carrito] Rutas GET /cart, POST /cart/items, PATCH /cart/items/:id y DELETE /cart/items/:id.
 import {
   Controller,
   Get,

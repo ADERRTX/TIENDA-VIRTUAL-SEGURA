@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Endpoints Públicos de Tiendas] Rutas GET /sellers/:id (perfil de tienda) y POST /sellers/apply (solicitud para ser vendedor).
 import {
   Controller,
   Post,

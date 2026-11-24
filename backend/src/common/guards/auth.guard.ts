@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Guardia de Autenticación JWT] Valida el token JWT en la cookie 'jwt' o cabecera Bearer; rechaza con 401 si el token no existe, expiró o está revocado.
 import {
   CanActivate,
   ExecutionContext,

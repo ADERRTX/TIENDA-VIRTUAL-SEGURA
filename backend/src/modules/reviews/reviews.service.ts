@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Lógica de Calificaciones] REGLA: Solo compradores con orden entregada (DELIVERED/COMPLETED) pueden calificar. Calificación entera entre 1 y 5 estrellas.
 import {
   Injectable,
   NotFoundException,

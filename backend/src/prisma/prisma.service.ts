@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Conexión con PostgreSQL] Inicializa PrismaClient con el adaptador pg, maneja el ciclo de vida de conexión y desconexión a la base de datos.
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../generated/prisma/client';

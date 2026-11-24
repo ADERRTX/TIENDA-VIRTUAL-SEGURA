@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Lógica de Negocio del Catálogo] Reglas: el vendedor solo edita sus propios productos, validación de stock positivo, precios en céntimos y registro de historial.
 import {
   Injectable,
   NotFoundException,

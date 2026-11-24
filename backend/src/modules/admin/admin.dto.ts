@@ -1,3 +1,4 @@
+// [REGLAS & FUNCIONES: Esquemas DTO de Configuración del Sistema] Validaciones Zod para parámetros del sistema: escrowHoldDays (mínimo 1 día) y platformFeeRate (0.00 a 0.50).
 import { z } from 'zod';
 
 export const updateConfigSchema = z.object({
