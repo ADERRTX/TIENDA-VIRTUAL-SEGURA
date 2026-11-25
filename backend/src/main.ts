@@ -36,7 +36,16 @@ export async function bootstrap(): Promise<void> {
   );
 
   app.enableCors({
-    origin: corsOrigins,
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+      // En desarrollo permitir localhost, 127.0.0.1 y cualquier IP de la red local (192.168.x.x, 10.x.x.x, etc.)
+      if (!origin || !isProduction) {
+        return callback(null, true);
+      }
+      if (corsOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error('CORS_BLOCKED'));
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Idempotency-Key'],
@@ -58,7 +67,7 @@ export async function bootstrap(): Promise<void> {
   }
 
   const port = Number(process.env['PORT'] ?? 3000);
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   console.log(`API escuchando en http://localhost:${port}/api/v1`);
   if (!isProduction) {
     console.log(`Swagger en http://localhost:${port}/api/docs`);
